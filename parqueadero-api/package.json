@@ -1,0 +1,40 @@
+{
+  "name": "parqueadero-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/server.js",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "node --env-file=.env node_modules/vitest/vitest.mjs run tests/unit",
+    "test:integration": "node node_modules/vitest/vitest.mjs run --config vitest.integration.config.js",
+    "lint": "eslint .",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "node --env-file=.env prisma/seed.js",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.1.0",
+    "bcryptjs": "^2.4.3",
+    "express": "^5.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "pino": "^9.5.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.14.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.4.2",
+    "prisma": "^6.1.0",
+    "supertest": "^7.0.0",
+    "vitest": "^2.1.8"
+  }
+}

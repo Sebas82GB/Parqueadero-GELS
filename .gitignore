@@ -1,0 +1,6 @@
+# Claude Code (config, settings, skills, instrucciones)
+.claude/
+CLAUDE.md
+
+# Copias de seguridad de historiales git anteriores (no forman parte del repo nuevo)
+**/.git.bak-*/

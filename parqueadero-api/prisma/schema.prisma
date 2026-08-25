@@ -1,0 +1,337 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────
+
+enum Rol {
+  ADMIN
+  OPERADOR
+}
+
+enum TipoVehiculo {
+  CARRO
+  MOTO
+  BICICLETA
+  OTRO
+}
+
+enum EstadoCelda {
+  LIBRE
+  OCUPADA
+  MANTENIMIENTO
+}
+
+enum EstadoTicket {
+  ABIERTO
+  PAGADO
+  ENTREGADO
+  ANULADO
+}
+
+enum EstadoPagoMensualidad {
+  PAGADA
+  NO_PAGADA
+  CANCELADA
+}
+
+enum EstadoTurno {
+  ABIERTO
+  CERRADO
+}
+
+enum EstadoPago {
+  VALIDO
+  ANULADO
+}
+
+enum MetodoPago {
+  EFECTIVO
+  TARJETA
+  TRANSFERENCIA
+}
+
+// ─── Usuario ────────────────────────────────────────────────────────────
+
+model Usuario {
+  id           String   @id @default(uuid()) @db.Uuid
+  nombre       String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  rol          Rol
+  activo       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  ticketsComoOperadorEntrada Ticket[]       @relation("TicketOperadorEntrada")
+  ticketsComoOperadorSalida  Ticket[]       @relation("TicketOperadorSalida")
+  ticketsAnulados            Ticket[]       @relation("TicketAnuladoPor")
+  ticketsEntregados          Ticket[]       @relation("TicketEntregadoPor")
+  turnos                     Turno[]
+  anulaciones                Anulacion[]
+  refreshTokens              RefreshToken[]
+
+  @@map("usuarios")
+}
+
+// ─── RefreshToken ───────────────────────────────────────────────────────
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  usuarioId String    @map("usuario_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  // A diferencia del resto del dominio (onDelete: Restrict), un refresh
+  // token es un artefacto de sesión: no tiene sentido de negocio que
+  // sobreviva al usuario, así que sí se borra en cascada.
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("refresh_tokens")
+}
+
+// ─── Vehiculo ───────────────────────────────────────────────────────────
+
+model Vehiculo {
+  id                  String       @id @default(uuid()) @db.Uuid
+  // Normalizada (mayúsculas, sin espacios) por el validador Zod antes de
+  // llegar al repositorio; la BD solo garantiza unicidad del valor ya normalizado.
+  placa               String       @unique
+  tipo                TipoVehiculo
+  propietarioNombre   String?      @map("propietario_nombre")
+  propietarioTelefono String?      @map("propietario_telefono")
+  createdAt           DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tickets       Ticket[]
+  mensualidades Mensualidad[]
+
+  @@map("vehiculos")
+}
+
+// ─── Celda ──────────────────────────────────────────────────────────────
+
+model Celda {
+  id            String       @id @default(uuid()) @db.Uuid
+  codigo        String       @unique
+  zona          String
+  tipoPermitido TipoVehiculo @map("tipo_permitido")
+  estado        EstadoCelda  @default(LIBRE)
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tickets       Ticket[]
+  mensualidades Mensualidad[]
+
+  // Consulta caliente: "celda libre del tipo del vehículo que va a entrar".
+  @@index([tipoPermitido, estado])
+  @@index([estado])
+  @@map("celdas")
+}
+
+// ─── Tarifa ─────────────────────────────────────────────────────────────
+
+model Tarifa {
+  id            String       @id @default(uuid()) @db.Uuid
+  tipoVehiculo  TipoVehiculo @map("tipo_vehiculo")
+  valorMinuto   Int          @map("valor_minuto")
+  valorPlena    Int          @map("valor_plena")
+  valorNocturna Int          @map("valor_nocturna")
+  valorMes      Int          @map("valor_mes")
+  vigenteDesde  DateTime     @map("vigente_desde") @db.Timestamptz(3)
+  vigenteHasta  DateTime?    @map("vigente_hasta") @db.Timestamptz(3)
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tickets Ticket[]
+
+  // Consulta caliente: "tarifa vigente para este tipo de vehículo al momento de entrada".
+  @@index([tipoVehiculo, vigenteDesde])
+  @@map("tarifas")
+}
+
+// ─── HorarioOperacion ───────────────────────────────────────────────────
+
+model HorarioOperacion {
+  id           String    @id @default(uuid()) @db.Uuid
+  apertura     DateTime  @db.Time
+  cierre       DateTime  @db.Time
+  vigenteDesde DateTime  @map("vigente_desde") @db.Timestamptz(3)
+  vigenteHasta DateTime? @map("vigente_hasta") @db.Timestamptz(3)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  tickets Ticket[]
+
+  // Consulta caliente: "horario vigente en este instante". Sin discriminador:
+  // a diferencia de Tarifa, solo existe un horario vigente global a la vez.
+  @@index([vigenteDesde])
+  @@map("horarios_operacion")
+}
+
+// ─── Ticket ─────────────────────────────────────────────────────────────
+
+// NOTA DE MIGRACIÓN: Prisma no tiene sintaxis para índices únicos parciales
+// (WHERE) en schema.prisma. Después de `prisma migrate dev --create-only`,
+// agregar a mano en el SQL generado:
+//   CREATE UNIQUE INDEX "tickets_vehiculo_id_abierto_key"
+//     ON "tickets" ("vehiculo_id") WHERE "estado" = 'ABIERTO';
+// Esto es lo que impone "una placa no puede tener dos tickets ABIERTO
+// simultáneos" a nivel de BD, no solo en TicketService.
+//
+// NOTA DE MIGRACIÓN 2: Prisma no tiene "secuencia" como concepto de schema.
+// Después de `prisma migrate dev --create-only`, agregar a mano en el SQL
+// generado:
+//   CREATE SEQUENCE "recibo_consecutivo_seq";   (antes del ALTER TABLE que agrega la columna)
+//   ALTER SEQUENCE "recibo_consecutivo_seq" OWNED BY "tickets"."recibo_consecutivo";  (al final)
+// El consecutivo se asigna con `nextval('recibo_consecutivo_seq')` dentro de
+// la transacción de registrarSalidaTransaccional (ticket.repository.js);
+// nextval() es atómica e independiente del rollback de la transacción que la
+// invoca, así que dos salidas concurrentes nunca reciben el mismo valor.
+model Ticket {
+  id                String       @id @default(uuid()) @db.Uuid
+  codigo            String       @unique
+  vehiculoId        String       @map("vehiculo_id") @db.Uuid
+  celdaId           String       @map("celda_id") @db.Uuid
+  horaEntrada       DateTime     @map("hora_entrada") @db.Timestamptz(3)
+  horaSalida        DateTime?    @map("hora_salida") @db.Timestamptz(3)
+  tarifaId          String       @map("tarifa_id") @db.Uuid
+  horarioId         String       @map("horario_id") @db.Uuid
+  valorTotal        Int?         @map("valor_total")
+  desglose          Json?
+  estado            EstadoTicket @default(ABIERTO)
+  operadorEntradaId String       @map("operador_entrada_id") @db.Uuid
+  operadorSalidaId  String?      @map("operador_salida_id") @db.Uuid
+  motivoAnulacion   String?      @map("motivo_anulacion")
+  anuladoPorId      String?      @map("anulado_por_id") @db.Uuid
+  anuladoEn         DateTime?    @map("anulado_en") @db.Timestamptz(3)
+  entregadoPorId    String?      @map("entregado_por_id") @db.Uuid
+  entregadoEn       DateTime?    @map("entregado_en") @db.Timestamptz(3)
+  reciboConsecutivo Int?         @unique @map("recibo_consecutivo")
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  vehiculo        Vehiculo         @relation(fields: [vehiculoId], references: [id], onDelete: Restrict)
+  celda           Celda            @relation(fields: [celdaId], references: [id], onDelete: Restrict)
+  tarifa          Tarifa           @relation(fields: [tarifaId], references: [id], onDelete: Restrict)
+  horario         HorarioOperacion @relation(fields: [horarioId], references: [id], onDelete: Restrict)
+  operadorEntrada Usuario          @relation("TicketOperadorEntrada", fields: [operadorEntradaId], references: [id], onDelete: Restrict)
+  operadorSalida  Usuario?         @relation("TicketOperadorSalida", fields: [operadorSalidaId], references: [id], onDelete: Restrict)
+  anuladoPor      Usuario?         @relation("TicketAnuladoPor", fields: [anuladoPorId], references: [id], onDelete: Restrict)
+  entregadoPor    Usuario?         @relation("TicketEntregadoPor", fields: [entregadoPorId], references: [id], onDelete: Restrict)
+  pago            Pago?
+
+  // Complementa el índice parcial de arriba: sirve para listar histórico
+  // por vehículo en cualquier estado y para el dashboard de "tickets abiertos ahora".
+  @@index([vehiculoId, estado])
+  @@index([estado])
+  @@index([celdaId])
+  @@map("tickets")
+}
+
+// ─── Mensualidad ────────────────────────────────────────────────────────
+
+model Mensualidad {
+  id               String                @id @default(uuid()) @db.Uuid
+  vehiculoId       String                @map("vehiculo_id") @db.Uuid
+  celdaId          String?               @map("celda_id") @db.Uuid
+  fechaInicio      DateTime              @map("fecha_inicio") @db.Timestamptz(3)
+  fechaFin         DateTime              @map("fecha_fin") @db.Timestamptz(3)
+  valorMensualidad Int                   @map("valor_mensualidad")
+  estadoPago       EstadoPagoMensualidad @default(NO_PAGADA) @map("estado_pago")
+  fechaPago        DateTime?             @map("fecha_pago") @db.Timestamptz(3)
+  createdAt        DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  vehiculo Vehiculo @relation(fields: [vehiculoId], references: [id], onDelete: Restrict)
+  celda    Celda?   @relation(fields: [celdaId], references: [id], onDelete: Restrict)
+  pagos    Pago[]
+
+  // Consulta caliente: "¿este vehículo tiene una mensualidad vigente que cubre horaEntrada?"
+  @@index([vehiculoId, estadoPago, fechaInicio, fechaFin])
+  @@map("mensualidades")
+}
+
+// ─── Turno ──────────────────────────────────────────────────────────────
+
+model Turno {
+  id               String      @id @default(uuid()) @db.Uuid
+  operadorId       String      @map("operador_id") @db.Uuid
+  apertura         DateTime    @default(now()) @db.Timestamptz(3)
+  cierre           DateTime?   @db.Timestamptz(3)
+  baseInicial      Int         @map("base_inicial")
+  totalRecaudado   Int?        @map("total_recaudado")
+  // Los tres siguientes solo se llenan al cerrar (arqueo de caja): el
+  // efectivo que el operador contó a mano, lo que el sistema esperaba
+  // (baseInicial + pagos EFECTIVO válidos) y la diferencia entre ambos.
+  // La diferencia se guarda siempre, incluso si es 0 — es un dato contable,
+  // nunca se corrige ni se oculta.
+  efectivoContado  Int?        @map("efectivo_contado")
+  efectivoEsperado Int?        @map("efectivo_esperado")
+  diferencia       Int?
+  estado           EstadoTurno @default(ABIERTO)
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  operador Usuario @relation(fields: [operadorId], references: [id], onDelete: Restrict)
+  pagos    Pago[]
+
+  // "¿este operador ya tiene un turno ABIERTO?" — solo acelera la consulta;
+  // la regla en sí se valida en TurnoService (decisión: sin índice único parcial).
+  @@index([operadorId, estado])
+  @@map("turnos")
+}
+
+// ─── Pago ───────────────────────────────────────────────────────────────
+
+// NOTA DE MIGRACIÓN: la relación XOR (un Pago pertenece a un Ticket O a una
+// Mensualidad, nunca a ambos ni a ninguno) no se puede declarar en
+// schema.prisma. Agregar a mano en el SQL generado:
+//   ALTER TABLE "pagos" ADD CONSTRAINT "pagos_ticket_xor_mensualidad_check"
+//     CHECK (num_nonnulls("ticket_id", "mensualidad_id") = 1);
+model Pago {
+  id            String     @id @default(uuid()) @db.Uuid
+  ticketId      String?    @unique @map("ticket_id") @db.Uuid
+  mensualidadId String?    @map("mensualidad_id") @db.Uuid
+  monto         Int
+  metodo        MetodoPago
+  turnoId       String     @map("turno_id") @db.Uuid
+  fecha         DateTime   @default(now()) @db.Timestamptz(3)
+  estado        EstadoPago @default(VALIDO)
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  ticket      Ticket?      @relation(fields: [ticketId], references: [id], onDelete: Restrict)
+  mensualidad Mensualidad? @relation(fields: [mensualidadId], references: [id], onDelete: Restrict)
+  turno       Turno        @relation(fields: [turnoId], references: [id], onDelete: Restrict)
+  anulacion   Anulacion?
+
+  @@index([mensualidadId])
+  @@index([turnoId])
+  @@map("pagos")
+}
+
+// ─── Anulacion ──────────────────────────────────────────────────────────
+
+// La anulación de un Ticket vive directamente en Ticket (motivoAnulacion,
+// anuladoPorId, anuladoEn); esta tabla solo registra la anulación de un Pago.
+model Anulacion {
+  id        String   @id @default(uuid()) @db.Uuid
+  pagoId    String   @unique @map("pago_id") @db.Uuid
+  motivo    String
+  usuarioId String   @map("usuario_id") @db.Uuid
+  fecha     DateTime @default(now()) @db.Timestamptz(3)
+
+  pago    Pago    @relation(fields: [pagoId], references: [id], onDelete: Restrict)
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Restrict)
+
+  @@map("anulaciones")
+}
