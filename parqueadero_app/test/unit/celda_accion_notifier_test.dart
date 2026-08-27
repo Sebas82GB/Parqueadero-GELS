@@ -7,11 +7,16 @@ import 'package:parqueadero_app/features/celdas/domain/celda.dart';
 import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
 import 'package:parqueadero_app/features/celdas/presentation/celda_accion_notifier.dart';
 import 'package:parqueadero_app/features/celdas/presentation/celda_list_notifier.dart';
+import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
+import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
 
 class MockCeldaRepository extends Mock implements CeldaRepository {}
 
+class MockTicketRepository extends Mock implements TicketRepository {}
+
 void main() {
   late MockCeldaRepository celdaRepository;
+  late MockTicketRepository ticketRepository;
   late ProviderContainer container;
 
   Celda celda({EstadoCelda estado = EstadoCelda.libre}) => Celda(
@@ -26,11 +31,18 @@ void main() {
 
   setUp(() {
     celdaRepository = MockCeldaRepository();
+    ticketRepository = MockTicketRepository();
     // celdaListNotifierProvider arranca su propia carga al construirse;
     // sin este stub, ese GET de fondo lanzaría MissingStubError.
     when(() => celdaRepository.listarTodas()).thenAnswer((_) async => [celda()]);
+    when(
+      () => ticketRepository.listar(estado: any(named: 'estado'), perPage: any(named: 'perPage')),
+    ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 100, total: 0));
     container = ProviderContainer(
-      overrides: [celdaRepositoryProvider.overrideWithValue(celdaRepository)],
+      overrides: [
+        celdaRepositoryProvider.overrideWithValue(celdaRepository),
+        ticketRepositoryProvider.overrideWithValue(ticketRepository),
+      ],
     );
     addTearDown(container.dispose);
     // Ambos providers son autoDispose: `container.listen` los mantiene vivos

@@ -3,22 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:parqueadero_app/core/theme/app_colors.dart';
 import 'package:parqueadero_app/features/auth/data/auth_repository_impl.dart';
 import 'package:parqueadero_app/features/auth/domain/auth_repository.dart';
 import 'package:parqueadero_app/features/auth/domain/usuario.dart';
 import 'package:parqueadero_app/features/celdas/data/celda_repository_impl.dart';
 import 'package:parqueadero_app/features/celdas/domain/celda.dart';
 import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
-import 'package:parqueadero_app/core/theme/app_colors.dart';
+import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_accion_rapida_sheet.dart';
 import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_card.dart';
+import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
+import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
 class MockCeldaRepository extends Mock implements CeldaRepository {}
 
+class MockTicketRepository extends Mock implements TicketRepository {}
+
 void main() {
   late MockAuthRepository authRepository;
   late MockCeldaRepository celdaRepository;
+  late MockTicketRepository ticketRepository;
 
   Usuario usuario(RolUsuario rol) => Usuario(
     id: 'u1',
@@ -40,9 +46,32 @@ void main() {
     updatedAt: DateTime.utc(2026, 1, 1),
   );
 
+  stubsComunes() {
+    // Sin esto, CeldaListNotifier (el GET adicional de placas por celda) y
+    // el panel de acción rápida (búsqueda de ticket por celda) tocarían el
+    // TicketRepository real. Vacíos por defecto: ningún test de este archivo
+    // le interesa el contenido del panel, solo que se abra en vez de navegar.
+    when(
+      () => ticketRepository.listar(estado: any(named: 'estado'), perPage: any(named: 'perPage')),
+    ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 100, total: 0));
+    when(
+      () => ticketRepository.listar(
+        celdaId: any(named: 'celdaId'),
+        estado: any(named: 'estado'),
+        perPage: any(named: 'perPage'),
+      ),
+    ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 1, total: 0));
+    return [
+      authRepositoryProvider.overrideWithValue(authRepository),
+      celdaRepositoryProvider.overrideWithValue(celdaRepository),
+      ticketRepositoryProvider.overrideWithValue(ticketRepository),
+    ];
+  }
+
   setUp(() {
     authRepository = MockAuthRepository();
     celdaRepository = MockCeldaRepository();
+    ticketRepository = MockTicketRepository();
   });
 
   Future<void> pumpCard(
@@ -61,13 +90,7 @@ void main() {
       ],
     );
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(authRepository),
-          celdaRepositoryProvider.overrideWithValue(celdaRepository),
-        ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
+      ProviderScope(overrides: stubsComunes(), child: MaterialApp.router(routerConfig: router)),
     );
     await tester.pumpAndSettle();
   }
@@ -97,13 +120,7 @@ void main() {
       ],
     );
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          authRepositoryProvider.overrideWithValue(authRepository),
-          celdaRepositoryProvider.overrideWithValue(celdaRepository),
-        ],
-        child: MaterialApp.router(routerConfig: router),
-      ),
+      ProviderScope(overrides: stubsComunes(), child: MaterialApp.router(routerConfig: router)),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.byType(CeldaCard));
@@ -112,12 +129,13 @@ void main() {
     expect(rutaVisitada, '/tickets/entrada?celdaId=c1');
   });
 
-  testWidgets('OPERADOR + OCUPADA: sigue yendo al detalle de la celda', (tester) async {
+  testWidgets('OPERADOR + OCUPADA: abre el panel de acción rápida en vez de navegar al detalle', (tester) async {
     await pumpCard(tester, rol: RolUsuario.operador, estado: EstadoCelda.ocupada);
     await tester.tap(find.byType(CeldaCard));
     await tester.pumpAndSettle();
 
-    expect(find.text('DETALLE'), findsOneWidget);
+    expect(find.text('DETALLE'), findsNothing);
+    expect(find.byType(CeldaAccionRapidaSheet), findsOneWidget);
   });
 
   testWidgets('ADMIN + LIBRE: nunca salta el detalle, aunque la celda esté libre', (tester) async {
@@ -149,19 +167,27 @@ void main() {
     expect(find.text('DETALLE'), findsNothing);
   });
 
-  testWidgets('OCUPADA: el código va en demarcación sobre el relleno asfalto (bahía pintada, no matiz de estado)', (
-    tester,
-  ) async {
-    await pumpCard(tester, rol: RolUsuario.admin, estado: EstadoCelda.ocupada);
+  testWidgets(
+    'OCUPADA: el ícono de tipo va en demarcación sobre el relleno asfalto (bahía pintada, no matiz de estado)',
+    (tester) async {
+      await pumpCard(tester, rol: RolUsuario.admin, estado: EstadoCelda.ocupada);
 
-    final texto = tester.widget<Text>(find.text('A-01'));
+      // ADMIN + OCUPADA no tiene acción rápida (sin ícono "⋮"), así que el
+      // único ícono en la tarjeta es el de tipo de vehículo.
+      final icono = tester.widget<Icon>(find.byIcon(Icons.directions_car));
 
-    expect(texto.style?.color, AppColors.demarcacion);
+      expect(icono.color, AppColors.demarcacion);
+    },
+  );
+
+  testWidgets('LIBRE: el código de celda sigue visible debajo del ícono de tipo', (tester) async {
+    await pumpCard(tester, rol: RolUsuario.admin, estado: EstadoCelda.libre);
+
+    expect(find.text('A-01'), findsOneWidget);
+    expect(find.byIcon(Icons.directions_car), findsOneWidget);
   });
 
-  testWidgets('OPERADOR + OCUPADA: el ícono de acciones rápidas es visible (hay "Registrar salida")', (
-    tester,
-  ) async {
+  testWidgets('OPERADOR + OCUPADA: el ícono de acciones rápidas es visible', (tester) async {
     await pumpCard(tester, rol: RolUsuario.operador, estado: EstadoCelda.ocupada);
 
     expect(find.byIcon(Icons.more_vert), findsOneWidget);
@@ -198,6 +224,16 @@ void main() {
     expect(find.text('DETALLE'), findsNothing);
   });
 
+  testWidgets('OPERADOR + OCUPADA: tocar el ícono abre el panel de acción rápida, igual que el tap', (
+    tester,
+  ) async {
+    await pumpCard(tester, rol: RolUsuario.operador, estado: EstadoCelda.ocupada);
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CeldaAccionRapidaSheet), findsOneWidget);
+  });
+
   testWidgets(
     'navegar mientras el Hero de la tarjeta está a mitad de cruce (poll de 30s) no lanza "multiple heroes"',
     (tester) async {
@@ -223,13 +259,7 @@ void main() {
         ],
       );
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            authRepositoryProvider.overrideWithValue(authRepository),
-            celdaRepositoryProvider.overrideWithValue(celdaRepository),
-          ],
-          child: MaterialApp.router(routerConfig: router),
-        ),
+        ProviderScope(overrides: stubsComunes(), child: MaterialApp.router(routerConfig: router)),
       );
       await tester.pumpAndSettle();
 

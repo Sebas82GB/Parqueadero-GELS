@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +7,6 @@ import '../../../core/domain/tipo_vehiculo.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/bogota_time.dart';
-import '../../../core/utils/elapsed_time.dart';
 import '../../../core/utils/money.dart';
 import '../../../core/utils/print/print_launcher.dart';
 import '../../../core/utils/tipo_vehiculo_label.dart';
@@ -17,6 +14,7 @@ import '../../../core/widgets/button_spinner.dart';
 import '../../../core/widgets/error_banner.dart';
 import '../../../core/widgets/error_state.dart';
 import '../../../core/widgets/loading_skeleton.dart';
+import '../../../core/widgets/tiempo_transcurrido_text.dart';
 import '../../turnos/presentation/widgets/turno_activo_indicator.dart';
 import '../domain/pago.dart';
 import '../domain/ticket.dart';
@@ -53,26 +51,12 @@ class RegistrarSalidaScreen extends ConsumerStatefulWidget {
 }
 
 class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
-  Timer? _timer;
   final _valorManualController = TextEditingController();
   final _montoRecibidoController = TextEditingController();
   MetodoPago? _metodo;
 
   @override
-  void initState() {
-    super.initState();
-    // Estado de UI puramente local: no sobrevive a la pantalla, no usa
-    // notifier ni red. Solo recalcula el tiempo transcurrido mostrado; cada
-    // 30s alcanza porque el display solo tiene granularidad de minutos
-    // (mismo intervalo que el poll de `CeldaListNotifier`).
-    _timer = Timer.periodic(const Duration(seconds: 30), (_) {
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
   void dispose() {
-    _timer?.cancel();
     _valorManualController.dispose();
     _montoRecibidoController.dispose();
     super.dispose();
@@ -147,7 +131,6 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
     final ticket = detalle.ticket!;
     final esOtro = ticket.vehiculo?.tipo == TipoVehiculo.otro;
     final enviando = salida.step == SalidaStep.enviando;
-    final transcurrido = DateTime.now().toUtc().difference(ticket.horaEntrada);
     final preview = ref.watch(cobroPreviewNotifierProvider(widget.ticketId));
 
     final valorManualTexto = _valorManualController.text.trim();
@@ -181,9 +164,14 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
                       Text('Celda: ${ticket.celda?.codigo ?? '—'}'),
                       Text('Entrada: ${formatBogota(ticket.horaEntrada)}'),
                       const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'Tiempo transcurrido: ${formatElapsed(transcurrido)}',
-                        style: Theme.of(context).textTheme.titleMedium,
+                      Row(
+                        children: [
+                          Text('Tiempo transcurrido: ', style: Theme.of(context).textTheme.titleMedium),
+                          TiempoTranscurridoText(
+                            horaEntrada: ticket.horaEntrada,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
                       ),
                     ],
                   ),

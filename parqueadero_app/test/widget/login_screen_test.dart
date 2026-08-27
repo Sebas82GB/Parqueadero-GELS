@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:parqueadero_app/core/network/api_exception.dart';
+import 'package:parqueadero_app/core/theme/app_colors.dart';
 import 'package:parqueadero_app/features/auth/data/auth_repository_impl.dart';
 import 'package:parqueadero_app/features/auth/domain/auth_repository.dart';
 import 'package:parqueadero_app/features/auth/domain/usuario.dart';
@@ -142,5 +143,20 @@ void main() {
 
     final emailField = tester.widget<TextField>(find.byType(TextField).at(0));
     expect(emailField.autofocus, isTrue);
+  });
+
+  // Hallazgo de la auditoría UX: la pantalla no llevaba ningún token de
+  // marca. El acento vive solo en el borde de foco (demarcación), sin
+  // agregar ningún elemento decorativo nuevo a una pantalla que debe
+  // quedarse tranquila fuera de la cuadrícula de celdas.
+  testWidgets('acento de marca: el borde de foco de ambos campos es demarcación', (tester) async {
+    await pumpLoginScreen(tester);
+
+    // TextFormField no expone `decoration` directamente (igual que
+    // obscureText/autofocus arriba): se verifica en el TextField interno.
+    for (final campo in tester.widgetList<TextField>(find.byType(TextField))) {
+      final focusedBorder = campo.decoration?.focusedBorder as OutlineInputBorder?;
+      expect(focusedBorder?.borderSide.color, AppColors.demarcacion);
+    }
   });
 }

@@ -1,9 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:parqueadero_app/core/network/api_exception.dart';
+import 'package:parqueadero_app/core/theme/app_colors.dart';
 import 'package:parqueadero_app/features/auth/data/auth_repository_impl.dart';
 import 'package:parqueadero_app/features/auth/domain/auth_repository.dart';
 import 'package:parqueadero_app/features/auth/domain/usuario.dart';
@@ -101,6 +104,55 @@ void main() {
 
     expect(find.textContaining('Turno abierto desde'), findsOneWidget);
     expect(find.widgetWithText(TextButton, 'Ver arqueo'), findsOneWidget);
+  });
+
+  // Regresión del hallazgo de la auditoría UX: el aviso usaba el azul de
+  // StatusTone.info (0xFF2C6FBB, ajeno a AppColors) en vez de la identidad
+  // de marca. Ahora es asfalto/demarcación, igual que la bahía pintada.
+  testWidgets(
+    'OPERADOR con turno abierto: fondo asfalto y texto/ícono/acción en demarcación, no el azul de StatusStyle',
+    (tester) async {
+      when(() => authRepository.restoreSession()).thenAnswer((_) async => usuario());
+      when(
+        () => turnoRepository.listar(operadorId: 'op1', estado: EstadoTurno.abierto, perPage: 1),
+      ).thenAnswer((_) async => TurnoPageResult(data: [turno()], page: 1, perPage: 1, total: 1));
+
+      await pumpIndicador(tester);
+      await tester.pumpAndSettle();
+
+      final banner = tester
+          .widgetList<Container>(find.byType(Container))
+          .firstWhere((c) => (c.decoration as BoxDecoration?)?.color == AppColors.asfalto);
+      expect((banner.decoration! as BoxDecoration).color, AppColors.asfalto);
+
+      final icono = tester.widget<Icon>(find.byIcon(Icons.schedule));
+      expect(icono.color, AppColors.demarcacion);
+
+      final texto = tester.widget<Text>(find.textContaining('Turno abierto desde'));
+      expect(texto.style?.color, AppColors.demarcacion);
+
+      final boton = tester.widget<TextButton>(find.widgetWithText(TextButton, 'Ver arqueo'));
+      expect(boton.style?.foregroundColor?.resolve(<WidgetState>{}), AppColors.demarcacion);
+    },
+  );
+
+  // Verifica el contraste real (no solo el hex) para que una regresión de
+  // color en cualquiera de los dos tokens se detecte aquí, igual que
+  // status_style_test.dart hace con los tonos de StatusStyle.
+  test('demarcación sobre asfalto pasa AA (>= 4.5:1) como texto/ícono del banner de turno', () {
+    double canal(double c) => c <= 0.03928 ? c / 12.92 : math.pow((c + 0.055) / 1.055, 2.4).toDouble();
+    double luminancia(Color color) => 0.2126 * canal(color.r) + 0.7152 * canal(color.g) + 0.0722 * canal(color.b);
+    double contraste(Color a, Color b) {
+      final la = luminancia(a);
+      final lb = luminancia(b);
+      final claro = la > lb ? la : lb;
+      final oscuro = la > lb ? lb : la;
+      return (claro + 0.05) / (oscuro + 0.05);
+    }
+
+    final ratio = contraste(AppColors.demarcacion, AppColors.asfalto);
+
+    expect(ratio, greaterThanOrEqualTo(4.5), reason: 'contraste real: $ratio');
   });
 
   testWidgets('error de red: muestra el mensaje y permite reintentar', (tester) async {

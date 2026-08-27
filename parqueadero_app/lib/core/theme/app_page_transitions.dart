@@ -30,7 +30,13 @@ class AppPageTransitionsBuilder extends PageTransitionsBuilder {
     return FadeTransition(
       opacity: curved,
       child: SlideTransition(
-        position: Tween<Offset>(begin: const Offset(0, 0.02), end: Offset.zero).animate(curved),
+        // 0.02 (2% de alto) medía ~1.6% real a mitad de la animación —
+        // unos pocos píxeles, invisibles: en la práctica la transición era
+        // solo el fundido, y un fundido puro sin ningún desplazamiento se
+        // lee como que el contenido "aparece de golpe" en vez de deslizarse.
+        // 0.06 sigue siendo corto y sutil (nada rebota, nada se dispara),
+        // pero ya es un desplazamiento que el ojo alcanza a percibir.
+        position: Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero).animate(curved),
         child: child,
       ),
     );

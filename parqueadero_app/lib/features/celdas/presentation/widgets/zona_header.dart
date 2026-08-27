@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_motion.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/animated_count_text.dart';
-import '../../domain/celda.dart';
-import 'celda_estado_style.dart';
 
 /// El conteo que recibe SIEMPRE viene sin los filtros activos aplicados
 /// (ver `CeldaListState.librresEnZona`/`totalEnZona`): la disponibilidad por
@@ -53,8 +52,13 @@ class ZonaHeader extends StatelessWidget {
   }
 }
 
-/// Barra de proporción de tres segmentos (mismos colores que
-/// [CeldaEstadoStyle]), animada al cambiar las proporciones.
+/// Barra de proporción de tres segmentos, animada al cambiar las
+/// proporciones. Mismo lenguaje visual que la bahía pintada de `CeldaCard`
+/// (relleno/borde, nunca matiz): libre se lee vacía (`concreto` con borde
+/// `demarcacion`), ocupada se lee llena (`asfalto`). Mantenimiento no tiene
+/// un tercer hueco de estado en la bahía individual (ahí es rayado, no un
+/// relleno plano) — acá usa `demarcacion` sólido, el mismo acento que ya
+/// delinea la bahía libre, para no reintroducir un tercer matiz de estado.
 class _BarraOcupacion extends StatelessWidget {
   const _BarraOcupacion({required this.libres, required this.ocupadas, required this.mantenimiento});
 
@@ -77,12 +81,13 @@ class _BarraOcupacion extends StatelessWidget {
                 Container(color: Theme.of(context).colorScheme.surfaceContainerHigh),
                 Row(
                   children: [
-                    _Segmento(ancho: anchoDe(libres), color: CeldaEstadoStyle.of(EstadoCelda.libre).color),
-                    _Segmento(ancho: anchoDe(ocupadas), color: CeldaEstadoStyle.of(EstadoCelda.ocupada).color),
                     _Segmento(
-                      ancho: anchoDe(mantenimiento),
-                      color: CeldaEstadoStyle.of(EstadoCelda.mantenimiento).color,
+                      ancho: anchoDe(libres),
+                      color: AppColors.concreto,
+                      borde: AppColors.demarcacion,
                     ),
+                    _Segmento(ancho: anchoDe(ocupadas), color: AppColors.asfalto),
+                    _Segmento(ancho: anchoDe(mantenimiento), color: AppColors.demarcacion),
                   ],
                 ),
               ],
@@ -95,10 +100,11 @@ class _BarraOcupacion extends StatelessWidget {
 }
 
 class _Segmento extends StatelessWidget {
-  const _Segmento({required this.ancho, required this.color});
+  const _Segmento({required this.ancho, required this.color, this.borde});
 
   final double ancho;
   final Color color;
+  final Color? borde;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +112,14 @@ class _Segmento extends StatelessWidget {
       tween: Tween<double>(begin: ancho, end: ancho),
       duration: AppMotion.effective(context, AppMotion.medium),
       curve: AppMotion.curve,
-      builder: (context, anchoActual, child) => Container(width: anchoActual, height: 4, color: color),
+      builder: (context, anchoActual, child) => Container(
+        width: anchoActual,
+        height: 4,
+        decoration: BoxDecoration(
+          color: color,
+          border: borde == null ? null : Border.all(color: borde!),
+        ),
+      ),
     );
   }
 }

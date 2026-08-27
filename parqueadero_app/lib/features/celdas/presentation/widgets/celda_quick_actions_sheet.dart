@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/button_spinner.dart';
 import '../../../auth/domain/usuario.dart';
 import '../../../auth/presentation/session_notifier.dart';
-import '../../../tickets/presentation/ticket_abierto_de_celda_notifier.dart';
 import '../../domain/celda.dart';
 import '../celda_accion_notifier.dart';
 import '../celda_list_notifier.dart';
 import 'celda_estado_badge.dart';
 
-/// Mismas acciones que ya existen en `celda_detail_screen.dart`, sobre los
-/// mismos notifiers — un atajo desde la cuadrícula, no una ruta nueva ni
-/// lógica nueva. Se abre con long-press sobre una tarjeta.
+/// Acciones de ADMIN (mantenimiento) que ya existen en
+/// `celda_detail_screen.dart`, sobre los mismos notifiers — un atajo desde
+/// la cuadrícula, no una ruta nueva ni lógica nueva. Se abre con long-press
+/// sobre una tarjeta. OPERADOR sobre una celda OCUPADA no pasa por acá: va
+/// directo al panel de acción rápida (`celda_accion_rapida_sheet.dart`), que
+/// reemplaza el ítem "Registrar salida" que este sheet tenía antes.
 Future<void> showCeldaQuickActions(BuildContext context, String celdaId) {
   return showModalBottomSheet<void>(
     context: context,
@@ -44,9 +45,7 @@ class CeldaQuickActionsSheet extends ConsumerWidget {
     if (celda == null) return const SizedBox.shrink();
 
     final esAdmin = ref.watch(sessionNotifierProvider).usuario?.rol == RolUsuario.admin;
-    final esOperador = ref.watch(sessionNotifierProvider).usuario?.rol == RolUsuario.operador;
     final accion = ref.watch(celdaAccionNotifierProvider(celdaId));
-    final buscarTicket = ref.watch(ticketAbiertoDeCeldaNotifierProvider(celdaId));
 
     // Cierra el sheet solo cuando una acción de mantenimiento/liberar
     // termina bien; si falla, se queda abierto mostrando el mensaje.
@@ -57,26 +56,6 @@ class CeldaQuickActionsSheet extends ConsumerWidget {
     });
 
     final acciones = <Widget>[
-      if (esOperador && celda.estado == EstadoCelda.ocupada)
-        ListTile(
-          leading: buscarTicket.isLoading ? const ButtonSpinner(size: 20) : const Icon(Icons.logout),
-          title: const Text('Registrar salida'),
-          onTap: buscarTicket.isLoading
-              ? null
-              : () async {
-                  final ticketId = await ref.read(ticketAbiertoDeCeldaNotifierProvider(celdaId).notifier).buscar();
-                  if (!context.mounted) return;
-                  if (ticketId != null) {
-                    Navigator.of(context).pop();
-                    context.push('/tickets/$ticketId/salida');
-                  } else if (buscarTicket.errorMessage == null) {
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('No se encontró un ticket abierto para esta celda.')),
-                    );
-                  }
-                },
-        ),
       if (esAdmin && celda.estado == EstadoCelda.libre)
         ListTile(
           leading: accion.isLoading ? const ButtonSpinner(size: 20) : const Icon(Icons.build),
@@ -116,11 +95,6 @@ class CeldaQuickActionsSheet extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
                 child: Text(accion.errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-              ),
-            if (buscarTicket.errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.xs),
-                child: Text(buscarTicket.errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
               ),
             if (acciones.isEmpty)
               Padding(

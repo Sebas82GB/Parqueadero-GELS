@@ -7,11 +7,18 @@ import 'package:parqueadero_app/features/celdas/data/celda_repository_impl.dart'
 import 'package:parqueadero_app/features/celdas/domain/celda.dart';
 import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
 import 'package:parqueadero_app/features/celdas/presentation/celda_list_notifier.dart';
+import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
+import 'package:parqueadero_app/features/tickets/domain/ticket.dart';
+import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
+import 'package:parqueadero_app/features/tickets/domain/vehiculo.dart';
 
 class MockCeldaRepository extends Mock implements CeldaRepository {}
 
+class MockTicketRepository extends Mock implements TicketRepository {}
+
 void main() {
   late MockCeldaRepository celdaRepository;
+  late MockTicketRepository ticketRepository;
   late ProviderContainer container;
 
   Celda celda({
@@ -30,10 +37,41 @@ void main() {
     updatedAt: DateTime.utc(2026, 1, 1),
   );
 
+  Vehiculo vehiculo({String placa = 'ABC123', TipoVehiculo tipo = TipoVehiculo.carro}) => Vehiculo(
+    id: 'v1',
+    placa: placa,
+    tipo: tipo,
+    createdAt: DateTime.utc(2026, 1, 1),
+    updatedAt: DateTime.utc(2026, 1, 1),
+  );
+
+  Ticket ticketAbierto({required String celdaId, required Vehiculo vehiculo}) => Ticket(
+    id: 't-$celdaId',
+    codigo: 'T-$celdaId',
+    vehiculoId: vehiculo.id,
+    celdaId: celdaId,
+    horaEntrada: DateTime.utc(2026, 1, 1),
+    tarifaId: 'tarifa1',
+    estado: EstadoTicket.abierto,
+    operadorEntradaId: 'op1',
+    createdAt: DateTime.utc(2026, 1, 1),
+    updatedAt: DateTime.utc(2026, 1, 1),
+    vehiculo: vehiculo,
+  );
+
   setUp(() {
     celdaRepository = MockCeldaRepository();
+    ticketRepository = MockTicketRepository();
+    // Salvo que un test lo sobrescriba, no hay tickets abiertos — así los
+    // tests que no le interesa la placa no necesitan stubear esto.
+    when(
+      () => ticketRepository.listar(estado: any(named: 'estado'), perPage: any(named: 'perPage')),
+    ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 100, total: 0));
     container = ProviderContainer(
-      overrides: [celdaRepositoryProvider.overrideWithValue(celdaRepository)],
+      overrides: [
+        celdaRepositoryProvider.overrideWithValue(celdaRepository),
+        ticketRepositoryProvider.overrideWithValue(ticketRepository),
+      ],
     );
     addTearDown(container.dispose);
   });
@@ -88,14 +126,71 @@ void main() {
     expect(state.errorMessage, isNull);
   });
 
+  group('placa por celda', () {
+    test('cruza los tickets abiertos con las celdas para armar el mapa de placas y tipos', () async {
+      when(
+        () => celdaRepository.listarTodas(),
+      ).thenAnswer((_) async => [celda(id: 'c1', estado: EstadoCelda.ocupada)]);
+      when(() => ticketRepository.listar(estado: EstadoTicket.abierto, perPage: 100)).thenAnswer(
+        (_) async => TicketPageResult(
+          data: [ticketAbierto(celdaId: 'c1', vehiculo: vehiculo(placa: 'XYZ999', tipo: TipoVehiculo.moto))],
+          page: 1,
+          perPage: 100,
+          total: 1,
+        ),
+      );
+
+      mantenerVivo();
+      await Future<void>.delayed(Duration.zero);
+
+      final info = container.read(celdaListNotifierProvider).ticketInfoPorCeldaId['c1'];
+      expect(info?.placa, 'XYZ999');
+      expect(info?.tipo, TipoVehiculo.moto);
+    });
+
+    test('un fallo al traer los tickets no tumba el refresco de celdas y conserva el mapa anterior', () async {
+      when(
+        () => celdaRepository.listarTodas(),
+      ).thenAnswer((_) async => [celda(id: 'c1', estado: EstadoCelda.ocupada)]);
+      when(() => ticketRepository.listar(estado: EstadoTicket.abierto, perPage: 100)).thenAnswer(
+        (_) async => TicketPageResult(
+          data: [ticketAbierto(celdaId: 'c1', vehiculo: vehiculo(placa: 'XYZ999'))],
+          page: 1,
+          perPage: 100,
+          total: 1,
+        ),
+      );
+      mantenerVivo();
+      await Future<void>.delayed(Duration.zero);
+      expect(container.read(celdaListNotifierProvider).ticketInfoPorCeldaId['c1']?.placa, 'XYZ999');
+
+      when(
+        () => ticketRepository.listar(estado: EstadoTicket.abierto, perPage: 100),
+      ).thenThrow(const ApiException(code: 'UNKNOWN', message: 'falla de tickets', statusCode: 500));
+      await container.read(celdaListNotifierProvider.notifier).refrescar();
+
+      final state = container.read(celdaListNotifierProvider);
+      expect(state.errorMessage, isNull, reason: 'la celda sí cargó, el fallo fue solo en tickets');
+      expect(state.ticketInfoPorCeldaId['c1']?.placa, 'XYZ999');
+    });
+  });
+
   group('filtros', () {
     setUp(() async {
       when(() => celdaRepository.listarTodas()).thenAnswer(
         (_) async => [
-          celda(id: 'c1', zona: 'Zona A', estado: EstadoCelda.libre, tipoPermitido: TipoVehiculo.carro),
-          celda(id: 'c2', zona: 'Zona A', estado: EstadoCelda.ocupada, tipoPermitido: TipoVehiculo.carro),
-          celda(id: 'c3', zona: 'Zona B', estado: EstadoCelda.libre, tipoPermitido: TipoVehiculo.moto),
+          celda(id: 'c1', codigo: 'A-01', zona: 'Zona A', estado: EstadoCelda.libre, tipoPermitido: TipoVehiculo.carro),
+          celda(id: 'c2', codigo: 'A-02', zona: 'Zona A', estado: EstadoCelda.ocupada, tipoPermitido: TipoVehiculo.carro),
+          celda(id: 'c3', codigo: 'B-01', zona: 'Zona B', estado: EstadoCelda.libre, tipoPermitido: TipoVehiculo.moto),
         ],
+      );
+      when(() => ticketRepository.listar(estado: EstadoTicket.abierto, perPage: 100)).thenAnswer(
+        (_) async => TicketPageResult(
+          data: [ticketAbierto(celdaId: 'c2', vehiculo: vehiculo(placa: 'XYZ999'))],
+          page: 1,
+          perPage: 100,
+          total: 1,
+        ),
       );
       mantenerVivo();
       await Future<void>.delayed(Duration.zero);
@@ -120,14 +215,32 @@ void main() {
       expect(state.celdasFiltradas.map((c) => c.id), ['c1']);
     });
 
-    test('limpiarFiltros vuelve a mostrar todo', () {
+    test('setBusquedaFiltro matchea por código de celda', () {
+      final notifier = container.read(celdaListNotifierProvider.notifier);
+      notifier.setBusquedaFiltro('a-01');
+
+      final state = container.read(celdaListNotifierProvider);
+      expect(state.celdasFiltradas.map((c) => c.id), ['c1']);
+    });
+
+    test('setBusquedaFiltro matchea por la placa del ticket abierto de la celda', () {
+      final notifier = container.read(celdaListNotifierProvider.notifier);
+      notifier.setBusquedaFiltro('xyz');
+
+      final state = container.read(celdaListNotifierProvider);
+      expect(state.celdasFiltradas.map((c) => c.id), ['c2']);
+    });
+
+    test('limpiarFiltros vuelve a mostrar todo, incluida la búsqueda', () {
       final notifier = container.read(celdaListNotifierProvider.notifier);
       notifier.setZonaFiltro('Zona A');
+      notifier.setBusquedaFiltro('xyz');
       notifier.limpiarFiltros();
 
       final state = container.read(celdaListNotifierProvider);
       expect(state.celdasFiltradas, hasLength(3));
       expect(state.zonaFiltro, isNull);
+      expect(state.busquedaFiltro, isNull);
     });
 
     test('celdasFiltradasPorZona agrupa y omite zonas sin resultados tras filtrar', () {

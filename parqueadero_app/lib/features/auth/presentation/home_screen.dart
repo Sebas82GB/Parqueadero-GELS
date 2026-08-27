@@ -6,8 +6,11 @@ import '../../../core/theme/app_spacing.dart';
 import '../../turnos/presentation/widgets/turno_activo_indicator.dart';
 import '../domain/usuario.dart';
 import 'session_notifier.dart';
+import 'widgets/operador_home_dashboard.dart';
 
-/// Provisional: solo nombre, rol y cerrar sesión.
+/// Provisional para ADMIN: solo nombre, rol y cerrar sesión. OPERADOR tiene
+/// su propio dashboard (skill `diseno-parqueadero`: Registrar entrada/salida
+/// como flujo principal) — ver `OperadorHomeDashboard`.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -20,6 +23,10 @@ class HomeScreen extends ConsumerWidget {
     // Chrome: un `usuario!` forzado aquí crashea la app en ese frame).
     if (usuario == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (usuario.rol == RolUsuario.operador) {
+      return const OperadorHomeDashboard();
     }
 
     return Scaffold(
@@ -63,23 +70,21 @@ class HomeScreen extends ConsumerWidget {
                       onPressed: () => context.push('/tickets/buscar'),
                       child: const Text('Buscar por placa'),
                     ),
-                    if (usuario.rol == RolUsuario.admin) ...[
-                      const SizedBox(height: AppSpacing.md),
-                      ElevatedButton(
-                        onPressed: () => context.push('/tarifas'),
-                        child: const Text('Tarifas'),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ElevatedButton(
-                        onPressed: () => context.push('/mensualidades'),
-                        child: const Text('Mensualidades'),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ElevatedButton(
-                        onPressed: () => context.push('/horarios'),
-                        child: const Text('Horario de operación'),
-                      ),
-                    ],
+                    const SizedBox(height: AppSpacing.md),
+                    ElevatedButton(
+                      onPressed: () => context.push('/tarifas'),
+                      child: const Text('Tarifas'),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    ElevatedButton(
+                      onPressed: () => context.push('/mensualidades'),
+                      child: const Text('Mensualidades'),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    ElevatedButton(
+                      onPressed: () => context.push('/horarios'),
+                      child: const Text('Horario de operación'),
+                    ),
                     const SizedBox(height: AppSpacing.md),
                     ElevatedButton(
                       onPressed: () => ref.read(sessionNotifierProvider.notifier).logout(),

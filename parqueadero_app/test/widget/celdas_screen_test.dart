@@ -16,6 +16,8 @@ import 'package:parqueadero_app/features/celdas/domain/celda.dart';
 import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
 import 'package:parqueadero_app/features/celdas/presentation/celdas_screen.dart';
 import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_grid_skeleton.dart';
+import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
+import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
 import 'package:parqueadero_app/features/turnos/data/turno_repository_impl.dart';
 import 'package:parqueadero_app/features/turnos/domain/turno_repository.dart';
 
@@ -25,9 +27,12 @@ class MockAuthRepository extends Mock implements AuthRepository {}
 
 class MockTurnoRepository extends Mock implements TurnoRepository {}
 
+class MockTicketRepository extends Mock implements TicketRepository {}
+
 void main() {
   late MockCeldaRepository celdaRepository;
   late MockAuthRepository authRepository;
+  late MockTicketRepository ticketRepository;
 
   final adminDePrueba = Usuario(
     id: 'u1',
@@ -57,7 +62,14 @@ void main() {
   setUp(() {
     celdaRepository = MockCeldaRepository();
     authRepository = MockAuthRepository();
+    ticketRepository = MockTicketRepository();
     when(() => authRepository.restoreSession()).thenAnswer((_) async => adminDePrueba);
+    // El GET adicional de placas por celda (ver CeldaListNotifier.refrescar):
+    // ningún test de esta pantalla verifica su contenido, solo que no rompa
+    // el refresco de celdas si no hay tickets abiertos.
+    when(
+      () => ticketRepository.listar(estado: any(named: 'estado'), perPage: any(named: 'perPage')),
+    ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 100, total: 0));
   });
 
   // CeldaCard lee sessionNotifierProvider (para decidir la navegación del
@@ -70,6 +82,7 @@ void main() {
         overrides: [
           celdaRepositoryProvider.overrideWithValue(celdaRepository),
           authRepositoryProvider.overrideWithValue(authRepository),
+          ticketRepositoryProvider.overrideWithValue(ticketRepository),
         ],
         child: const MaterialApp(home: CeldasScreen()),
       ),
@@ -143,8 +156,11 @@ void main() {
     expect(find.text('Zona B'), findsOneWidget);
     expect(find.textContaining('/1 libres'), findsOneWidget);
     expect(find.text('A-01'), findsOneWidget);
-    expect(find.text('A-02'), findsOneWidget);
     expect(find.text('B-01'), findsOneWidget);
+    // A-02 está OCUPADA: el rediseño de CeldaCard ya no muestra el código
+    // ahí (queda el ícono de tipo + tiempo transcurrido; el código se ve en
+    // el panel de acción rápida al tocarla).
+    expect(find.text('A-02'), findsNothing);
   });
 
   testWidgets('cargando: el skeleton reproduce la forma de mini-tarjeta', (tester) async {
@@ -187,6 +203,7 @@ void main() {
           celdaRepositoryProvider.overrideWithValue(celdaRepository),
           authRepositoryProvider.overrideWithValue(authRepository),
           turnoRepositoryProvider.overrideWithValue(turnoRepository),
+          ticketRepositoryProvider.overrideWithValue(ticketRepository),
         ],
         child: const MaterialApp(home: CeldasScreen()),
       ),

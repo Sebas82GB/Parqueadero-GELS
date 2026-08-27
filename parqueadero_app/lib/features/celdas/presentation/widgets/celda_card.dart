@@ -16,51 +16,56 @@ import '../../domain/celda.dart';
 import '../celda_accion_notifier.dart';
 import '../celda_list_notifier.dart';
 import '../reloj_notifier.dart';
+import 'celda_accion_rapida_sheet.dart';
 import 'celda_quick_actions_sheet.dart';
 
-/// `ConsumerStatefulWidget` (no `ConsumerWidget`) a propósito: la animación
-/// de entrada escalonada (ver [_CeldaCardState.initState]) solo debe correr
-/// una vez por tarjeta genuinamente nueva, y eso requiere un `State` cuyo
-/// `initState` Flutter reutiliza mientras la `Key` (`ValueKey(celda.id)`,
-/// la pone `CeldasScreen`) siga en la misma posición del árbol — así el
-/// poll de 30s o un cambio en otra celda no la vuelven a disparar.
-class CeldaCard extends ConsumerStatefulWidget {
-  const CeldaCard({super.key, required this.celdaId, this.entryIndex = 0});
+class CeldaCard extends ConsumerWidget {
+  const CeldaCard({
+    super.key,
+    required this.celdaId,
+    this.entryIndex = 0,
+    this.entrada = kAlwaysCompleteAnimation,
+  });
 
   final String celdaId;
 
   /// Posición dentro de su zona: solo escalona el delay de la animación de
-  /// entrada (§1.7 del plan), no se usa para nada más.
+  /// entrada (ver el cálculo de `beginFrac`/`endFrac` más abajo), no se usa
+  /// para nada más.
   final int entryIndex;
 
-  @override
-  ConsumerState<CeldaCard> createState() => _CeldaCardState();
-}
+  /// Controller ÚNICO compartido por toda la grilla (uno solo, en
+  /// `CeldasScreen`) — reemplaza el `AnimationController` propio que antes
+  /// creaba cada tarjeta, que instanciaba ~30 controllers/tickers de golpe
+  /// en el primer build. Cada tarjeta deriva su propio tramo de entrada con
+  /// `Interval`, calculado a partir de [entryIndex], sobre este mismo
+  /// controller. Por defecto ya completo (`kAlwaysCompleteAnimation`): una
+  /// `CeldaCard` construida suelta (tests, reutilización futura) se muestra
+  /// de una sin exigir un controller real.
+  final Animation<double> entrada;
 
-class _CeldaCardState extends ConsumerState<CeldaCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _entrada;
+  /// Tope del delay escalonado por índice: la tarjeta N-ésima de su zona
+  /// empieza a entrar a los `(N * 25).clamp(0, maxDelayMs)` ms.
+  static const maxDelayMs = 300;
 
-  @override
-  void initState() {
-    super.initState();
-    _entrada = AnimationController(vsync: this, duration: AppMotion.fast);
-    final delay = Duration(
-      milliseconds: (widget.entryIndex * 25).clamp(0, 300),
-    );
-    Future.delayed(delay, () {
-      if (mounted) _entrada.forward();
-    });
+  /// Duración que debe tener el controller compartido de `CeldasScreen` para
+  /// que quepan el delay máximo más la animación de cada tarjeta.
+  static final totalMs = maxDelayMs + AppMotion.fast.inMilliseconds;
+
+  /// Long-press y el ícono "⋮" comparten el mismo criterio: OPERADOR sobre
+  /// OCUPADA va al panel de acción rápida nuevo (placa, monto, cobro);
+  /// cualquier otro caso (ADMIN sobre libre/mantenimiento) sigue yendo al
+  /// menú de acciones existente, sin cambios.
+  void _abrirAccionRapida(BuildContext context, EstadoCelda estado, bool esOperador) {
+    if (esOperador && estado == EstadoCelda.ocupada) {
+      showCeldaAccionRapida(context, celdaId);
+    } else {
+      showCeldaQuickActions(context, celdaId);
+    }
   }
 
   @override
-  void dispose() {
-    _entrada.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Se observa sin condición, antes de cualquier early-return (mismo
     // criterio que `celda_detail_screen.dart`).
     final rol = ref.watch(sessionNotifierProvider).usuario?.rol;
@@ -74,18 +79,25 @@ class _CeldaCardState extends ConsumerState<CeldaCard>
     final celda = ref.watch(
       celdaListNotifierProvider.select((s) {
         for (final c in s.celdas) {
-          if (c.id == widget.celdaId) return c;
+          if (c.id == celdaId) return c;
         }
         return null;
       }),
     );
     if (celda == null) return const SizedBox.shrink();
 
+    // Tipo real del vehículo parqueado, si se conoce (ver doc de
+    // `CeldaListState.ticketInfoPorCeldaId`); `.select` sobre el mapa
+    // completo, no sobre `celda`, así que solo esta tarjeta se reconstruye
+    // si SU entrada del mapa cambia — un `record` compara por valor, así
+    // que un refresco de 30s sin cambios reales no dispara nada.
+    final ticketInfo = ref.watch(
+      celdaListNotifierProvider.select((s) => s.ticketInfoPorCeldaId[celdaId]),
+    );
+
     // Estado de una acción rápida (§1.4) en vuelo para ESTA celda — ya lo
     // expone `CeldaAccionNotifier`, no se agrega nada nuevo al notifier.
-    final pendiente = ref
-        .watch(celdaAccionNotifierProvider(widget.celdaId))
-        .isLoading;
+    final pendiente = ref.watch(celdaAccionNotifierProvider(celdaId)).isLoading;
 
     final duration = AppMotion.effective(context, AppMotion.fast);
 
@@ -120,16 +132,25 @@ class _CeldaCardState extends ConsumerState<CeldaCard>
         ? AppColors.demarcacion
         : AppColors.tinta;
 
-    // Borde de urgencia: intensidad (alpha + grosor) del mismo demarcación,
-    // nunca un cambio de matiz — antes interpolaba hacia el naranja de
-    // StatusTone.warning, lo que contradecía la skill directamente.
+    // Borde de urgencia (solo OCUPADA): intensidad (alpha + grosor) del
+    // mismo demarcación, nunca un cambio de matiz — antes interpolaba hacia
+    // el naranja de StatusTone.warning, lo que contradecía la skill
+    // directamente. LIBRE pasó a un borde neutro (`linea`, 1px): la bahía se
+    // lee vacía por el relleno, no necesita el acento amarillo — eso se
+    // reserva para lo que sí exige atención (una celda ocupada).
     final urgencia = transcurrido == null
         ? 0.0
         : (transcurrido.inMinutes / 180).clamp(0.0, 1.0);
-    final borderColor = AppColors.demarcacion.withValues(
-      alpha: 0.5 + urgencia * 0.5,
-    );
-    final borderWidth = 1.5 + urgencia * 1.5;
+    final borderColor = switch (celda.estado) {
+      EstadoCelda.libre => AppColors.linea,
+      EstadoCelda.ocupada => AppColors.demarcacion.withValues(alpha: 0.5 + urgencia * 0.5),
+      EstadoCelda.mantenimiento => AppColors.demarcacion.withValues(alpha: 0.5),
+    };
+    final borderWidth = switch (celda.estado) {
+      EstadoCelda.libre => 1.0,
+      EstadoCelda.ocupada => 2.0 + urgencia * 1.0,
+      EstadoCelda.mantenimiento => 1.5,
+    };
 
     final tarjeta = RepaintBoundary(
       child: Card(
@@ -143,18 +164,23 @@ class _CeldaCardState extends ConsumerState<CeldaCard>
         child: InkWell(
           borderRadius: BorderRadius.circular(AppRadius.md),
           // Un OPERADOR sobre una celda LIBRE salta directo a "Registrar
-          // entrada" con la celda ya preseleccionada, en vez de pasar por el
-          // detalle. Cualquier otro caso (ADMIN, u otro estado) mantiene el
-          // comportamiento original.
+          // entrada" con la celda ya preseleccionada; sobre una OCUPADA abre
+          // el panel de acción rápida (bottom sheet, sin navegar a pantalla
+          // completa). Cualquier otro caso (ADMIN, o MANTENIMIENTO) mantiene
+          // el comportamiento original de ir al detalle.
           onTap: () {
             tapFeedback();
-            esOperador && celda.estado == EstadoCelda.libre
-                ? context.push('/tickets/entrada?celdaId=${celda.id}')
-                : context.push('/celdas/${celda.id}');
+            if (esOperador && celda.estado == EstadoCelda.libre) {
+              context.push('/tickets/entrada?celdaId=${celda.id}');
+            } else if (esOperador && celda.estado == EstadoCelda.ocupada) {
+              showCeldaAccionRapida(context, celdaId);
+            } else {
+              context.push('/celdas/${celda.id}');
+            }
           },
           onLongPress: () {
             tapFeedback();
-            showCeldaQuickActions(context, widget.celdaId);
+            _abrirAccionRapida(context, celda.estado, esOperador);
           },
           child: Stack(
             children: [
@@ -206,7 +232,16 @@ class _CeldaCardState extends ConsumerState<CeldaCard>
                             ),
                           ),
                         )
-                      else
+                      else if (celda.estado == EstadoCelda.libre) ...[
+                        // Ícono de tipo permitido en vez del texto: la
+                        // celda ya se lee vacía por el relleno, esto solo
+                        // aclara qué puede entrar ahí.
+                        Icon(
+                          tipoVehiculoIcon(celda.tipoPermitido),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          size: 22,
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           celda.codigo,
                           style: Theme.of(
@@ -214,25 +249,27 @@ class _CeldaCardState extends ConsumerState<CeldaCard>
                           ).textTheme.titleMedium?.copyWith(color: colorTexto),
                           textAlign: TextAlign.center,
                         ),
-                      const SizedBox(height: AppSpacing.xs),
-                      // Tipo permitido solo tiene sentido en una bahía
-                      // disponible; en MANTENIMIENTO no aplica y, sobre el
-                      // rayado, texto suelto (sin placa) no sería legible.
-                      if (celda.estado == EstadoCelda.libre)
-                        Text(
-                          tipoVehiculoLabel(celda.tipoPermitido),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: colorTexto),
-                          textAlign: TextAlign.center,
+                      ] else ...[
+                        // OCUPADA: el código ya no se muestra acá (se ve en
+                        // el panel de acción rápida al tocar la celda); el
+                        // tipo viene del ticket real si ya se conoce
+                        // (`ticketInfo`), y si no, cae de vuelta al tipo
+                        // permitido de la celda.
+                        Icon(
+                          tipoVehiculoIcon(ticketInfo?.tipo ?? celda.tipoPermitido),
+                          color: AppColors.demarcacion,
+                          size: 22,
                         ),
-                      if (transcurrido != null)
-                        Text(
-                          formatElapsed(transcurrido),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: colorTexto),
-                        ),
+                        if (transcurrido != null) ...[
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            formatElapsed(transcurrido),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmall?.copyWith(color: colorTexto),
+                          ),
+                        ],
+                      ],
                     ],
                   ),
                 ),
@@ -263,7 +300,7 @@ class _CeldaCardState extends ConsumerState<CeldaCard>
                     radius: 18,
                     onTap: () {
                       tapFeedback();
-                      showCeldaQuickActions(context, widget.celdaId);
+                      _abrirAccionRapida(context, celda.estado, esOperador);
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(AppSpacing.xs),
@@ -309,13 +346,29 @@ class _CeldaCardState extends ConsumerState<CeldaCard>
 
     if (MediaQuery.of(context).disableAnimations) return tarjeta;
 
+    // Tramo de esta tarjeta dentro del controller COMPARTIDO: antes de
+    // `beginFrac` vale 0, después de `endFrac` vale 1 — mismo efecto que el
+    // controller propio de antes (delay + 150ms), solo que derivado de un
+    // único controller en vez de instanciar uno por tarjeta.
+    final delayMs = (entryIndex * 25).clamp(0, maxDelayMs);
+    final beginFrac = delayMs / totalMs;
+    final endFrac = (delayMs + AppMotion.fast.inMilliseconds) / totalMs;
+    // El fade original usaba el valor crudo (lineal) del controller; el
+    // slide lo pasaba por AppMotion.curve. Se preserva esa asimetría acá con
+    // dos Interval distintos sobre el mismo tramo.
+    final fade = CurvedAnimation(parent: entrada, curve: Interval(beginFrac, endFrac));
+    final deslizamiento = CurvedAnimation(
+      parent: entrada,
+      curve: Interval(beginFrac, endFrac, curve: AppMotion.curve),
+    );
+
     return FadeTransition(
-      opacity: _entrada,
+      opacity: fade,
       child: SlideTransition(
         position: Tween<Offset>(
           begin: const Offset(0, 0.08),
           end: Offset.zero,
-        ).animate(CurvedAnimation(parent: _entrada, curve: AppMotion.curve)),
+        ).animate(deslizamiento),
         child: tarjeta,
       ),
     );

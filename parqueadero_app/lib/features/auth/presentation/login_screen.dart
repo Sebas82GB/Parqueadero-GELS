@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/button_spinner.dart';
 import '../../../core/widgets/error_banner.dart';
 import 'login_controller.dart';
 
 final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+/// Único acento de marca de la pantalla (skill `diseno-parqueadero`: fuera
+/// de la cuadrícula, todo queda tranquilo). El foco de un campo ya es un
+/// evento de interacción del operador, así que teñirlo de `demarcacion` en
+/// vez del `verdeSenal` genérico del tema ancla la identidad sin agregar
+/// ningún elemento decorativo nuevo a la pantalla.
+final _focusedBorder = OutlineInputBorder(
+  borderRadius: BorderRadius.circular(AppRadius.sm),
+  borderSide: const BorderSide(color: AppColors.demarcacion, width: 2),
+);
 
 /// Nunca importa dio ni construye URLs: solo lee [loginControllerProvider] y
 /// dispara [LoginController.submit]. La navegación a `/home` ocurre sola,
@@ -68,7 +80,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       autofocus: true,
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const [AutofillHints.email],
-                      decoration: const InputDecoration(labelText: 'Correo'),
+                      decoration: InputDecoration(labelText: 'Correo', focusedBorder: _focusedBorder),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) return 'Ingresa tu correo';
                         if (!_emailRegex.hasMatch(value.trim())) return 'Ingresa un correo válido';
@@ -83,6 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       autofillHints: const [AutofillHints.password],
                       decoration: InputDecoration(
                         labelText: 'Contraseña',
+                        focusedBorder: _focusedBorder,
                         suffixIcon: IconButton(
                           icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
                           onPressed: () => setState(() => _obscurePassword = !_obscurePassword),

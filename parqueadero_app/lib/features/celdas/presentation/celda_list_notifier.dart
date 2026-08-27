@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_exception.dart';
+import '../../tickets/data/ticket_repository_impl.dart';
+import '../../tickets/domain/ticket.dart';
 import '../data/celda_repository_impl.dart';
 import '../domain/celda.dart';
 import 'celda_list_state.dart';
@@ -24,7 +26,36 @@ class CeldaListNotifier extends Notifier<CeldaListState> {
     // termine de inicializar el estado con el valor que retorna `build()`.
     // Un microtask la difiere a después de eso, sin esperar los 30s del timer.
     Future.microtask(refrescar);
-    return const CeldaListState(isLoading: true);
+    // Ya no `const`: CeldaListState precalcula sus valores derivados
+    // (totales, filtrado, agrupado por zona) en el constructor, así que deja
+    // de ser una expresión const-evaluable.
+    return CeldaListState(isLoading: true);
+  }
+
+  /// Placa + tipo real por celda (ver doc de
+  /// [CeldaListState.ticketInfoPorCeldaId]): un único GET a los tickets
+  /// ABIERTOS, no uno por celda. `perPage` tiene un tope de 100 en la API —
+  /// si hay más de 100 celdas ocupadas a la vez, las que queden fuera de esa
+  /// página simplemente no matchean por placa (el código de celda sí,
+  /// siempre) y su tarjeta cae de vuelta a `celda.tipoPermitido` para el
+  /// ícono. Un fallo acá no debe tumbar el refresco de celdas: se degrada y
+  /// se conserva el último mapa conocido.
+  Future<Map<String, TicketInfo>> _cargarTicketInfoPorCeldaId() async {
+    try {
+      final pagina = await ref
+          .read(ticketRepositoryProvider)
+          .listar(estado: EstadoTicket.abierto, perPage: 100);
+      return {
+        for (final t in pagina.data)
+          if (t.vehiculo != null) t.celdaId: (placa: t.vehiculo!.placa, tipo: t.vehiculo!.tipo),
+      };
+    } catch (_) {
+      // Deliberadamente amplio (no solo `AppException`): esto es un
+      // enriquecimiento de mejor esfuerzo para la búsqueda por placa, nunca
+      // debe tumbar ni colgar el refresco de celdas si falla por cualquier
+      // motivo — la búsqueda por código de celda sigue funcionando siempre.
+      return state.ticketInfoPorCeldaId;
+    }
   }
 
   /// Usado por el timer de 30s Y por el pull-to-refresh: el guard evita
@@ -37,9 +68,17 @@ class CeldaListNotifier extends Notifier<CeldaListState> {
       state = state.copyWith(isLoading: true, clearError: true);
     }
     try {
-      final celdas = await ref.read(celdaRepositoryProvider).listarTodas();
+      final resultados = await Future.wait([
+        ref.read(celdaRepositoryProvider).listarTodas(),
+        _cargarTicketInfoPorCeldaId(),
+      ]);
       if (!ref.mounted) return;
-      state = state.copyWith(celdas: celdas, isLoading: false, clearError: true);
+      state = state.copyWith(
+        celdas: resultados[0] as List<Celda>,
+        ticketInfoPorCeldaId: resultados[1] as Map<String, TicketInfo>,
+        isLoading: false,
+        clearError: true,
+      );
     } on AppException catch (e) {
       if (!ref.mounted) return;
       // Un refresh de fondo fallido (timer o pull-to-refresh) con datos ya
@@ -57,8 +96,10 @@ class CeldaListNotifier extends Notifier<CeldaListState> {
 
   void setTipoFiltro(TipoVehiculo? tipo) => state = state.copyWith(tipoFiltro: tipo);
 
+  void setBusquedaFiltro(String? busqueda) => state = state.copyWith(busquedaFiltro: busqueda);
+
   void limpiarFiltros() =>
-      state = state.copyWith(zonaFiltro: null, estadoFiltro: null, tipoFiltro: null);
+      state = state.copyWith(zonaFiltro: null, estadoFiltro: null, tipoFiltro: null, busquedaFiltro: null);
 
   /// Parchea localmente una celda tras una acción exitosa del detalle, para
   /// no esperar al próximo poll de 30s.

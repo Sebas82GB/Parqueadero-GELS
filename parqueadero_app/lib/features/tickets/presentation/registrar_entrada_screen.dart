@@ -74,24 +74,38 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
   @override
   Widget build(BuildContext context) {
     final celdaId = widget.celdaId;
-    final listState = ref.watch(celdaListNotifierProvider);
-    final celdaListNotifier = ref.read(celdaListNotifierProvider.notifier);
-    Celda? celda;
-    if (celdaId != null) {
-      for (final c in listState.celdas) {
-        if (c.id == celdaId) {
-          celda = c;
-          break;
+    // Esta pantalla nunca necesita la lista completa ni los filtros de
+    // `CeldaListState` (eso es de `CeldasScreen`): solo la celda puntual que
+    // llegó por query param, más `isLoading`/`errorMessage` para la rama
+    // "no encontrada todavía". `.select()` con un record compara por valor
+    // (Celda ya implementa `==`), así que el poll de 30s de
+    // `CeldaListNotifier` deja de reconstruir este formulario completo
+    // cuando ninguno de esos tres campos cambió de verdad.
+    final celdaState = ref.watch(
+      celdaListNotifierProvider.select((s) {
+        Celda? celda;
+        if (celdaId != null) {
+          for (final c in s.celdas) {
+            if (c.id == celdaId) {
+              celda = c;
+              break;
+            }
+          }
         }
-      }
-    }
+        return (celda: celda, isLoading: s.isLoading, errorMessage: s.errorMessage);
+      }),
+    );
+    final celda = celdaState.celda;
 
     if (celda == null) {
       Widget body;
-      if (listState.isLoading) {
+      if (celdaState.isLoading) {
         body = const Center(child: CircularProgressIndicator());
-      } else if (listState.errorMessage != null) {
-        body = ErrorState(message: listState.errorMessage!, onRetry: celdaListNotifier.refrescar);
+      } else if (celdaState.errorMessage != null) {
+        body = ErrorState(
+          message: celdaState.errorMessage!,
+          onRetry: ref.read(celdaListNotifierProvider.notifier).refrescar,
+        );
       } else {
         body = const EmptyState(
           icon: Icons.error_outline,
@@ -165,14 +179,15 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
                         validator: placaValidator,
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      DropdownButtonFormField<TipoVehiculo>(
-                        initialValue: _tipoVehiculo,
-                        decoration: const InputDecoration(labelText: 'Tipo de vehículo'),
-                        items: [
-                          for (final tipo in TipoVehiculo.values)
-                            DropdownMenuItem(value: tipo, child: Text(tipoVehiculoLabel(tipo))),
-                        ],
-                        onChanged: state.isLoading ? null : (value) => setState(() => _tipoVehiculo = value),
+                      _TipoVehiculoDropdown(
+                        initialValue: _tipoVehiculo!,
+                        enabled: !state.isLoading,
+                        // Sin setState acá: el valor solo lo necesita
+                        // _submit() más adelante (async, on-tap), no ningún
+                        // otro widget de este build(). Guardarlo en un campo
+                        // plano evita reconstruir las ~150 líneas del
+                        // formulario por cada selección.
+                        onChanged: (value) => _tipoVehiculo = value,
                       ),
                       const SizedBox(height: AppSpacing.md),
                       TextFormField(
@@ -222,6 +237,44 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Aislado del formulario para que elegir un tipo no reconstruya las ~150
+/// líneas de `RegistrarEntradaScreen` — el valor elegido solo lo lee
+/// `_submit()` más adelante (vía [onChanged]), ningún otro widget del
+/// formulario depende de él en cada tecla/selección.
+class _TipoVehiculoDropdown extends StatefulWidget {
+  const _TipoVehiculoDropdown({required this.initialValue, required this.enabled, required this.onChanged});
+
+  final TipoVehiculo initialValue;
+  final bool enabled;
+  final ValueChanged<TipoVehiculo> onChanged;
+
+  @override
+  State<_TipoVehiculoDropdown> createState() => _TipoVehiculoDropdownState();
+}
+
+class _TipoVehiculoDropdownState extends State<_TipoVehiculoDropdown> {
+  late TipoVehiculo _value = widget.initialValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<TipoVehiculo>(
+      initialValue: _value,
+      decoration: const InputDecoration(labelText: 'Tipo de vehículo'),
+      items: [
+        for (final tipo in TipoVehiculo.values)
+          DropdownMenuItem(value: tipo, child: Text(tipoVehiculoLabel(tipo))),
+      ],
+      onChanged: widget.enabled
+          ? (value) {
+              if (value == null) return;
+              setState(() => _value = value);
+              widget.onChanged(value);
+            }
+          : null,
     );
   }
 }

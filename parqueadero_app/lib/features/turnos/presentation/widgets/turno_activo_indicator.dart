@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/status_style.dart';
@@ -55,11 +56,50 @@ class TurnoActivoIndicator extends ConsumerWidget {
       );
     }
 
-    return _Banner(
-      style: StatusStyle.of(StatusTone.info),
+    return _TurnoAbiertoBanner(
       text: 'Turno abierto desde ${formatBogota(turno.apertura)}',
-      actionLabel: 'Ver arqueo',
-      onAction: () => context.push('/turnos/${turno.id}'),
+      onVerArqueo: () => context.push('/turnos/${turno.id}'),
+    );
+  }
+}
+
+/// A diferencia de `_Banner` (que muestra estados genéricos con
+/// `StatusStyle`), este aviso es siempre el mismo hecho — hay un turno
+/// abierto — así que no necesita distinguirse de otro tono por matiz: lleva
+/// la identidad de marca (asfalto/demarcación) en vez de la paleta de
+/// estados. `demarcacion` pasa 10.6:1 de contraste sobre `asfalto`, muy por
+/// encima de AA; también se usa en el link de acción porque `verdeSenal`
+/// (el color de acción en el resto de la app) da solo ~2.7:1 ahí y no
+/// pasaría el mismo estándar.
+class _TurnoAbiertoBanner extends StatelessWidget {
+  const _TurnoAbiertoBanner({required this.text, required this.onVerArqueo});
+
+  final String text;
+  final VoidCallback onVerArqueo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter, vertical: AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.asfalto,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.schedule, color: AppColors.demarcacion, size: 20),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(text, style: const TextStyle(color: AppColors.demarcacion)),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: AppColors.demarcacion),
+            onPressed: onVerArqueo,
+            child: const Text('Ver arqueo'),
+          ),
+        ],
+      ),
     );
   }
 }

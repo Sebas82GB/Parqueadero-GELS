@@ -3,11 +3,13 @@ import swaggerUi from 'swagger-ui-express';
 import { apiRouter } from './routes/index.js';
 import { cors } from './middlewares/cors.js';
 import { errorHandler } from './middlewares/error-handler.js';
+import { requestTiming } from './middlewares/request-timing.js';
 import { openapiSpec } from './config/openapi.js';
 
 export function createApp() {
   const app = express();
 
+  app.use(requestTiming);
   app.use(cors);
   app.use(express.json());
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));

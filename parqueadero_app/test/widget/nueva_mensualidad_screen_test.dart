@@ -13,16 +13,21 @@ import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
 import 'package:parqueadero_app/features/mensualidades/data/mensualidad_repository_impl.dart';
 import 'package:parqueadero_app/features/mensualidades/domain/mensualidad_repository.dart';
 import 'package:parqueadero_app/features/mensualidades/presentation/nueva_mensualidad_screen.dart';
+import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
+import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
 
 class MockMensualidadRepository extends Mock implements MensualidadRepository {}
 
 class MockCeldaRepository extends Mock implements CeldaRepository {}
+
+class MockTicketRepository extends Mock implements TicketRepository {}
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
 void main() {
   late MockMensualidadRepository mensualidadRepository;
   late MockCeldaRepository celdaRepository;
+  late MockTicketRepository ticketRepository;
   late MockAuthRepository authRepository;
 
   Usuario usuario(RolUsuario rol) => Usuario(
@@ -57,10 +62,14 @@ void main() {
   setUp(() {
     mensualidadRepository = MockMensualidadRepository();
     celdaRepository = MockCeldaRepository();
+    ticketRepository = MockTicketRepository();
     authRepository = MockAuthRepository();
     when(
       () => celdaRepository.listarTodas(),
     ).thenAnswer((_) async => [celda('c1', 'A-01'), celda('c2', 'A-02')]);
+    when(
+      () => ticketRepository.listar(estado: any(named: 'estado'), perPage: any(named: 'perPage')),
+    ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 100, total: 0));
   });
 
   Future<void> pumpNuevaMensualidadScreen(WidgetTester tester, {RolUsuario rol = RolUsuario.admin}) async {
@@ -70,6 +79,7 @@ void main() {
         overrides: [
           mensualidadRepositoryProvider.overrideWithValue(mensualidadRepository),
           celdaRepositoryProvider.overrideWithValue(celdaRepository),
+          ticketRepositoryProvider.overrideWithValue(ticketRepository),
           authRepositoryProvider.overrideWithValue(authRepository),
         ],
         child: const MaterialApp(home: NuevaMensualidadScreen()),
