@@ -26,6 +26,9 @@ import '../../features/turnos/presentation/abrir_turno_screen.dart';
 import '../../features/turnos/presentation/turno_cierre_screen.dart';
 import '../../features/turnos/presentation/turno_detail_screen.dart';
 import '../../features/turnos/presentation/turnos_historial_screen.dart';
+import '../../features/usuarios/presentation/nuevo_usuario_screen.dart';
+import '../../features/usuarios/presentation/usuario_detail_screen.dart';
+import '../../features/usuarios/presentation/usuarios_screen.dart';
 import '../widgets/splash_screen.dart';
 
 /// Puente entre Riverpod y `refreshListenable` de go_router (que espera un
@@ -119,6 +122,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/mensualidades/:id',
         builder: (context, state) =>
             MensualidadDetailScreen(mensualidadId: state.pathParameters['id']!),
+      ),
+      // Misma regla de orden: literal /usuarios/nuevo antes de /usuarios/:id.
+      GoRoute(path: '/usuarios', builder: (context, state) => const UsuariosScreen()),
+      GoRoute(path: '/usuarios/nuevo', builder: (context, state) => const NuevoUsuarioScreen()),
+      GoRoute(
+        path: '/usuarios/:id',
+        builder: (context, state) => UsuarioDetailScreen(usuarioId: state.pathParameters['id']!),
       ),
     ],
   );

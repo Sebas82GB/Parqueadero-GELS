@@ -37,7 +37,7 @@ void main() {
     operadorId: operadorId,
     estado: estado,
     apertura: DateTime.utc(2026, 1, 1, 6),
-    cierre: estado == EstadoTurno.cerrado ? DateTime.utc(2026, 1, 1, 14) : null,
+    cierre: estado == EstadoTurno.abierto ? null : DateTime.utc(2026, 1, 1, 14),
     baseInicial: 50000,
     totalesPorMetodo: const TotalesPorMetodo(efectivo: 15000, tarjeta: 20000, transferencia: 0),
     totalRecaudado: 35000,
@@ -134,6 +134,29 @@ void main() {
     await pumpDetalle(tester);
 
     expect(find.text('Arqueo final'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Cerrar turno'), findsNothing);
+  });
+
+  testWidgets('pendiente de arqueo, ADMIN: muestra el botón de completar arqueo', (tester) async {
+    when(
+      () => turnoRepository.obtenerArqueo('tur1'),
+    ).thenAnswer((_) async => arqueo(estado: EstadoTurno.cerradoPendienteArqueo));
+
+    await pumpDetalle(tester, rol: RolUsuario.admin, usuarioId: 'admin1');
+
+    expect(find.text('Arqueo pendiente de completar'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Completar arqueo'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Cerrar turno'), findsNothing);
+  });
+
+  testWidgets('pendiente de arqueo, el propio operador: no muestra ningún botón de acción', (tester) async {
+    when(
+      () => turnoRepository.obtenerArqueo('tur1'),
+    ).thenAnswer((_) async => arqueo(estado: EstadoTurno.cerradoPendienteArqueo));
+
+    await pumpDetalle(tester);
+
+    expect(find.widgetWithText(ElevatedButton, 'Completar arqueo'), findsNothing);
     expect(find.widgetWithText(ElevatedButton, 'Cerrar turno'), findsNothing);
   });
 }

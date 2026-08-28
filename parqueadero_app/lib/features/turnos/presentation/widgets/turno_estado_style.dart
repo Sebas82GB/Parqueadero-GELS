@@ -15,6 +15,11 @@ class TurnoEstadoStyle {
 
   static TurnoEstadoStyle of(EstadoTurno estado) => switch (estado) {
     EstadoTurno.abierto => TurnoEstadoStyle._(StatusStyle.of(StatusTone.info).color, Icons.timelapse, 'Abierto'),
+    EstadoTurno.cerradoPendienteArqueo => TurnoEstadoStyle._(
+      StatusStyle.of(StatusTone.warning).color,
+      Icons.pending_actions,
+      'Pendiente de arqueo',
+    ),
     EstadoTurno.cerrado => TurnoEstadoStyle._(
       StatusStyle.of(StatusTone.neutral).color,
       Icons.task_alt,

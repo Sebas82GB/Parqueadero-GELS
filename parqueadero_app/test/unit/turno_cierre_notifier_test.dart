@@ -126,4 +126,72 @@ void main() {
     expect(ok, isFalse);
     expect(container.read(turnoCierreNotifierProvider('tur1')).step, TurnoCierreStep.formulario);
   });
+
+  group('completarArqueo', () {
+    test('éxito: pasa a éxito con el arqueo devuelto por el backend', () async {
+      when(
+        () => turnoRepository.completarArqueo('tur1', 65000),
+      ).thenAnswer((_) async => arqueo());
+
+      final ok = await container.read(turnoCierreNotifierProvider('tur1').notifier).completarArqueo(65000);
+
+      expect(ok, isTrue);
+      final state = container.read(turnoCierreNotifierProvider('tur1'));
+      expect(state.step, TurnoCierreStep.exito);
+      expect(state.resultado?.diferencia, 0);
+    });
+
+    test('403: vuelve a formulario con el error, sin resultado', () async {
+      when(() => turnoRepository.completarArqueo('tur1', 65000)).thenThrow(
+        const ApiException(
+          code: 'TURNO_ARQUEO_SOLO_ADMIN',
+          message: 'Solo un administrador puede completar el arqueo',
+          statusCode: 403,
+        ),
+      );
+
+      final ok = await container.read(turnoCierreNotifierProvider('tur1').notifier).completarArqueo(65000);
+
+      expect(ok, isFalse);
+      final state = container.read(turnoCierreNotifierProvider('tur1'));
+      expect(state.step, TurnoCierreStep.formulario);
+      expect(state.error?.message, 'Solo un administrador puede completar el arqueo');
+      expect(state.resultado, isNull);
+    });
+
+    test('409: el turno no está pendiente de arqueo', () async {
+      when(() => turnoRepository.completarArqueo('tur1', 65000)).thenThrow(
+        const ApiException(
+          code: 'TURNO_NO_PENDIENTE_ARQUEO',
+          message: 'El turno no está pendiente de arqueo',
+          statusCode: 409,
+        ),
+      );
+
+      final ok = await container.read(turnoCierreNotifierProvider('tur1').notifier).completarArqueo(65000);
+
+      expect(ok, isFalse);
+      expect(container.read(turnoCierreNotifierProvider('tur1')).step, TurnoCierreStep.formulario);
+    });
+
+    test('no refresca turnoActivoNotifierProvider: quien completa arqueo es ADMIN, sin turno propio', () async {
+      when(
+        () => turnoRepository.completarArqueo('tur1', 65000),
+      ).thenAnswer((_) async => arqueo());
+      // El setUp ya disparó una carga inicial de turnoActivoNotifierProvider
+      // (vía sessionNotifierProvider); se descarta esa interacción para que
+      // el verifyNever de abajo solo mire lo que pasa durante completarArqueo.
+      clearInteractions(turnoRepository);
+
+      await container.read(turnoCierreNotifierProvider('tur1').notifier).completarArqueo(65000);
+
+      verifyNever(
+        () => turnoRepository.listar(
+          operadorId: any(named: 'operadorId'),
+          estado: any(named: 'estado'),
+          perPage: any(named: 'perPage'),
+        ),
+      );
+    });
+  });
 }

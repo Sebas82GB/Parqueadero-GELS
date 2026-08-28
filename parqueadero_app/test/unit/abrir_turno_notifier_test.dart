@@ -93,6 +93,22 @@ void main() {
     verify(() => turnoRepository.listar(operadorId: 'op1', estado: EstadoTurno.abierto, perPage: 1)).called(1);
   });
 
+  test('sin baseInicial: la pasa tal cual al repositorio (usa la automática del backend)', () async {
+    when(() => turnoRepository.abrir()).thenAnswer((_) async => turno());
+    when(
+      () => turnoRepository.listar(
+        operadorId: any(named: 'operadorId'),
+        estado: any(named: 'estado'),
+        perPage: any(named: 'perPage'),
+      ),
+    ).thenAnswer((_) async => const TurnoPageResult(data: [], page: 1, perPage: 1, total: 0));
+
+    final ok = await container.read(abrirTurnoNotifierProvider.notifier).abrir();
+
+    expect(ok, isTrue);
+    verify(() => turnoRepository.abrir()).called(1);
+  });
+
   test('error: retorna false y expone el mensaje del backend', () async {
     when(() => turnoRepository.abrir(50000)).thenThrow(
       const ApiException(code: 'TURNO_YA_ABIERTO', message: 'Ya tiene un turno abierto', statusCode: 409),

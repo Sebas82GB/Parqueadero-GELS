@@ -17,9 +17,14 @@ class TurnoPageResult {
 
 /// Sin dependencias de Flutter ni de dio.
 abstract interface class TurnoRepository {
-  /// `POST /turnos`. Lanza [ApiException] con code `CONFLICT` (409) si el
-  /// operador ya tiene un turno abierto.
-  Future<Turno> abrir(int baseInicial);
+  /// `POST /turnos`. El operador siempre confirma esta acción explícitamente
+  /// (nunca se llama en segundo plano). Si se omite [baseInicial], el
+  /// backend usa la que un ADMIN configuró para la apertura automática — el
+  /// operador no tiene que digitarla. Lanza [ApiException] con code
+  /// `TURNO_YA_ABIERTO` (409) si ya tiene uno abierto, o
+  /// `BASE_INICIAL_NO_CONFIGURADA` (422) si se omitió y ningún ADMIN
+  /// configuró una.
+  Future<Turno> abrir([int? baseInicial]);
 
   /// `POST /turnos/:id/cierre`. Devuelve el arqueo completo del turno recién
   /// cerrado en la misma respuesta. Lanza [ApiException] con `CONFLICT` (409)
@@ -28,9 +33,18 @@ abstract interface class TurnoRepository {
   Future<ArqueoTurno> cerrar(String turnoId, int efectivoContado);
 
   /// `GET /turnos/:id/arqueo`. Disponible con el turno abierto (parcial, en
-  /// vivo) o cerrado (final). Mismos codes de error que [cerrar] salvo
-  /// `CONFLICT`.
+  /// vivo), pendiente de arqueo o cerrado (final). Mismos codes de error que
+  /// [cerrar] salvo `CONFLICT`.
   Future<ArqueoTurno> obtenerArqueo(String turnoId);
+
+  /// `POST /turnos/:id/completar-arqueo`. Solo para un turno
+  /// [EstadoTurno.cerradoPendienteArqueo] — el turno automático ya cerró la
+  /// ventana horaria y nadie había contado caja. Devuelve el arqueo final, ya
+  /// con `estado` en `CERRADO`. Lanza [ApiException] con `FORBIDDEN` (403) si
+  /// quien llama no es ADMIN (a diferencia de [cerrar], acá no hay excepción
+  /// para el operador dueño), `NOT_FOUND` (404) si el turno no existe, o
+  /// `CONFLICT` (409) si no estaba pendiente de arqueo.
+  Future<ArqueoTurno> completarArqueo(String turnoId, int efectivoContado);
 
   /// `GET /turnos` con filtros, paginado. Un OPERADOR ve solo los suyos aunque
   /// mande otro `operadorId` — el backend lo fuerza igual.

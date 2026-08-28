@@ -37,6 +37,8 @@ class ArqueoTurnoDto {
     required this.efectivoEsperado,
     this.efectivoContado,
     this.diferencia,
+    this.validadoPorId,
+    this.validadoEn,
   });
 
   factory ArqueoTurnoDto.fromJson(Map<String, dynamic> json) => _$ArqueoTurnoDtoFromJson(json);
@@ -53,6 +55,8 @@ class ArqueoTurnoDto {
   final int efectivoEsperado;
   final int? efectivoContado;
   final int? diferencia;
+  final String? validadoPorId;
+  final String? validadoEn;
 
   ArqueoTurno toDomain() => ArqueoTurno(
     turnoId: turnoId,
@@ -67,5 +71,7 @@ class ArqueoTurnoDto {
     efectivoEsperado: efectivoEsperado,
     efectivoContado: efectivoContado,
     diferencia: diferencia,
+    validadoPorId: validadoPorId,
+    validadoEn: validadoEn == null ? null : DateTime.parse(validadoEn!),
   );
 }

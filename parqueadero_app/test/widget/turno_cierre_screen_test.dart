@@ -44,6 +44,19 @@ void main() {
     efectivoEsperado: efectivoEsperado,
   );
 
+  ArqueoTurno arqueoPendiente({int efectivoEsperado = 65000}) => ArqueoTurno(
+    turnoId: 'tur1',
+    operadorId: 'op1',
+    estado: EstadoTurno.cerradoPendienteArqueo,
+    apertura: DateTime.utc(2026, 1, 1, 6),
+    cierre: DateTime.utc(2026, 1, 1, 14),
+    baseInicial: 50000,
+    totalesPorMetodo: const TotalesPorMetodo(efectivo: 15000, tarjeta: 20000, transferencia: 0),
+    totalRecaudado: 35000,
+    ticketsCerrados: 4,
+    efectivoEsperado: efectivoEsperado,
+  );
+
   ArqueoTurno arqueoFinal({required int efectivoContado, required int diferencia}) => ArqueoTurno(
     turnoId: 'tur1',
     operadorId: 'op1',
@@ -78,6 +91,20 @@ void main() {
 
   Future<void> pumpCierre(WidgetTester tester) async {
     when(() => turnoRepository.obtenerArqueo('tur1')).thenAnswer((_) async => arqueoEnVivo());
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          turnoRepositoryProvider.overrideWithValue(turnoRepository),
+          authRepositoryProvider.overrideWithValue(authRepository),
+        ],
+        child: const MaterialApp(home: TurnoCierreScreen(turnoId: 'tur1')),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> pumpCierrePendiente(WidgetTester tester) async {
+    when(() => turnoRepository.obtenerArqueo('tur1')).thenAnswer((_) async => arqueoPendiente());
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -162,5 +189,61 @@ void main() {
 
     expect(find.text('El turno ya está cerrado'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Cerrar turno'), findsOneWidget);
+  });
+
+  group('turno pendiente de arqueo', () {
+    testWidgets('muestra el título y el botón como "Completar arqueo"', (tester) async {
+      await pumpCierrePendiente(tester);
+
+      expect(find.text('Completar arqueo'), findsWidgets);
+      expect(find.widgetWithText(ElevatedButton, 'Cerrar turno'), findsNothing);
+    });
+
+    testWidgets('el diálogo de confirmación pregunta por completar el arqueo', (tester) async {
+      await pumpCierrePendiente(tester);
+
+      await tester.enterText(find.widgetWithText(TextFormField, 'Efectivo contado'), '65000');
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Completar arqueo'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('¿Completar arqueo?'), findsOneWidget);
+    });
+
+    testWidgets('confirmar: llama a completarArqueo (no a cerrar) y muestra "Arqueo completado"', (tester) async {
+      when(
+        () => turnoRepository.completarArqueo('tur1', 65000),
+      ).thenAnswer((_) async => arqueoFinal(efectivoContado: 65000, diferencia: 0));
+
+      await pumpCierrePendiente(tester);
+      await tester.enterText(find.widgetWithText(TextFormField, 'Efectivo contado'), '65000');
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Completar arqueo'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Confirmar'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Arqueo completado'), findsOneWidget);
+      verify(() => turnoRepository.completarArqueo('tur1', 65000)).called(1);
+      verifyNever(() => turnoRepository.cerrar(any(), any()));
+    });
+
+    testWidgets('403: vuelve al formulario con el error del backend', (tester) async {
+      when(() => turnoRepository.completarArqueo('tur1', 65000)).thenThrow(
+        const ApiException(
+          code: 'TURNO_ARQUEO_SOLO_ADMIN',
+          message: 'Solo un administrador puede completar el arqueo',
+          statusCode: 403,
+        ),
+      );
+
+      await pumpCierrePendiente(tester);
+      await tester.enterText(find.widgetWithText(TextFormField, 'Efectivo contado'), '65000');
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Completar arqueo'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Confirmar'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Solo un administrador puede completar el arqueo'), findsOneWidget);
+      expect(find.widgetWithText(ElevatedButton, 'Completar arqueo'), findsOneWidget);
+    });
   });
 }

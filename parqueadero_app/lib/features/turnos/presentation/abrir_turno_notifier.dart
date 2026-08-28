@@ -9,7 +9,10 @@ class AbrirTurnoNotifier extends Notifier<AbrirTurnoState> {
   @override
   AbrirTurnoState build() => const AbrirTurnoState();
 
-  Future<bool> abrir(int baseInicial) async {
+  /// Sin [baseInicial]: usa la automática que configuró un ADMIN (flujo del
+  /// diálogo "Iniciar" en `OperadorHomeDashboard`). Con [baseInicial]:
+  /// apertura manual con el valor que digitó el operador (`AbrirTurnoScreen`).
+  Future<bool> abrir([int? baseInicial]) async {
     state = const AbrirTurnoState(isLoading: true);
     try {
       await ref.read(turnoRepositoryProvider).abrir(baseInicial);

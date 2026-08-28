@@ -22,6 +22,7 @@ import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
 import 'package:parqueadero_app/features/tickets/domain/vehiculo.dart';
 import 'package:parqueadero_app/features/tickets/presentation/registrar_salida_screen.dart';
 import 'package:parqueadero_app/features/turnos/data/turno_repository_impl.dart';
+import 'package:parqueadero_app/features/turnos/domain/turno.dart';
 import 'package:parqueadero_app/features/turnos/domain/turno_repository.dart';
 
 class MockTicketRepository extends Mock implements TicketRepository {}
@@ -152,27 +153,70 @@ void main() {
     await initializeDateFormatting('es_CO');
   });
 
+  Turno turno() => Turno(
+    id: 'tur1',
+    operadorId: 'op1',
+    apertura: DateTime.utc(2026, 1, 1, 6),
+    baseInicial: 50000,
+    estado: EstadoTurno.abierto,
+    createdAt: DateTime.utc(2026, 1, 1, 6),
+    updatedAt: DateTime.utc(2026, 1, 1, 6),
+  );
+
+  // El operador siempre llega a esta pantalla sin turno abierto en estos
+  // tests, lo que ahora dispara el diálogo "¿Iniciar turno?". Se simula el
+  // estado real: antes de responder, listar() sigue devolviendo vacío; en
+  // cuanto abrir() "tiene éxito", empieza a devolver el turno, igual que
+  // haría el backend real, para que el refrescar() posterior a un "Iniciar"
+  // no vuelva a disparar el mismo diálogo.
+  bool turnoAbiertoSimulado = false;
+
   setUp(() {
     ticketRepository = MockTicketRepository();
     celdaRepository = MockCeldaRepository();
     turnoRepository = MockTurnoRepository();
     authRepository = MockAuthRepository();
+    turnoAbiertoSimulado = false;
     when(() => celdaRepository.listarTodas()).thenAnswer((_) async => []);
     when(() => authRepository.restoreSession()).thenAnswer((_) async => operador);
+    when(() => authRepository.logout()).thenAnswer((_) async {});
     when(
       () => turnoRepository.listar(
         operadorId: any(named: 'operadorId'),
         estado: any(named: 'estado'),
         perPage: any(named: 'perPage'),
       ),
-    ).thenAnswer((_) async => const TurnoPageResult(data: [], page: 1, perPage: 1, total: 0));
+    ).thenAnswer(
+      (_) async => turnoAbiertoSimulado
+          ? TurnoPageResult(data: [turno()], page: 1, perPage: 1, total: 1)
+          : const TurnoPageResult(data: [], page: 1, perPage: 1, total: 0),
+    );
+    when(() => turnoRepository.abrir()).thenAnswer((_) async {
+      turnoAbiertoSimulado = true;
+      return turno();
+    });
     // Default: la mayoría de los tests no le importa el preview, solo que
     // exista uno para que la pantalla no se quede cargando. Los tests que sí
     // lo verifican re-estuban esto con un valor distinto.
     when(() => ticketRepository.previsualizarCobro(any())).thenAnswer((_) async => previewBloques());
   });
 
-  Future<void> pumpSalidaScreen(WidgetTester tester, {TipoVehiculo tipoVehiculo = TipoVehiculo.carro}) async {
+  /// Por defecto responde "Iniciar" al diálogo "¿Iniciar turno?" apenas
+  /// aparece, para que el resto de los tests no tengan que lidiar con él.
+  /// Los tests que verifican específicamente el escenario "sin turno
+  /// abierto" pasan `responderIniciar: false`.
+  Future<void> responderIniciarTurnoSiAparece(WidgetTester tester) async {
+    if (find.text('¿Iniciar turno?').evaluate().isNotEmpty) {
+      await tester.tap(find.widgetWithText(FilledButton, 'Iniciar'));
+      await tester.pumpAndSettle();
+    }
+  }
+
+  Future<void> pumpSalidaScreen(
+    WidgetTester tester, {
+    TipoVehiculo tipoVehiculo = TipoVehiculo.carro,
+    bool responderIniciar = true,
+  }) async {
     when(() => ticketRepository.obtenerPorId('t1')).thenAnswer((_) async => ticketAbierto(tipoVehiculo: tipoVehiculo));
 
     final router = GoRouter(
@@ -209,6 +253,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('IR_A_SALIDA'));
     await tester.pumpAndSettle();
+    if (responderIniciar) await responderIniciarTurnoSiAparece(tester);
   }
 
   testWidgets('muestra los datos del ticket: placa, tipo y celda', (tester) async {
@@ -220,7 +265,7 @@ void main() {
   });
 
   testWidgets('muestra el indicador de turno activo antes de intentar la salida', (tester) async {
-    await pumpSalidaScreen(tester);
+    await pumpSalidaScreen(tester, responderIniciar: false);
 
     expect(find.text('Sin turno abierto'), findsOneWidget);
   });

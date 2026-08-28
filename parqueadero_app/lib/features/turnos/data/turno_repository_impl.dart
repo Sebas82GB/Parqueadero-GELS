@@ -16,9 +16,12 @@ class TurnoRepositoryImpl implements TurnoRepository {
   final Dio _dio;
 
   @override
-  Future<Turno> abrir(int baseInicial) async {
+  Future<Turno> abrir([int? baseInicial]) async {
     try {
-      final response = await _dio.post('/turnos', data: {'baseInicial': baseInicial});
+      final response = await _dio.post(
+        '/turnos',
+        data: {if (baseInicial != null) 'baseInicial': baseInicial},
+      );
       return TurnoDto.fromJson(response.data as Map<String, dynamic>).toDomain();
     } on DioException catch (e) {
       throw AppException.fromDioException(e);
@@ -42,6 +45,19 @@ class TurnoRepositoryImpl implements TurnoRepository {
   Future<ArqueoTurno> obtenerArqueo(String turnoId) async {
     try {
       final response = await _dio.get('/turnos/$turnoId/arqueo');
+      return ArqueoTurnoDto.fromJson(response.data as Map<String, dynamic>).toDomain();
+    } on DioException catch (e) {
+      throw AppException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<ArqueoTurno> completarArqueo(String turnoId, int efectivoContado) async {
+    try {
+      final response = await _dio.post(
+        '/turnos/$turnoId/completar-arqueo',
+        data: {'efectivoContado': efectivoContado},
+      );
       return ArqueoTurnoDto.fromJson(response.data as Map<String, dynamic>).toDomain();
     } on DioException catch (e) {
       throw AppException.fromDioException(e);

@@ -9,3 +9,11 @@ String? requiredIntegerValidator(String? value) {
 
 String? placaValidator(String? value) =>
     (value == null || value.trim().isEmpty) ? 'Ingresa la placa' : null;
+
+final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+String? emailValidator(String? value) {
+  final requiredError = requiredValidator(value);
+  if (requiredError != null) return requiredError;
+  return _emailRegex.hasMatch(value!.trim()) ? null : 'Ingresa un email válido';
+}

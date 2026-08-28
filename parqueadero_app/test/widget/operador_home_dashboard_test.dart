@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:parqueadero_app/core/network/api_exception.dart';
 import 'package:parqueadero_app/core/theme/app_colors.dart';
@@ -15,6 +16,7 @@ import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
 import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
 import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
 import 'package:parqueadero_app/features/turnos/data/turno_repository_impl.dart';
+import 'package:parqueadero_app/features/turnos/domain/turno.dart';
 import 'package:parqueadero_app/features/turnos/domain/turno_repository.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
@@ -51,19 +53,51 @@ void main() {
     updatedAt: DateTime.utc(2026, 1, 1),
   );
 
+  Turno turno() => Turno(
+    id: 'tur1',
+    operadorId: 'op1',
+    apertura: DateTime.utc(2026, 1, 1, 6),
+    baseInicial: 50000,
+    estado: EstadoTurno.abierto,
+    createdAt: DateTime.utc(2026, 1, 1, 6),
+    updatedAt: DateTime.utc(2026, 1, 1, 6),
+  );
+
+  // El operador siempre llega al dashboard sin turno abierto en estos tests
+  // (mismo fixture de siempre), lo que ahora dispara el diálogo "¿Iniciar
+  // turno?". Se simula el estado real: antes de responder, listar() sigue
+  // devolviendo vacío; en cuanto abrir() "tiene éxito", empieza a devolver el
+  // turno — igual que haría el backend real — para que el refrescar() que
+  // sigue a un "Iniciar" no vuelva a disparar el mismo diálogo.
+  bool turnoAbiertoSimulado = false;
+
+  setUpAll(() async {
+    await initializeDateFormatting('es_CO');
+  });
+
   setUp(() {
     authRepository = MockAuthRepository();
     turnoRepository = MockTurnoRepository();
     celdaRepository = MockCeldaRepository();
     ticketRepository = MockTicketRepository();
+    turnoAbiertoSimulado = false;
     when(() => authRepository.restoreSession()).thenAnswer((_) async => operador);
+    when(() => authRepository.logout()).thenAnswer((_) async {});
     when(
       () => turnoRepository.listar(
         operadorId: any(named: 'operadorId'),
         estado: any(named: 'estado'),
         perPage: any(named: 'perPage'),
       ),
-    ).thenAnswer((_) async => const TurnoPageResult(data: [], page: 1, perPage: 1, total: 0));
+    ).thenAnswer(
+      (_) async => turnoAbiertoSimulado
+          ? TurnoPageResult(data: [turno()], page: 1, perPage: 1, total: 1)
+          : const TurnoPageResult(data: [], page: 1, perPage: 1, total: 0),
+    );
+    when(() => turnoRepository.abrir()).thenAnswer((_) async {
+      turnoAbiertoSimulado = true;
+      return turno();
+    });
     when(
       () => ticketRepository.listar(estado: any(named: 'estado'), perPage: any(named: 'perPage')),
     ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 100, total: 0));
@@ -71,7 +105,11 @@ void main() {
 
   String? rutaVisitada;
 
-  Future<void> pumpDashboard(WidgetTester tester) async {
+  /// Por defecto responde "Iniciar" al diálogo apenas aparece, para que el
+  /// resto de los tests (navegación, tokens de color, etc.) no tengan que
+  /// lidiar con él — mismo espíritu que cualquier operador real al entrar.
+  /// Los tests que sí verifican el diálogo pasan `responderIniciar: false`.
+  Future<void> pumpDashboard(WidgetTester tester, {bool responderIniciar = true}) async {
     rutaVisitada = null;
     final router = GoRouter(
       initialLocation: '/home',
@@ -82,6 +120,13 @@ void main() {
           builder: (context, state) {
             rutaVisitada = '/celdas';
             return const Scaffold(body: Text('CELDAS'));
+          },
+        ),
+        GoRoute(
+          path: '/tickets/entrada',
+          builder: (context, state) {
+            rutaVisitada = '/tickets/entrada';
+            return const Scaffold(body: Text('ENTRADA'));
           },
         ),
         GoRoute(
@@ -119,6 +164,11 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+
+    if (responderIniciar && find.text('¿Iniciar turno?').evaluate().isNotEmpty) {
+      await tester.tap(find.widgetWithText(FilledButton, 'Iniciar'));
+      await tester.pumpAndSettle();
+    }
   }
 
   testWidgets('celdas libres: muestra el conteo real una vez carga', (tester) async {
@@ -143,20 +193,38 @@ void main() {
     expect(find.text(' / 0'), findsNothing);
   });
 
-  testWidgets('Registrar entrada y Ver celdas llevan a /celdas', (tester) async {
+  testWidgets('Registrar entrada lleva a /tickets/entrada sin celda preseleccionada', (tester) async {
     when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
     await pumpDashboard(tester);
 
     await tester.tap(find.text('Registrar entrada'));
     await tester.pumpAndSettle();
+    expect(rutaVisitada, '/tickets/entrada');
+  });
+
+  testWidgets('Ver celdas lleva a /celdas', (tester) async {
+    when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
+    await pumpDashboard(tester);
+
+    await tester.tap(find.text('Ver celdas'));
+    await tester.pumpAndSettle();
     expect(rutaVisitada, '/celdas');
   });
 
-  testWidgets('Registrar salida y Buscar placa llevan a /tickets/buscar', (tester) async {
+  testWidgets('Registrar salida lleva a /celdas (se elige la celda ocupada a mano)', (tester) async {
     when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
     await pumpDashboard(tester);
 
     await tester.tap(find.text('Registrar salida'));
+    await tester.pumpAndSettle();
+    expect(rutaVisitada, '/celdas');
+  });
+
+  testWidgets('Buscar placa lleva a /tickets/buscar', (tester) async {
+    when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
+    await pumpDashboard(tester);
+
+    await tester.tap(find.text('Buscar placa'));
     await tester.pumpAndSettle();
     expect(rutaVisitada, '/tickets/buscar');
   });
@@ -189,5 +257,70 @@ void main() {
       find.ancestor(of: find.text('Registrar salida'), matching: find.byType(Material)).first,
     );
     expect(material.color, AppColors.concreto);
+  });
+
+  group('diálogo "¿Iniciar turno?" (primera vez del día sin turno abierto)', () {
+    testWidgets('aparece apenas se detecta que no hay turno, antes de dejar hacer cualquier otra cosa', (
+      tester,
+    ) async {
+      when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
+      await pumpDashboard(tester, responderIniciar: false);
+
+      expect(find.text('¿Iniciar turno?'), findsOneWidget);
+
+      // El barrier modal (barrierDismissible: false) bloquea la interacción
+      // con lo que hay detrás: tocar "Registrar entrada" no navega.
+      await tester.tap(find.text('Registrar entrada'), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(rutaVisitada, isNull);
+    });
+
+    testWidgets('Iniciar: abre el turno con la baseInicial automática y el diálogo desaparece', (tester) async {
+      when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
+      await pumpDashboard(tester, responderIniciar: false);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Iniciar'));
+      await tester.pumpAndSettle();
+
+      verify(() => turnoRepository.abrir()).called(1);
+      verifyNever(() => authRepository.logout());
+      expect(find.text('¿Iniciar turno?'), findsNothing);
+    });
+
+    testWidgets('No: cierra la sesión sin abrir ningún turno', (tester) async {
+      when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
+      await pumpDashboard(tester, responderIniciar: false);
+
+      await tester.tap(find.widgetWithText(TextButton, 'No'));
+      await tester.pumpAndSettle();
+
+      verify(() => authRepository.logout()).called(1);
+      verifyNever(() => turnoRepository.abrir());
+    });
+
+    testWidgets('sin baseInicial configurada: muestra el error del backend y no cierra sesión', (tester) async {
+      when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
+      when(() => turnoRepository.abrir()).thenThrow(
+        const ApiException(
+          code: 'BASE_INICIAL_NO_CONFIGURADA',
+          message: 'Ningún administrador ha configurado la baseInicial para apertura automática',
+          statusCode: 422,
+        ),
+      );
+      await pumpDashboard(tester, responderIniciar: false);
+
+      // No pumpAndSettle(): un SnackBar se auto-descarta a los ~4s reales, y
+      // pumpAndSettle avanza el reloj falso hasta que todo se asiente —
+      // incluida esa salida — dejándolo ya cerrado antes de poder mirarlo.
+      await tester.tap(find.widgetWithText(FilledButton, 'Iniciar'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 750));
+
+      expect(
+        find.text('Ningún administrador ha configurado la baseInicial para apertura automática'),
+        findsOneWidget,
+      );
+      verifyNever(() => authRepository.logout());
+    });
   });
 }

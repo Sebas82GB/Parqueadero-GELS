@@ -87,6 +87,11 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     ElevatedButton(
+                      onPressed: () => context.push('/usuarios'),
+                      child: const Text('Usuarios'),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    ElevatedButton(
                       onPressed: () => ref.read(sessionNotifierProvider.notifier).logout(),
                       child: const Text('Cerrar sesión'),
                     ),

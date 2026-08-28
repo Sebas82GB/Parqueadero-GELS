@@ -7,6 +7,7 @@ import '../../../auth/domain/usuario.dart';
 import '../../../auth/presentation/session_notifier.dart';
 import '../../domain/turno.dart';
 import '../turno_list_notifier.dart';
+import 'turno_estado_style.dart';
 
 /// El campo de `operadorId` solo se muestra para ADMIN: un OPERADOR ya ve
 /// solo los suyos (el backend lo fuerza), y no hay endpoint para listar
@@ -66,7 +67,7 @@ class _TurnoFiltrosBarState extends ConsumerState<TurnoFiltrosBar> {
           items: [
             const DropdownMenuItem(value: null, child: Text('Todos los estados')),
             for (final estado in EstadoTurno.values)
-              DropdownMenuItem(value: estado, child: Text(estado == EstadoTurno.abierto ? 'Abierto' : 'Cerrado')),
+              DropdownMenuItem(value: estado, child: Text(TurnoEstadoStyle.of(estado).label)),
           ],
           onChanged: notifier.setEstadoFiltro,
         ),

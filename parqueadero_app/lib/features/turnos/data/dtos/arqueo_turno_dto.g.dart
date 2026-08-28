@@ -29,4 +29,6 @@ ArqueoTurnoDto _$ArqueoTurnoDtoFromJson(Map<String, dynamic> json) =>
       efectivoEsperado: (json['efectivoEsperado'] as num).toInt(),
       efectivoContado: (json['efectivoContado'] as num?)?.toInt(),
       diferencia: (json['diferencia'] as num?)?.toInt(),
+      validadoPorId: json['validadoPorId'] as String?,
+      validadoEn: json['validadoEn'] as String?,
     );

@@ -18,6 +18,7 @@ class Usuario {
     required this.email,
     required this.rol,
     required this.activo,
+    this.baseInicialTurno,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -27,6 +28,12 @@ class Usuario {
   final String email;
   final RolUsuario rol;
   final bool activo;
+
+  /// Solo tiene efecto si [rol] es [RolUsuario.admin]: la baseInicial fija
+  /// que usa el turno automático al abrir un turno sin que el operador la
+  /// digite. Si hay más de un ADMIN activo con este valor configurado, el
+  /// backend usa el más antiguo.
+  final int? baseInicialTurno;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -40,9 +47,11 @@ class Usuario {
           email == other.email &&
           rol == other.rol &&
           activo == other.activo &&
+          baseInicialTurno == other.baseInicialTurno &&
           createdAt == other.createdAt &&
           updatedAt == other.updatedAt;
 
   @override
-  int get hashCode => Object.hash(id, nombre, email, rol, activo, createdAt, updatedAt);
+  int get hashCode =>
+      Object.hash(id, nombre, email, rol, activo, baseInicialTurno, createdAt, updatedAt);
 }

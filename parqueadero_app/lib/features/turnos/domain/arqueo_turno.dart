@@ -10,9 +10,12 @@ class TotalesPorMetodo {
 
 /// Resumen de caja de un turno: parcial y en vivo mientras el turno sigue
 /// [EstadoTurno.abierto] (ahí [efectivoContado] y [diferencia] llegan en
-/// `null`, porque todavía no se ha contado caja), o final una vez
-/// [EstadoTurno.cerrado]. Lo devuelven tanto `GET /turnos/:id/arqueo` como
-/// `POST /turnos/:id/cierre`.
+/// `null`, porque todavía no se ha contado caja); [EstadoTurno.cerradoPendienteArqueo]
+/// cuando el turno automático ya cerró la ventana horaria pero nadie ha
+/// contado caja todavía (efectivoEsperado ya calculado, efectivoContado y
+/// diferencia siguen en `null`); o final una vez [EstadoTurno.cerrado]. Lo
+/// devuelven `GET /turnos/:id/arqueo`, `POST /turnos/:id/cierre` y
+/// `POST /turnos/:id/completar-arqueo`.
 class ArqueoTurno {
   const ArqueoTurno({
     required this.turnoId,
@@ -27,6 +30,8 @@ class ArqueoTurno {
     required this.efectivoEsperado,
     this.efectivoContado,
     this.diferencia,
+    this.validadoPorId,
+    this.validadoEn,
   });
 
   final String turnoId;
@@ -41,4 +46,9 @@ class ArqueoTurno {
   final int efectivoEsperado;
   final int? efectivoContado;
   final int? diferencia;
+
+  /// Solo distintos de `null` si el turno pasó por
+  /// [EstadoTurno.cerradoPendienteArqueo] y un ADMIN ya completó el arqueo.
+  final String? validadoPorId;
+  final DateTime? validadoEn;
 }

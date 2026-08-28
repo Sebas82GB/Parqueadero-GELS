@@ -13,6 +13,7 @@ class UsuarioDto {
     required this.email,
     required this.rol,
     required this.activo,
+    this.baseInicialTurno,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -24,6 +25,7 @@ class UsuarioDto {
   final String email;
   final String rol;
   final bool activo;
+  final int? baseInicialTurno;
   final String createdAt;
   final String updatedAt;
 
@@ -33,6 +35,7 @@ class UsuarioDto {
     email: email,
     rol: RolUsuario.fromBackend(rol),
     activo: activo,
+    baseInicialTurno: baseInicialTurno,
     createdAt: DateTime.parse(createdAt),
     updatedAt: DateTime.parse(updatedAt),
   );

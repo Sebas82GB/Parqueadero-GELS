@@ -9,6 +9,7 @@ import '../../../core/utils/validators.dart';
 import '../../../core/widgets/button_spinner.dart';
 import '../../../core/widgets/error_banner.dart';
 import '../../../core/widgets/error_state.dart';
+import '../domain/turno.dart';
 import 'turno_cierre_notifier.dart';
 import 'turno_cierre_state.dart';
 import 'turno_detail_notifier.dart';
@@ -18,9 +19,11 @@ import 'widgets/arqueo_summary_view.dart';
 /// `turnoDetailNotifierProvider`), pide el efectivo contado, recalcula la
 /// diferencia en vivo mientras se escribe (aritmética de presentación sobre
 /// un número que ya entregó el backend, no una regla de negocio nueva) y, al
-/// confirmar, cierra el turno. Como el backend devuelve el arqueo completo en
-/// la misma respuesta del cierre, el resultado final se muestra sin pedir
-/// otra llamada — mismo espíritu que `_ReciboSalida` en el flujo de salida.
+/// confirmar, cierra el turno o completa su arqueo pendiente — mismo
+/// formulario para las dos acciones, distinguidas por el `estado` del turno
+/// que ya está cargado. Como el backend devuelve el arqueo completo en la
+/// misma respuesta, el resultado final se muestra sin pedir otra llamada —
+/// mismo espíritu que `_ReciboSalida` en el flujo de salida.
 class TurnoCierreScreen extends ConsumerStatefulWidget {
   const TurnoCierreScreen({super.key, required this.turnoId});
 
@@ -33,6 +36,11 @@ class TurnoCierreScreen extends ConsumerStatefulWidget {
 class _TurnoCierreScreenState extends ConsumerState<TurnoCierreScreen> {
   final _formKey = GlobalKey<FormState>();
   final _contadoController = TextEditingController();
+
+  /// Capturado al confirmar, no recalculado después: una vez la acción tiene
+  /// éxito el turno ya quedó `CERRADO` en los dos casos, así que no hay forma
+  /// de distinguirlos leyendo el resultado — solo recordando cuál se pidió.
+  bool _completandoArqueo = false;
 
   @override
   void dispose() {
@@ -47,15 +55,18 @@ class _TurnoCierreScreenState extends ConsumerState<TurnoCierreScreen> {
     return null;
   }
 
-  Future<void> _confirmarYCerrar(int esperado) async {
+  Future<void> _confirmarYCerrar(int esperado, {required bool esCompletarArqueo}) async {
     if (!_formKey.currentState!.validate()) return;
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('¿Cerrar turno?'),
-        content: const Text(
-          'Se registrará el efectivo contado y la diferencia contra lo esperado. '
-          'Esta acción no se puede deshacer.',
+        title: Text(esCompletarArqueo ? '¿Completar arqueo?' : '¿Cerrar turno?'),
+        content: Text(
+          esCompletarArqueo
+              ? 'Se registrará el efectivo contado y la diferencia contra lo esperado, y el turno '
+                    'quedará cerrado. Esta acción no se puede deshacer.'
+              : 'Se registrará el efectivo contado y la diferencia contra lo esperado. '
+                    'Esta acción no se puede deshacer.',
         ),
         actions: [
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancelar')),
@@ -65,8 +76,14 @@ class _TurnoCierreScreenState extends ConsumerState<TurnoCierreScreen> {
     );
     if (confirmado != true || !mounted) return;
 
+    _completandoArqueo = esCompletarArqueo;
     final contado = int.parse(_contadoController.text.trim());
-    await ref.read(turnoCierreNotifierProvider(widget.turnoId).notifier).cerrar(contado);
+    final notifier = ref.read(turnoCierreNotifierProvider(widget.turnoId).notifier);
+    if (esCompletarArqueo) {
+      await notifier.completarArqueo(contado);
+    } else {
+      await notifier.cerrar(contado);
+    }
   }
 
   @override
@@ -75,7 +92,7 @@ class _TurnoCierreScreenState extends ConsumerState<TurnoCierreScreen> {
 
     if (cierre.step == TurnoCierreStep.exito) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Turno cerrado')),
+        appBar: AppBar(title: Text(_completandoArqueo ? 'Arqueo completado' : 'Turno cerrado')),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -114,11 +131,13 @@ class _TurnoCierreScreenState extends ConsumerState<TurnoCierreScreen> {
     }
 
     final esperado = detalle.arqueo!.efectivoEsperado;
+    final esCompletarArqueo = detalle.arqueo!.estado == EstadoTurno.cerradoPendienteArqueo;
     final enviando = cierre.step == TurnoCierreStep.enviando;
     final contado = int.tryParse(_contadoController.text.trim());
+    final tituloAccion = esCompletarArqueo ? 'Completar arqueo' : 'Cerrar turno';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Cerrar turno')),
+      appBar: AppBar(title: Text(tituloAccion)),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.lg),
@@ -155,8 +174,10 @@ class _TurnoCierreScreenState extends ConsumerState<TurnoCierreScreen> {
                 ],
                 const SizedBox(height: AppSpacing.lg),
                 ElevatedButton(
-                  onPressed: enviando ? null : () => _confirmarYCerrar(esperado),
-                  child: enviando ? const ButtonSpinner() : const Text('Cerrar turno'),
+                  onPressed: enviando
+                      ? null
+                      : () => _confirmarYCerrar(esperado, esCompletarArqueo: esCompletarArqueo),
+                  child: enviando ? const ButtonSpinner() : Text(tituloAccion),
                 ),
               ],
             ),

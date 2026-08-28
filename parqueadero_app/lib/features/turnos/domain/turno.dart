@@ -1,15 +1,18 @@
 enum EstadoTurno {
   abierto,
+  cerradoPendienteArqueo,
   cerrado;
 
   static EstadoTurno fromBackend(String value) => switch (value) {
     'ABIERTO' => EstadoTurno.abierto,
+    'CERRADO_PENDIENTE_ARQUEO' => EstadoTurno.cerradoPendienteArqueo,
     'CERRADO' => EstadoTurno.cerrado,
     _ => throw FormatException('estado de turno desconocido recibido del backend: $value'),
   };
 
   String toBackend() => switch (this) {
     EstadoTurno.abierto => 'ABIERTO',
+    EstadoTurno.cerradoPendienteArqueo => 'CERRADO_PENDIENTE_ARQUEO',
     EstadoTurno.cerrado => 'CERRADO',
   };
 }

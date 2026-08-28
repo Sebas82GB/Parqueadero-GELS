@@ -12,6 +12,7 @@ UsuarioDto _$UsuarioDtoFromJson(Map<String, dynamic> json) => UsuarioDto(
   email: json['email'] as String,
   rol: json['rol'] as String,
   activo: json['activo'] as bool,
+  baseInicialTurno: (json['baseInicialTurno'] as num?)?.toInt(),
   createdAt: json['createdAt'] as String,
   updatedAt: json['updatedAt'] as String,
 );

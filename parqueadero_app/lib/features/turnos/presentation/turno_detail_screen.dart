@@ -34,6 +34,13 @@ class TurnoDetailScreen extends ConsumerWidget {
           arqueo.estado == EstadoTurno.abierto &&
           usuario != null &&
           (usuario.id == arqueo.operadorId || usuario.rol == RolUsuario.admin);
+      // A diferencia de cerrar, completar el arqueo pendiente es siempre
+      // ADMIN-only: el backend no tiene excepción para el operador dueño acá
+      // porque esta validación ES el control diario que pide el negocio.
+      final puedeCompletarArqueo =
+          arqueo.estado == EstadoTurno.cerradoPendienteArqueo &&
+          usuario != null &&
+          usuario.rol == RolUsuario.admin;
 
       body = SafeArea(
         child: SingleChildScrollView(
@@ -47,6 +54,13 @@ class TurnoDetailScreen extends ConsumerWidget {
                 ElevatedButton(
                   onPressed: () => context.push('/turnos/$turnoId/cerrar'),
                   child: const Text('Cerrar turno'),
+                ),
+              ],
+              if (puedeCompletarArqueo) ...[
+                const SizedBox(height: AppSpacing.lg),
+                ElevatedButton(
+                  onPressed: () => context.push('/turnos/$turnoId/cerrar'),
+                  child: const Text('Completar arqueo'),
                 ),
               ],
             ],

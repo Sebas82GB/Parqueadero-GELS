@@ -38,7 +38,11 @@ class ArqueoSummaryView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              arqueo.estado == EstadoTurno.abierto ? 'Arqueo en vivo' : 'Arqueo final',
+              switch (arqueo.estado) {
+                EstadoTurno.abierto => 'Arqueo en vivo',
+                EstadoTurno.cerradoPendienteArqueo => 'Arqueo pendiente de completar',
+                EstadoTurno.cerrado => 'Arqueo final',
+              },
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -62,6 +66,10 @@ class ArqueoSummaryView extends StatelessWidget {
               arqueo.diferencia == null ? 'Aún no calculada' : diferenciaTexto(arqueo.diferencia!),
               destacado: true,
             ),
+            if (arqueo.validadoEn != null) ...[
+              const Divider(height: AppSpacing.lg),
+              _Fila('Arqueo validado', formatBogota(arqueo.validadoEn!)),
+            ],
           ],
         ),
       ),
