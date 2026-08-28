@@ -8,7 +8,13 @@ import {
   cerrarTurnoBodySchema,
   listarTurnosQuerySchema,
 } from '../validators/turno.validator.js';
-import { abrirTurno, cerrarTurno, obtenerArqueo, listarTurnos } from '../controllers/turno.controller.js';
+import {
+  abrirTurno,
+  cerrarTurno,
+  completarArqueo,
+  obtenerArqueo,
+  listarTurnos,
+} from '../controllers/turno.controller.js';
 
 export const turnoRouter = Router();
 
@@ -17,17 +23,24 @@ export const turnoRouter = Router();
  * /turnos:
  *   post:
  *     summary: Abrir un turno para el operador autenticado
+ *     description: >
+ *       El operador siempre confirma esta acción explícitamente (nunca se abre en segundo plano). Si se
+ *       omite baseInicial, se usa la que un ADMIN haya configurado para la apertura automática
+ *       (`Usuario.baseInicialTurno`) — así el operador no tiene que digitarla cada vez.
  *     tags: [Turnos]
  *     security: [{ bearerAuth: [] }]
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required: [baseInicial]
  *             properties:
- *               baseInicial: { type: integer, minimum: 0, example: 50000 }
+ *               baseInicial:
+ *                 type: integer
+ *                 minimum: 0
+ *                 example: 50000
+ *                 description: Si se omite, se usa la baseInicial automática configurada por un ADMIN.
  *     responses:
  *       201:
  *         description: Turno abierto
@@ -39,6 +52,8 @@ export const turnoRouter = Router();
  *         description: Sin permisos (requiere OPERADOR)
  *       409:
  *         description: El operador ya tiene un turno abierto
+ *       422:
+ *         description: Se omitió baseInicial y ningún ADMIN configuró una automática (code BASE_INICIAL_NO_CONFIGURADA)
  */
 turnoRouter.post(
   '/',
@@ -53,7 +68,11 @@ turnoRouter.post(
  * /turnos:
  *   get:
  *     summary: Listar turnos
- *     description: Un OPERADOR solo ve sus propios turnos, aunque intente filtrar por otro operadorId. Un ADMIN ve todos y puede filtrar por operadorId.
+ *     description: >
+ *       Un OPERADOR solo ve sus propios turnos, aunque intente filtrar por otro operadorId. Un ADMIN ve
+ *       todos y puede filtrar por operadorId. Si quien consulta es OPERADOR y tiene un turno ABIERTO cuya
+ *       ventana horaria ya venció, esta llamada lo pasa a CERRADO_PENDIENTE_ARQUEO antes de responder (la
+ *       apertura nunca es automática: el operador siempre la confirma con POST /turnos).
  *     tags: [Turnos]
  *     security: [{ bearerAuth: [] }]
  *     parameters:
@@ -63,7 +82,7 @@ turnoRouter.post(
  *         description: Ignorado si quien consulta es OPERADOR (siempre ve los suyos)
  *       - in: query
  *         name: estado
- *         schema: { type: string, enum: [ABIERTO, CERRADO] }
+ *         schema: { type: string, enum: [ABIERTO, CERRADO_PENDIENTE_ARQUEO, CERRADO] }
  *       - in: query
  *         name: desde
  *         schema: { type: string, format: date-time }
@@ -140,7 +159,11 @@ turnoRouter.post(
  * /turnos/{id}/arqueo:
  *   get:
  *     summary: Ver el arqueo de un turno
- *     description: Disponible tanto para un turno ABIERTO (parcial, en vivo — efectivoContado y diferencia llegan en null porque todavía no se ha contado caja) como CERRADO (final, con los valores ya persistidos).
+ *     description: >
+ *       Disponible para un turno ABIERTO (parcial, en vivo — efectivoContado y diferencia llegan en null),
+ *       CERRADO_PENDIENTE_ARQUEO (efectivoEsperado ya calculado pero todavía sin efectivoContado) o CERRADO
+ *       (final, con los valores ya persistidos). Si el turno está ABIERTO y su ventana horaria ya venció,
+ *       esta llamada lo pasa a CERRADO_PENDIENTE_ARQUEO antes de responder.
  *     tags: [Turnos]
  *     security: [{ bearerAuth: [] }]
  *     parameters:
@@ -166,4 +189,57 @@ turnoRouter.get(
   auth,
   validate({ params: idParamSchema }),
   obtenerArqueo,
+);
+
+/**
+ * @openapi
+ * /turnos/{id}/completar-arqueo:
+ *   post:
+ *     summary: Completar el arqueo de un turno pendiente (solo ADMIN)
+ *     description: >
+ *       Un turno pasa a CERRADO_PENDIENTE_ARQUEO automáticamente cuando se acaba la ventana horaria y
+ *       nadie ha contado el efectivo todavía. Este endpoint recibe ese conteo, calcula la diferencia
+ *       contra el efectivoEsperado ya guardado, y cierra el turno de verdad (estado CERRADO), dejando
+ *       registro de qué ADMIN lo validó y cuándo (validadoPorId, validadoEn). A diferencia de
+ *       POST /turnos/{id}/cierre, no hay excepción para el operador dueño: esta validación es un control
+ *       del negocio que solo puede hacer un administrador.
+ *     tags: [Turnos]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [efectivoContado]
+ *             properties:
+ *               efectivoContado: { type: integer, minimum: 0, example: 185000 }
+ *     responses:
+ *       200:
+ *         description: Turno validado y cerrado, con el arqueo completo
+ *         content:
+ *           application/json:
+ *             schema: { $ref: '#/components/schemas/ArqueoTurno' }
+ *       400:
+ *         description: Datos inválidos
+ *       401:
+ *         description: No autenticado
+ *       403:
+ *         description: Sin permisos (requiere ADMIN)
+ *       404:
+ *         description: Turno no encontrado
+ *       409:
+ *         description: El turno no está pendiente de arqueo (sigue ABIERTO o ya está CERRADO)
+ */
+turnoRouter.post(
+  '/:id/completar-arqueo',
+  auth,
+  authorize('ADMIN'),
+  validate({ params: idParamSchema, body: cerrarTurnoBodySchema }),
+  completarArqueo,
 );

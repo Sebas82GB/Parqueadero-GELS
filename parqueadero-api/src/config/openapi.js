@@ -37,6 +37,12 @@ const options = {
             email: { type: 'string', format: 'email' },
             rol: { type: 'string', enum: ['ADMIN', 'OPERADOR'] },
             activo: { type: 'boolean' },
+            baseInicialTurno: {
+              type: 'integer',
+              nullable: true,
+              description:
+                'Solo tiene efecto en un ADMIN: la baseInicial fija que usa el turno automático al abrir un turno sin que el operador la digite. Si hay más de un ADMIN activo con este valor configurado, se usa el más antiguo.',
+            },
             createdAt: { type: 'string', format: 'date-time' },
             updatedAt: { type: 'string', format: 'date-time' },
           },
@@ -86,7 +92,12 @@ const options = {
           properties: {
             turnoId: { type: 'string', format: 'uuid' },
             operadorId: { type: 'string', format: 'uuid' },
-            estado: { type: 'string', enum: ['ABIERTO', 'CERRADO'] },
+            estado: {
+              type: 'string',
+              enum: ['ABIERTO', 'CERRADO_PENDIENTE_ARQUEO', 'CERRADO'],
+              description:
+                'CERRADO_PENDIENTE_ARQUEO: el turno automático detectó que ya pasó la ventana horaria y lo cerró operativamente, pero todavía no hay efectivoContado porque nadie ha hecho el arqueo (ver POST /turnos/{id}/completar-arqueo).',
+            },
             apertura: { type: 'string', format: 'date-time' },
             cierre: { type: 'string', format: 'date-time', nullable: true },
             baseInicial: { type: 'integer' },
@@ -111,6 +122,13 @@ const options = {
               nullable: true,
               description: 'Sobrante > 0, faltante < 0, cuadre exacto = 0. null mientras el turno sigue ABIERTO',
             },
+            validadoPorId: {
+              type: 'string',
+              format: 'uuid',
+              nullable: true,
+              description: 'Id del ADMIN que completó el arqueo. null salvo que el turno pasó por CERRADO_PENDIENTE_ARQUEO.',
+            },
+            validadoEn: { type: 'string', format: 'date-time', nullable: true },
           },
         },
         Pago: {

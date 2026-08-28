@@ -130,7 +130,7 @@ usuarioRouter.post(
  * @openapi
  * /usuarios/{id}:
  *   patch:
- *     summary: Actualizar un usuario (incluye activar/desactivar)
+ *     summary: Actualizar un usuario (incluye activar/desactivar y configurar baseInicialTurno)
  *     tags: [Usuarios]
  *     security: [{ bearerAuth: [] }]
  *     parameters:
@@ -150,6 +150,14 @@ usuarioRouter.post(
  *               password: { type: string, format: password, minLength: 8 }
  *               rol: { type: string, enum: [ADMIN, OPERADOR] }
  *               activo: { type: boolean }
+ *               baseInicialTurno:
+ *                 type: integer
+ *                 minimum: 0
+ *                 nullable: true
+ *                 description: >
+ *                   Solo tiene efecto en un ADMIN: la baseInicial fija que usa el turno automático al abrir
+ *                   un turno sin que el operador la digite. Se usa la del ADMIN activo más antiguo que la
+ *                   tenga configurada.
  *     responses:
  *       200:
  *         description: Usuario actualizado

@@ -42,6 +42,7 @@ enum EstadoPagoMensualidad {
 
 enum EstadoTurno {
   ABIERTO
+  CERRADO_PENDIENTE_ARQUEO
   CERRADO
 }
 
@@ -65,6 +66,12 @@ model Usuario {
   passwordHash String   @map("password_hash")
   rol          Rol
   activo       Boolean  @default(true)
+  // Solo tiene sentido para ADMIN: la baseInicial fija que usa el turno
+  // automático al abrir un turno sin que el operador la digite. Si hay más
+  // de un ADMIN activo, se usa el del más antiguo (ver
+  // usuario.repository.js#findAdminConBaseInicial); no hay hoy un concepto
+  // de "configuración global" separado de Usuario.
+  baseInicialTurno Int?     @map("base_inicial_turno")
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
@@ -73,6 +80,7 @@ model Usuario {
   ticketsAnulados            Ticket[]       @relation("TicketAnuladoPor")
   ticketsEntregados          Ticket[]       @relation("TicketEntregadoPor")
   turnos                     Turno[]
+  turnosValidados            Turno[]        @relation("TurnoValidadoPor")
   anulaciones                Anulacion[]
   refreshTokens              RefreshToken[]
 
@@ -278,11 +286,18 @@ model Turno {
   efectivoEsperado Int?        @map("efectivo_esperado")
   diferencia       Int?
   estado           EstadoTurno @default(ABIERTO)
+  // Se llenan solo cuando un ADMIN completa el arqueo de un turno que quedó
+  // en CERRADO_PENDIENTE_ARQUEO (ver POST /turnos/:id/completar-arqueo).
+  // Un turno cerrado manualmente vía POST /turnos/:id/cierre nunca los llena
+  // porque en ese flujo quien cuenta el efectivo es el propio operador.
+  validadoPorId    String?     @map("validado_por_id") @db.Uuid
+  validadoEn       DateTime?   @map("validado_en") @db.Timestamptz(3)
   createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-  operador Usuario @relation(fields: [operadorId], references: [id], onDelete: Restrict)
-  pagos    Pago[]
+  operador   Usuario  @relation(fields: [operadorId], references: [id], onDelete: Restrict)
+  validadoPor Usuario? @relation("TurnoValidadoPor", fields: [validadoPorId], references: [id], onDelete: Restrict)
+  pagos      Pago[]
 
   // "¿este operador ya tiene un turno ABIERTO?" — solo acelera la consulta;
   // la regla en sí se valida en TurnoService (decisión: sin índice único parcial).

@@ -13,6 +13,14 @@ export async function cerrarTurno(req, res) {
   res.status(200).json(arqueo);
 }
 
+export async function completarArqueo(req, res) {
+  const arqueo = await turnoService.completarArqueo(req.params.id, req.body, {
+    usuarioId: req.user.id,
+    rol: req.user.rol,
+  });
+  res.status(200).json(arqueo);
+}
+
 export async function obtenerArqueo(req, res) {
   const arqueo = await turnoService.obtenerArqueo(req.params.id, {
     usuarioId: req.user.id,

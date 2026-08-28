@@ -7,6 +7,7 @@ import { createUsuarioInDb } from '../helpers/usuario-fixture.js';
 import { createCeldaInDb } from '../helpers/celda-fixture.js';
 import { createVehiculoInDb } from '../helpers/vehiculo-fixture.js';
 import { createTarifaInDb } from '../helpers/tarifa-fixture.js';
+import { createHorarioInDb } from '../helpers/horario-fixture.js';
 import { createTurnoInDb } from '../helpers/turno-fixture.js';
 import { createTicketInDb } from '../helpers/ticket-fixture.js';
 import {
@@ -14,6 +15,7 @@ import {
   resetOperacion,
   resetRefreshTokens,
   resetTarifas,
+  resetHorariosOperacion,
   resetUsuarios,
   disconnectDb,
 } from '../helpers/db.js';
@@ -33,6 +35,7 @@ beforeEach(async () => {
   await resetUsuarios();
   await resetCeldas();
   await resetTarifas();
+  await resetHorariosOperacion();
 
   ({ usuario: admin } = await createUsuarioInDb({ rol: 'ADMIN' }));
   ({ usuario: operador } = await createUsuarioInDb({ rol: 'OPERADOR' }));
@@ -481,5 +484,177 @@ describe('GET /api/v1/turnos', () => {
       .set('Authorization', `Bearer ${adminToken}`);
     expect(resFiltrado.body.data).toHaveLength(1);
     expect(resFiltrado.body.data[0].operadorId).toBe(operador.id);
+  });
+});
+
+describe('POST /api/v1/turnos sin baseInicial (apertura confirmada por el operador, con la automática)', () => {
+  it('usa la baseInicial configurada por un ADMIN cuando no se manda ninguna', async () => {
+    await createUsuarioInDb({ rol: 'ADMIN', baseInicialTurno: 40000 });
+
+    const res = await request(app)
+      .post('/api/v1/turnos')
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({});
+
+    expect(res.status).toBe(201);
+    expect(res.body.operadorId).toBe(operador.id);
+    expect(res.body.estado).toBe('ABIERTO');
+    expect(res.body.baseInicial).toBe(40000);
+  });
+
+  it('abre incluso sin ningún horario de operación vigente: la apertura ya no depende de la ventana', async () => {
+    await createUsuarioInDb({ rol: 'ADMIN', baseInicialTurno: 40000 });
+
+    const res = await request(app)
+      .post('/api/v1/turnos')
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({});
+
+    expect(res.status).toBe(201);
+    expect(res.body.baseInicial).toBe(40000);
+  });
+
+  it('422 BASE_INICIAL_NO_CONFIGURADA si ningún ADMIN configuró una', async () => {
+    const res = await request(app)
+      .post('/api/v1/turnos')
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({});
+
+    expect(res.status).toBe(422);
+    expect(res.body.error.code).toBe('BASE_INICIAL_NO_CONFIGURADA');
+  });
+});
+
+describe('turno automático (resolverTurnoAutomatico vía GET /turnos y /arqueo: solo cierre perezoso)', () => {
+  it('pasa a CERRADO_PENDIENTE_ARQUEO un turno abierto cuya ventana ya venció', async () => {
+    await createHorarioInDb({ apertura: '08:00', cierre: '21:30' });
+    // Muy en el pasado: sin importar cuándo corra la suite, su ventana
+    // (ese día + 1h de margen) ya quedó atrás hace años.
+    const turno = await createTurnoInDb({
+      operadorId: operador.id,
+      baseInicial: 50000,
+      apertura: new Date('2020-01-01T13:00:00.000Z'),
+    });
+    await crearTicketCerradoConPago({
+      turnoId: turno.id,
+      operadorSalidaId: operador.id,
+      monto: 20000,
+      metodo: 'EFECTIVO',
+    });
+
+    const res = await request(app)
+      .get(`/api/v1/turnos/${turno.id}/arqueo`)
+      .set('Authorization', `Bearer ${operadorToken}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.estado).toBe('CERRADO_PENDIENTE_ARQUEO');
+    expect(res.body.efectivoEsperado).toBe(70000);
+    expect(res.body.efectivoContado).toBeNull();
+    expect(res.body.diferencia).toBeNull();
+
+    const turnoEnDb = await prisma.turno.findUnique({ where: { id: turno.id } });
+    expect(turnoEnDb.estado).toBe('CERRADO_PENDIENTE_ARQUEO');
+    expect(turnoEnDb.validadoPorId).toBeNull();
+  });
+});
+
+describe('POST /api/v1/turnos/:id/completar-arqueo', () => {
+  function crearPendiente(overrides = {}) {
+    return createTurnoInDb({
+      operadorId: operador.id,
+      baseInicial: 50000,
+      estado: 'CERRADO_PENDIENTE_ARQUEO',
+      cierre: new Date(),
+      totalRecaudado: 20000,
+      efectivoEsperado: 70000,
+      ...overrides,
+    });
+  }
+
+  it('devuelve 401 sin token', async () => {
+    const turno = await crearPendiente();
+    const res = await request(app)
+      .post(`/api/v1/turnos/${turno.id}/completar-arqueo`)
+      .send({ efectivoContado: 70000 });
+    expect(res.status).toBe(401);
+  });
+
+  it('ADMIN completa el arqueo: cierra de verdad y deja validadoPorId/validadoEn', async () => {
+    const turno = await crearPendiente();
+
+    const res = await request(app)
+      .post(`/api/v1/turnos/${turno.id}/completar-arqueo`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ efectivoContado: 68000 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.estado).toBe('CERRADO');
+    expect(res.body.efectivoContado).toBe(68000);
+    expect(res.body.diferencia).toBe(-2000);
+    expect(res.body.validadoPorId).toBe(admin.id);
+    expect(res.body.validadoEn).toBeTruthy();
+
+    const turnoEnDb = await prisma.turno.findUnique({ where: { id: turno.id } });
+    expect(turnoEnDb.estado).toBe('CERRADO');
+    expect(turnoEnDb.validadoPorId).toBe(admin.id);
+  });
+
+  it('403 si un OPERADOR intenta completarlo, aunque sea el dueño del turno', async () => {
+    const turno = await crearPendiente();
+
+    const res = await request(app)
+      .post(`/api/v1/turnos/${turno.id}/completar-arqueo`)
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({ efectivoContado: 70000 });
+
+    expect(res.status).toBe(403);
+  });
+
+  it('404 si el turno no existe', async () => {
+    const res = await request(app)
+      .post('/api/v1/turnos/00000000-0000-0000-0000-000000000000/completar-arqueo')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ efectivoContado: 0 });
+
+    expect(res.status).toBe(404);
+  });
+
+  it('409 TURNO_NO_PENDIENTE_ARQUEO si el turno sigue ABIERTO', async () => {
+    const turno = await createTurnoInDb({ operadorId: operador.id, baseInicial: 50000 });
+
+    const res = await request(app)
+      .post(`/api/v1/turnos/${turno.id}/completar-arqueo`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ efectivoContado: 50000 });
+
+    expect(res.status).toBe(409);
+    expect(res.body.error.code).toBe('TURNO_NO_PENDIENTE_ARQUEO');
+  });
+
+  it('409 TURNO_NO_PENDIENTE_ARQUEO si el turno ya está CERRADO', async () => {
+    const turno = await createTurnoInDb({
+      operadorId: operador.id,
+      estado: 'CERRADO',
+      cierre: new Date(),
+    });
+
+    const res = await request(app)
+      .post(`/api/v1/turnos/${turno.id}/completar-arqueo`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ efectivoContado: 0 });
+
+    expect(res.status).toBe(409);
+    expect(res.body.error.code).toBe('TURNO_NO_PENDIENTE_ARQUEO');
+  });
+
+  it('400 si falta efectivoContado en el body', async () => {
+    const turno = await crearPendiente();
+
+    const res = await request(app)
+      .post(`/api/v1/turnos/${turno.id}/completar-arqueo`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({});
+
+    expect(res.status).toBe(400);
   });
 });

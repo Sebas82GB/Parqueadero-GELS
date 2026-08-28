@@ -178,6 +178,18 @@ describe('PATCH /api/v1/usuarios/:id', () => {
     expect(res.body.nombre).toBe('Nombre Nuevo');
   });
 
+  it('configura baseInicialTurno en un ADMIN, usada por el turno automático', async () => {
+    const { usuario } = await createUsuarioInDb({ rol: 'ADMIN' });
+
+    const res = await request(app)
+      .patch(`/api/v1/usuarios/${usuario.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ baseInicialTurno: 40000 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.baseInicialTurno).toBe(40000);
+  });
+
   it('desactiva un usuario y ya no puede loguearse', async () => {
     const { usuario, password } = await createUsuarioInDb({ activo: true });
 

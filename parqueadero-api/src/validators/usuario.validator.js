@@ -25,6 +25,12 @@ export const actualizarUsuarioBodySchema = z
     password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').optional(),
     rol: rolSchema.optional(),
     activo: z.boolean().optional(),
+    baseInicialTurno: z
+      .number()
+      .int('baseInicialTurno debe ser un entero')
+      .nonnegative('baseInicialTurno no puede ser negativo')
+      .nullable()
+      .optional(),
   })
   .strict()
   .refine((data) => Object.keys(data).length > 0, {

@@ -1,10 +1,11 @@
 export class Usuario {
-  constructor({ id, nombre, email, rol, activo, createdAt, updatedAt }) {
+  constructor({ id, nombre, email, rol, activo, baseInicialTurno, createdAt, updatedAt }) {
     this.id = id;
     this.nombre = nombre;
     this.email = email;
     this.rol = rol;
     this.activo = activo;
+    this.baseInicialTurno = baseInicialTurno;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -18,18 +19,20 @@ export class Usuario {
       email: record.email,
       rol: record.rol,
       activo: record.activo,
+      baseInicialTurno: record.baseInicialTurno,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     });
   }
 
-  static toPersistence({ nombre, email, passwordHash, rol, activo } = {}) {
+  static toPersistence({ nombre, email, passwordHash, rol, activo, baseInicialTurno } = {}) {
     const data = {};
     if (nombre !== undefined) data.nombre = nombre;
     if (email !== undefined) data.email = email;
     if (passwordHash !== undefined) data.passwordHash = passwordHash;
     if (rol !== undefined) data.rol = rol;
     if (activo !== undefined) data.activo = activo;
+    if (baseInicialTurno !== undefined) data.baseInicialTurno = baseInicialTurno;
     return data;
   }
 }

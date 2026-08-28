@@ -7,10 +7,13 @@ export const idParamSchema = z.object({
 
 export const abrirTurnoBodySchema = z
   .object({
+    // Opcional: si no se manda, el servicio usa la baseInicial que un ADMIN
+    // configuró para la apertura automática (ver turno.service.js#abrirTurno).
     baseInicial: z
       .number()
       .int('baseInicial debe ser un entero')
-      .nonnegative('baseInicial no puede ser negativo'),
+      .nonnegative('baseInicial no puede ser negativo')
+      .optional(),
   })
   .strict();
 

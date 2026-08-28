@@ -74,3 +74,16 @@ export async function update(id, data) {
     traducirErrorEmailDuplicado(err, data.email);
   }
 }
+
+// Usado por turno.service.js para abrir turnos automáticamente: no hay hoy
+// una entidad de "configuración global", así que la baseInicial fija vive en
+// el ADMIN activo más antiguo que la haya configurado. Si hay más de un
+// ADMIN, los demás pueden tener su propio baseInicialTurno guardado pero se
+// ignora — solo hay un valor efectivo a la vez.
+export async function findAdminConBaseInicial() {
+  const record = await prisma.usuario.findFirst({
+    where: { rol: 'ADMIN', activo: true, baseInicialTurno: { not: null } },
+    orderBy: { createdAt: 'asc' },
+  });
+  return record ? record.baseInicialTurno : null;
+}

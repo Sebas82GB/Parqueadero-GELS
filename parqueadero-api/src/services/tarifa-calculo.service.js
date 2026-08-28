@@ -1,44 +1,15 @@
 import { UnprocessableEntityError } from '../errors/index.js';
+import { bogotaParts, horaInstant, MINUTO_MS, HORA_MS } from '../utils/bogota-time.js';
 
-// Bogotá vive en UTC-5 todo el año (sin horario de verano desde 1993), así
-// que la conversión es una resta fija de horas, no una zona horaria real.
-const BOGOTA_OFFSET_MS = 5 * 60 * 60 * 1000;
-const MINUTO_MS = 60 * 1000;
-const HORA_MS = 60 * MINUTO_MS;
 const BLOQUE_MS = 6 * HORA_MS;
 const MAX_BLOQUES_POR_DIA = 2;
 
-function bogotaParts(date) {
-  const shifted = new Date(date.getTime() - BOGOTA_OFFSET_MS);
-  return {
-    year: shifted.getUTCFullYear(),
-    month: shifted.getUTCMonth(),
-    day: shifted.getUTCDate(),
-    hour: shifted.getUTCHours(),
-    minute: shifted.getUTCMinutes(),
-    second: shifted.getUTCSeconds(),
-  };
-}
-
-function bogotaInstant(year, month, day, hour, minute, second) {
-  return new Date(Date.UTC(year, month, day, hour, minute, second) + BOGOTA_OFFSET_MS);
-}
-
-// horario.apertura/horario.cierre llegan como strings "HH:mm" (hora local),
-// tal como los expone HorarioOperacion.toDomain.
-function parseHora(hhmm) {
-  const [hora, minuto] = hhmm.split(':').map(Number);
-  return { hora, minuto };
-}
-
 function aperturaInstant(year, month, day, horario) {
-  const { hora, minuto } = parseHora(horario.apertura);
-  return bogotaInstant(year, month, day, hora, minuto, 0);
+  return horaInstant(year, month, day, horario.apertura);
 }
 
 function cierreInstant(year, month, day, horario) {
-  const { hora, minuto } = parseHora(horario.cierre);
-  return bogotaInstant(year, month, day, hora, minuto, 0);
+  return horaInstant(year, month, day, horario.cierre);
 }
 
 // Próxima apertura Bogotá estrictamente después de `ancla`: mismo día

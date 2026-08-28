@@ -47,6 +47,48 @@ export async function cerrar(
   return findById(id);
 }
 
+// Transición automática (turno.service.js#resolverTurnoAutomatico), disparada
+// de forma perezosa al consultar el turno, no por un scheduler. Se ignora
+// silenciosamente si count da 0: significa que otra petición concurrente ya
+// lo resolvió primero, no es un conflicto que el llamador necesite ver.
+export async function marcarPendienteArqueo(id, { cierre, totalRecaudado, efectivoEsperado }) {
+  const { count } = await prisma.turno.updateMany({
+    where: { id, estado: 'ABIERTO' },
+    data: Turno.toPersistence({
+      cierre,
+      totalRecaudado,
+      efectivoEsperado,
+      estado: 'CERRADO_PENDIENTE_ARQUEO',
+    }),
+  });
+
+  if (count === 0) return null;
+  return findById(id);
+}
+
+// Guardia de concurrencia igual que cerrar(): solo completa el arqueo si
+// seguía CERRADO_PENDIENTE_ARQUEO. Aquí sí se lanza el error de dominio (a
+// diferencia de marcarPendienteArqueo) porque esta transición la pide un
+// ADMIN explícitamente, no es un efecto perezoso de fondo.
+export async function completarArqueo(id, { efectivoContado, diferencia, validadoPorId, validadoEn }) {
+  const { count } = await prisma.turno.updateMany({
+    where: { id, estado: 'CERRADO_PENDIENTE_ARQUEO' },
+    data: Turno.toPersistence({
+      efectivoContado,
+      diferencia,
+      validadoPorId,
+      validadoEn,
+      estado: 'CERRADO',
+    }),
+  });
+
+  if (count === 0) {
+    throw new ConflictError('El turno no está pendiente de arqueo', 'TURNO_NO_PENDIENTE_ARQUEO');
+  }
+
+  return findById(id);
+}
+
 function buildWhere({ operadorId, estado, desde, hasta }) {
   return {
     ...(operadorId !== undefined && { operadorId }),
