@@ -72,10 +72,10 @@
     "semantic_hash": "647f26aaebed660f63b20f2916e67e26"
   },
   "lib/core/theme/app_page_transitions.dart": {
-    "mtime": 1789219442.586844,
-    "seen": 1789226117.9122634,
-    "ast_hash": "467a30947ffbf5f7057f3d305030d88d",
-    "semantic_hash": "467a30947ffbf5f7057f3d305030d88d"
+    "mtime": 1789235045.9233136,
+    "seen": 1789241710.7816367,
+    "ast_hash": "a78c716123b2d671d2ab669457aeb9c0",
+    "semantic_hash": ""
   },
   "lib/core/theme/app_radius.dart": {
     "mtime": 1787285678.0444758,
@@ -180,10 +180,10 @@
     "semantic_hash": "bc3f143959e2de140c0bd8612c74f84e"
   },
   "lib/core/widgets/button_spinner.dart": {
-    "mtime": 1789219442.588838,
-    "seen": 1789226117.9122875,
-    "ast_hash": "d32f14e655bb5c436246b83c28b70adc",
-    "semantic_hash": "d32f14e655bb5c436246b83c28b70adc"
+    "mtime": 1789235045.9243152,
+    "seen": 1789241710.7930064,
+    "ast_hash": "344986cc8611b67644681885e770502b",
+    "semantic_hash": ""
   },
   "lib/core/widgets/detail_skeleton.dart": {
     "mtime": 1787451394.2026532,
@@ -288,10 +288,10 @@
     "semantic_hash": "ae89d40135e41837ec272b093a8ea52e"
   },
   "lib/features/auth/presentation/home_screen.dart": {
-    "mtime": 1789219442.5908349,
-    "seen": 1789226117.9123116,
-    "ast_hash": "8852618df5f0a95ce37df018437a600d",
-    "semantic_hash": "8852618df5f0a95ce37df018437a600d"
+    "mtime": 1789235045.9263155,
+    "seen": 1789241710.8089995,
+    "ast_hash": "0323855d2c12a660b75103a7f29d1f30",
+    "semantic_hash": ""
   },
   "lib/features/auth/presentation/login_controller.dart": {
     "mtime": 1787116819.5355873,
@@ -300,10 +300,10 @@
     "semantic_hash": "620ab8001070fe32e7fc9f2b8c0651fe"
   },
   "lib/features/auth/presentation/login_screen.dart": {
-    "mtime": 1789219442.5928345,
-    "seen": 1789226117.9123142,
-    "ast_hash": "c80698ad7853d4f170fe989e6d3426ad",
-    "semantic_hash": "c80698ad7853d4f170fe989e6d3426ad"
+    "mtime": 1789235045.9273124,
+    "seen": 1789241710.8095558,
+    "ast_hash": "45cc407d8fa969beb40c3cb09090d8fc",
+    "semantic_hash": ""
   },
   "lib/features/auth/presentation/session_notifier.dart": {
     "mtime": 1787103940.4152286,
@@ -318,10 +318,10 @@
     "semantic_hash": "c129815963fdb51b503bf93c48bcfbfd"
   },
   "lib/features/auth/presentation/widgets/operador_home_dashboard.dart": {
-    "mtime": 1789219442.5950544,
-    "seen": 1789226117.912318,
-    "ast_hash": "dd2d19e770a4b3400daf57c7fce1013b",
-    "semantic_hash": "dd2d19e770a4b3400daf57c7fce1013b"
+    "mtime": 1789235045.9293072,
+    "seen": 1789241710.814495,
+    "ast_hash": "2f47b17ece669a6a98f298f09732845c",
+    "semantic_hash": ""
   },
   "lib/features/celdas/data/celda_repository_impl.dart": {
     "mtime": 1787116064.0531914,
@@ -378,16 +378,16 @@
     "semantic_hash": "3c170564dff2942ff1d3e9571b761ac0"
   },
   "lib/features/celdas/presentation/celda_list_state.dart": {
-    "mtime": 1789219442.5982504,
-    "seen": 1789226117.9123304,
-    "ast_hash": "c9cab50e794229fc2db31c1e946429c0",
-    "semantic_hash": "c9cab50e794229fc2db31c1e946429c0"
+    "mtime": 1789235045.931321,
+    "seen": 1789241710.82608,
+    "ast_hash": "bd47b21601dd4eb75faa74bf6c5d84b2",
+    "semantic_hash": ""
   },
   "lib/features/celdas/presentation/celdas_screen.dart": {
-    "mtime": 1789219442.6002438,
-    "seen": 1789226117.9123318,
-    "ast_hash": "56d000e006be93476107e89cc509d50c",
-    "semantic_hash": "56d000e006be93476107e89cc509d50c"
+    "mtime": 1789235045.9333234,
+    "seen": 1789241710.8260913,
+    "ast_hash": "8d8a43d91564f384adcb6d14e7893b99",
+    "semantic_hash": ""
   },
   "lib/features/celdas/presentation/reloj_notifier.dart": {
     "mtime": 1787451059.031547,
@@ -396,16 +396,16 @@
     "semantic_hash": "4001a9d638fad19f018b5739e858c4bb"
   },
   "lib/features/celdas/presentation/widgets/celda_accion_rapida_sheet.dart": {
-    "mtime": 1789219442.6025877,
-    "seen": 1789226117.9123344,
-    "ast_hash": "36f2f61a16583aacd9f8efa2c2e650d0",
-    "semantic_hash": "36f2f61a16583aacd9f8efa2c2e650d0"
+    "mtime": 1789235045.936316,
+    "seen": 1789241710.8271763,
+    "ast_hash": "4ff04e3ad9184b65cdf8ec84fba218a2",
+    "semantic_hash": ""
   },
   "lib/features/celdas/presentation/widgets/celda_card.dart": {
-    "mtime": 1789219442.6056247,
-    "seen": 1789226117.9123356,
-    "ast_hash": "443b7c827e6f177de80a183cae3c4d5e",
-    "semantic_hash": "443b7c827e6f177de80a183cae3c4d5e"
+    "mtime": 1789235045.9383237,
+    "seen": 1789241710.8271866,
+    "ast_hash": "844f3cb41a0dcd28c3bcc7fb83e6b95a",
+    "semantic_hash": ""
   },
   "lib/features/celdas/presentation/widgets/celda_estado_badge.dart": {
     "mtime": 1787451217.04075,
@@ -432,10 +432,10 @@
     "semantic_hash": "b752008b3d2d630d3c7367a36332dda2"
   },
   "lib/features/celdas/presentation/widgets/celda_grid_skeleton.dart": {
-    "mtime": 1789219442.607639,
-    "seen": 1789226117.912342,
-    "ast_hash": "513ad56ef9a9aa72d69832bd76d3df00",
-    "semantic_hash": "513ad56ef9a9aa72d69832bd76d3df00"
+    "mtime": 1789235045.9393234,
+    "seen": 1789241710.8302321,
+    "ast_hash": "e84e0497ca489f748c6cad14beb4abc6",
+    "semantic_hash": ""
   },
   "lib/features/celdas/presentation/widgets/celda_quick_actions_sheet.dart": {
     "mtime": 1787772174.9349117,
@@ -864,22 +864,22 @@
     "semantic_hash": "57781e045e7b92ec1fa51eb8f783e4ed"
   },
   "lib/features/tickets/presentation/registrar_entrada_notifier.dart": {
-    "mtime": 1789219442.6108427,
-    "seen": 1789226117.9124336,
-    "ast_hash": "b5ba4664451504ef76f37e1cd6c5ff3d",
-    "semantic_hash": "b5ba4664451504ef76f37e1cd6c5ff3d"
+    "mtime": 1789235045.9413228,
+    "seen": 1789241710.9097967,
+    "ast_hash": "1792a0d2b437d0c9957fbe97184877d7",
+    "semantic_hash": ""
   },
   "lib/features/tickets/presentation/registrar_entrada_screen.dart": {
-    "mtime": 1789219442.61284,
-    "seen": 1789226117.912435,
-    "ast_hash": "914637a05bd06eec4dea5143ff40ce41",
-    "semantic_hash": "914637a05bd06eec4dea5143ff40ce41"
+    "mtime": 1789235045.943725,
+    "seen": 1789241710.9098046,
+    "ast_hash": "52471c1b5e56f92722659f70bfd6419f",
+    "semantic_hash": ""
   },
   "lib/features/tickets/presentation/registrar_entrada_state.dart": {
-    "mtime": 1789219442.613845,
-    "seen": 1789226117.9124365,
-    "ast_hash": "ebd00d91784cecce2d821ac204724626",
-    "semantic_hash": "ebd00d91784cecce2d821ac204724626"
+    "mtime": 1789235045.945241,
+    "seen": 1789241710.90981,
+    "ast_hash": "9a5d3e9cc0394cb1fbbb65091e097cac",
+    "semantic_hash": ""
   },
   "lib/features/tickets/presentation/registrar_salida_screen.dart": {
     "mtime": 1787793718.9838521,
@@ -1524,16 +1524,16 @@
     "semantic_hash": "c05754cc2e317c9e26d7e6a26f9665f2"
   },
   "test/widget/celda_accion_rapida_sheet_test.dart": {
-    "mtime": 1789219442.6168394,
-    "seen": 1789226117.9125774,
-    "ast_hash": "0c3a01bdd8ce1bad0756d069a3c47c80",
-    "semantic_hash": "0c3a01bdd8ce1bad0756d069a3c47c80"
+    "mtime": 1789235045.9467094,
+    "seen": 1789241711.018274,
+    "ast_hash": "b34331bddc56833fd399959d64c6d755",
+    "semantic_hash": ""
   },
   "test/widget/celda_card_test.dart": {
-    "mtime": 1789219442.6188414,
-    "seen": 1789226117.9125788,
-    "ast_hash": "e5a259950a618b9981869e5e4d2930fe",
-    "semantic_hash": "e5a259950a618b9981869e5e4d2930fe"
+    "mtime": 1789235045.9487896,
+    "seen": 1789241711.0182798,
+    "ast_hash": "00cc6845c43245745c0143e33a5c0eb0",
+    "semantic_hash": ""
   },
   "test/widget/celda_detail_screen_test.dart": {
     "mtime": 1787320390.5134947,
@@ -1542,16 +1542,16 @@
     "semantic_hash": "ab46e0f8b8883dd3020592d5a4c77ae0"
   },
   "test/widget/celdas_screen_test.dart": {
-    "mtime": 1789219442.6211526,
-    "seen": 1789226117.9125812,
-    "ast_hash": "9eae7e51e02409196bebf8af9f69f9c8",
-    "semantic_hash": "9eae7e51e02409196bebf8af9f69f9c8"
+    "mtime": 1789235045.9501872,
+    "seen": 1789241711.018702,
+    "ast_hash": "c1c7dd24d2962554c622b8f7e86b0032",
+    "semantic_hash": ""
   },
   "test/widget/home_screen_test.dart": {
-    "mtime": 1789219442.6236858,
-    "seen": 1789226117.9125824,
-    "ast_hash": "75aa62038602fa4f8ae4c3909e965004",
-    "semantic_hash": "75aa62038602fa4f8ae4c3909e965004"
+    "mtime": 1789235045.9525528,
+    "seen": 1789241711.0187075,
+    "ast_hash": "43afb9c458b42818acfbb9a3ba495aeb",
+    "semantic_hash": ""
   },
   "test/widget/horarios_screen_test.dart": {
     "mtime": 1787591631.9436262,
@@ -1560,10 +1560,10 @@
     "semantic_hash": "733a1833305d8ec5bd377cb57ce07bf9"
   },
   "test/widget/login_screen_test.dart": {
-    "mtime": 1789219442.6256926,
-    "seen": 1789226117.912585,
-    "ast_hash": "d910918cef11234ad5de48baa7cb066f",
-    "semantic_hash": "d910918cef11234ad5de48baa7cb066f"
+    "mtime": 1789235045.9547577,
+    "seen": 1789241711.0190754,
+    "ast_hash": "05567bbd87c8bef8be4251a25f16e546",
+    "semantic_hash": ""
   },
   "test/widget/mensualidad_detail_screen_test.dart": {
     "mtime": 1787451918.7839053,
@@ -1690,5 +1690,95 @@
     "seen": 1789226117.9126122,
     "ast_hash": "68769100063bb8a4bf17cc919fd4de42",
     "semantic_hash": "68769100063bb8a4bf17cc919fd4de42"
+  },
+  "lib/core/widgets/dashboard_action_group.dart": {
+    "mtime": 1789235046.06575,
+    "seen": 1789241710.7930176,
+    "ast_hash": "dc33e26cd8c2d878735bb0e4706bee53",
+    "semantic_hash": ""
+  },
+  "lib/core/widgets/dashboard_metric_card.dart": {
+    "mtime": 1789235046.0677416,
+    "seen": 1789241710.7930262,
+    "ast_hash": "9db1f662de6267c32e23845f6db67b7f",
+    "semantic_hash": ""
+  },
+  "lib/features/auth/presentation/widgets/admin_home_dashboard.dart": {
+    "mtime": 1789235046.0701854,
+    "seen": 1789241710.8144815,
+    "ast_hash": "ee36b9030a9704ed6def9925da2a32f5",
+    "semantic_hash": ""
+  },
+  "test/widget/admin_home_dashboard_test.dart": {
+    "mtime": 1789235046.0721774,
+    "seen": 1789241711.0172462,
+    "ast_hash": "e5b6182cb2a51785e91e7a8a0048f640",
+    "semantic_hash": ""
+  },
+  ".opencode/skills/diseno-parqueadero/SKILL.md": {
+    "mtime": 1789235046.0623257,
+    "seen": 1789241711.0291502,
+    "ast_hash": "6ef4f30dd32e9b021043f3bfe0f6a3e6",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1789225277.5258877,
+    "seen": 1789241711.0291572,
+    "ast_hash": "9015287b90ea8c74ccdd006862f39577",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1787099731.617468,
+    "seen": 1789241711.0291607,
+    "ast_hash": "c3f01b84b46989128202ad620a3a92ab",
+    "semantic_hash": ""
+  },
+  "analysis_options.yaml": {
+    "mtime": 1787099731.5421686,
+    "seen": 1789241711.0291638,
+    "ast_hash": "9e65f4b9beebb674c0dc252f70a5c177",
+    "semantic_hash": ""
+  },
+  "pubspec.yaml": {
+    "mtime": 1787116025.0878553,
+    "seen": 1789241711.029167,
+    "ast_hash": "189cbff7a3566a20dfa5f0f58ce997a0",
+    "semantic_hash": ""
+  },
+  "web/index.html": {
+    "mtime": 1787099731.689933,
+    "seen": 1789241711.0291693,
+    "ast_hash": "a3a42bbe4023a5742162f6bd7610405e",
+    "semantic_hash": ""
+  },
+  "web/favicon.png": {
+    "mtime": 1761415458.383765,
+    "seen": 1789241711.029172,
+    "ast_hash": "5dcef449791fa27946b3d35ad8803796",
+    "semantic_hash": ""
+  },
+  "web/icons/Icon-192.png": {
+    "mtime": 1761415458.3858125,
+    "seen": 1789241711.029175,
+    "ast_hash": "ac9a721a12bbc803b44f645561ecb1e1",
+    "semantic_hash": ""
+  },
+  "web/icons/Icon-512.png": {
+    "mtime": 1761415458.3868213,
+    "seen": 1789241711.0291777,
+    "ast_hash": "96e752610906ba2a93c65f8abe1645f1",
+    "semantic_hash": ""
+  },
+  "web/icons/Icon-maskable-192.png": {
+    "mtime": 1761415503.1222134,
+    "seen": 1789241711.0291798,
+    "ast_hash": "c457ef57daa1d16f64b27b786ec2ea3c",
+    "semantic_hash": ""
+  },
+  "web/icons/Icon-maskable-512.png": {
+    "mtime": 1761415503.1115313,
+    "seen": 1789241711.0291822,
+    "ast_hash": "301a7604d45b3e739efc881eb04896ea",
+    "semantic_hash": ""
   }
 }

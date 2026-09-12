@@ -1,6 +1,8 @@
-# AGENTS.md — parqueadero-api
+﻿# AGENTS.md — parqueadero-api
 
 <mark>Este `AGENTS.md` es el puente. Las reglas completas están en `CLAUDE.md` (este directorio). Léelo entero antes de tocar código.</mark>
+
+> **OBLIGATORIO antes de tocar nada:** ejecuta `graphify update .` en este directorio (~14 s). Es la primera accion de la sesion, antes de leer codigo o planear. Un grafo desfasado no falla: responde "no existe" sobre archivos que si existen, y ese dato falso se propaga al refinador y al implementador. Detalle en el `AGENTS.md` de la raiz.
 
 API REST de gestión de parqueadero: `Node.js 22` (ESM) + `Express 5` + `PostgreSQL 16` + `Prisma` + `Zod` + `JWT` + `Vitest`/`Supertest`.
 

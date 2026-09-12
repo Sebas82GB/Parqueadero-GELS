@@ -39,14 +39,31 @@ Cada proyecto tiene el suyo, en su propia carpeta. **No hay grafo en la raiz y n
 | `parqueadero-api` | `parqueadero-api/graphify-out/` | ~587 nodos |
 | `parqueadero_app` | `parqueadero_app/graphify-out/` | ~2848 nodos |
 
-**Regla de oro: actualiza antes de confiar.** Un grafo desactualizado no da error, da una respuesta incompleta que parece valida: responde "no existe" sobre un archivo que si existe. Antes de la primera consulta de una sesion, dentro del proyecto:
+### OBLIGATORIO al iniciar sesion
+
+**La primera accion de toda sesion de desarrollo es actualizar el grafo del proyecto de la tarea.** No es opcional ni queda a criterio: va antes de leer codigo, antes de planear y antes de cualquier consulta al grafo.
 
 ```bash
-cd parqueadero-api        # o parqueadero_app
-graphify update .         # AST local, sin LLM
+cd parqueadero-api        # si la tarea es del backend   (~14 s)
+graphify update .         # AST local, sin LLM, sin coste de tokens
+
+cd parqueadero_app        # si la tarea es de la app     (~36 s)
+graphify update .
 ```
 
-Si una consulta devuelve algo inesperado o vacio, **sospecha del grafo antes que del codigo**.
+Actualiza **solo el proyecto de la tarea**: una tarea pertenece a UN proyecto, y actualizar el otro es tiempo perdido. Si la sesion cambia de proyecto a medias, actualiza el nuevo antes de consultarlo.
+
+**Por que es obligatorio.** Un grafo desactualizado no da error: da una respuesta incompleta que parece valida. Responde "no existe" sobre un archivo que si existe. Ha pasado dos veces en este repo:
+
+- `paginacion.util.js` estaba commiteado y el grafo respondia "No node matching found".
+- Los widgets `admin_home_dashboard.dart`, `dashboard_metric_card.dart` y `dashboard_action_group.dart` estaban ausentes del grafo del front despues de commitearlos.
+
+En los dos casos el codigo estaba bien y el grafo mentia. Si esa respuesta entra a un plan, se propaga al refinador y al implementador como un hecho falso: una fase se dimensiona mal, o se declara que algo no tiene dependientes cuando tiene catorce.
+
+Si una consulta devuelve algo inesperado o vacio **despues** de actualizar, entonces si: sospecha del codigo. Antes de actualizar, sospecha siempre del grafo.
+
+Excepcion unica: si la sesion no va a tocar codigo (configuracion, documentacion, dudas conceptuales), no hace falta. En cuanto aparezca la primera pregunta sobre estructura del codigo, actualiza primero.
+
 
 ### Que comando usar (de mas barato a mas caro)
 
