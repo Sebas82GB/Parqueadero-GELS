@@ -4,3 +4,19 @@ CLAUDE.md
 
 # Copias de seguridad de historiales git anteriores (no forman parte del repo nuevo)
 **/.git.bak-*/
+
+# graphify - se versionan solo los artefactos portables y utiles para el equipo:
+# graph.json (consultable con `graphify query`) y GRAPH_REPORT.md (arquitectura).
+# Todo lo demas es local o regenerable:
+#   .graphify_root   -> ruta ABSOLUTA de la maquina que lo genero
+#   .graphify_python -> interprete local
+#   cache/           -> cache de AST, se reconstruye
+#   graph.html       -> 0.6-2.5 MB de visor, regenerable con `cluster-only`
+#   cost.json        -> gasto local de LLM
+# Tras `git pull`, ejecuta `graphify update .` para sincronizar el grafo.
+**/graphify-out/.graphify_root
+**/graphify-out/.graphify_python
+**/graphify-out/.graphify_labels.json.sig
+**/graphify-out/cache/
+**/graphify-out/graph.html
+**/graphify-out/cost.json
