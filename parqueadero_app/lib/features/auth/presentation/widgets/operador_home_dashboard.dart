@@ -6,7 +6,7 @@ import '../../../../core/theme/app_breakpoints.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/animated_count_text.dart';
+import '../../../../core/widgets/dashboard_metric_card.dart';
 import '../../../celdas/presentation/celda_list_notifier.dart';
 import '../../../turnos/presentation/widgets/turno_activo_indicator.dart';
 import '../session_notifier.dart';
@@ -16,14 +16,22 @@ import '../session_notifier.dart';
 /// entrada/salida) porque son la tarea que se repite decenas de veces por
 /// turno — el resto de la pantalla se queda tranquilo.
 ///
-/// "Registrar entrada" y "Ver celdas" llevan al mismo `/celdas`:
-/// `RegistrarEntradaScreen` exige llegar con un `celdaId` (se toma de un tap
-/// en una celda LIBRE de la cuadrícula, nunca de un selector propio — ver su
-/// doc comment), así que no hay una ruta de "registrar entrada" sin pasar
-/// por ahí. Mismo caso con "Registrar salida" y "Buscar placa": ambos llevan
-/// a `/tickets/buscar`, la única pantalla que resuelve "¿qué ticket cierro?"
-/// buscando por placa. No son accesos duplicados por error: son la misma
-/// pantalla con distinta prioridad visual según la intención del operador.
+/// "Registrar entrada" es la ruta rápida a `/tickets/entrada` sin
+/// `celdaId`: `RegistrarEntradaScreen` asigna sola la primera celda LIBRE
+/// compatible con el tipo elegido (ver su doc comment), así que el
+/// operador no necesita pasar por la cuadrícula para el caso común. "Ver
+/// celdas" sigue llevando a `/celdas` para cuando sí hace falta elegir una
+/// celda específica a mano — mismo `RegistrarEntradaScreen`, esta vez con
+/// `celdaId` porque se llega tocando una celda LIBRE puntual.
+///
+/// "Registrar salida" también lleva a `/celdas`: a diferencia de la
+/// entrada, acá el operador SÍ sabe (o ve) en qué bahía física está el
+/// vehículo que se va, así que elegirla a mano es lo natural. Tocar una
+/// celda OCUPADA como OPERADOR ya abre el panel de acción rápida con
+/// "Registrar salida y cobrar" (`celda_card.dart` → `showCeldaAccionRapida`)
+/// — no hace falta ninguna pantalla nueva para esto. "Buscar placa" sigue
+/// aparte, en `/tickets/buscar`: sirve para el caso en que el operador NO
+/// sabe en qué celda quedó el vehículo, o para consultar uno que ya salió.
 class OperadorHomeDashboard extends ConsumerWidget {
   const OperadorHomeDashboard({super.key});
 
@@ -84,7 +92,7 @@ class OperadorHomeDashboard extends ConsumerWidget {
                         label: 'Registrar entrada',
                         fondo: AppColors.verdeSenal,
                         contenido: AppColors.concreto,
-                        onTap: () => context.push('/celdas'),
+                        onTap: () => context.push('/tickets/entrada'),
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       _AccionPrincipal(
@@ -93,7 +101,7 @@ class OperadorHomeDashboard extends ConsumerWidget {
                         fondo: AppColors.concreto,
                         contenido: AppColors.asfalto,
                         borde: AppColors.asfalto,
-                        onTap: () => context.push('/tickets/buscar'),
+                        onTap: () => context.push('/celdas'),
                       ),
                       const SizedBox(height: AppSpacing.md),
                       Row(
@@ -130,6 +138,7 @@ class OperadorHomeDashboard extends ConsumerWidget {
 /// "Celdas libres" siempre en vivo: comparte `celdaListNotifierProvider` con
 /// `CeldasScreen` (mismo `autoDispose` + poll de 30s), así que no duplica el
 /// fetch — si ambas pantallas están montadas, un solo timer las alimenta.
+/// Molde compartido con `AdminHomeDashboard` vía `DashboardMetricCard`.
 class _CeldasLibresCard extends ConsumerWidget {
   const _CeldasLibresCard();
 
@@ -138,62 +147,15 @@ class _CeldasLibresCard extends ConsumerWidget {
     final state = ref.watch(celdaListNotifierProvider);
     final sinDatosTodavia = state.celdas.isEmpty;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(color: AppColors.asfalto, borderRadius: BorderRadius.circular(AppRadius.md)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Celdas libres', style: TextStyle(color: AppColors.demarcacion, fontSize: 11)),
-                const SizedBox(height: AppSpacing.xs),
-                if (sinDatosTodavia && state.isLoading)
-                  const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(AppColors.demarcacion),
-                    ),
-                  )
-                else if (sinDatosTodavia && state.errorMessage != null)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.error_outline, color: AppColors.demarcacion, size: 20),
-                      const SizedBox(width: AppSpacing.xs),
-                      TextButton(
-                        style: TextButton.styleFrom(foregroundColor: AppColors.demarcacion),
-                        onPressed: () => ref.read(celdaListNotifierProvider.notifier).refrescar(),
-                        child: const Text('Reintentar'),
-                      ),
-                    ],
-                  )
-                else
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      AnimatedCountText(
-                        value: state.totalLibres,
-                        style: const TextStyle(color: AppColors.demarcacion, fontSize: 28),
-                      ),
-                      Text(
-                        ' / ${state.totalCeldas}',
-                        style: const TextStyle(color: AppColors.concreto, fontSize: 15),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-          Icon(Icons.local_parking, color: AppColors.demarcacion.withValues(alpha: 0.7), size: 28),
-        ],
-      ),
+    return DashboardMetricCard(
+      label: 'Celdas libres',
+      icon: Icons.local_parking,
+      dark: true,
+      value: sinDatosTodavia && (state.isLoading || state.errorMessage != null) ? null : state.totalLibres,
+      suffix: ' / ${state.totalCeldas}',
+      isLoading: state.isLoading,
+      errorMessage: state.errorMessage,
+      onRetry: () => ref.read(celdaListNotifierProvider.notifier).refrescar(),
     );
   }
 }

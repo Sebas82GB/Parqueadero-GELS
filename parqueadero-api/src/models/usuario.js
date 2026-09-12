@@ -10,8 +10,10 @@ export class Usuario {
     this.updatedAt = updatedAt;
   }
 
-  // A propósito no lee record.passwordHash: la entidad de dominio no puede
-  // filtrar el hash aunque un controlador la serialice directo en res.json.
+  // Lista de campos deliberada, no `new Usuario(record)`: así una columna
+  // nueva de Prisma no queda expuesta en la API solo por existir en la fila,
+  // y es lo que garantiza que record.passwordHash nunca entre a la entidad
+  // de dominio, aunque un controlador la serialice directo en res.json.
   static toDomain(record) {
     return new Usuario({
       id: record.id,

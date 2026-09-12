@@ -260,6 +260,24 @@ class CeldaCard extends ConsumerWidget {
                           color: AppColors.demarcacion,
                           size: 22,
                         ),
+                        // Placa del ticket abierto: mismo `ticketInfo` que ya
+                        // trae el ícono, sin ningún GET nuevo. Ausente solo
+                        // si la celda quedó fuera de la primera página de
+                        // 100 tickets ABIERTOS (ver doc de `ticketInfo` en
+                        // `celda_list_state.dart`) — ahí no se inventa nada,
+                        // se omite la línea.
+                        if (ticketInfo?.placa case final placa?) ...[
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            placa,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: colorTexto,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                         if (transcurrido != null) ...[
                           const SizedBox(height: AppSpacing.xs),
                           Text(

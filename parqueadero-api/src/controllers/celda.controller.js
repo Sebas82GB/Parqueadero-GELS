@@ -1,8 +1,9 @@
 import * as celdaService from '../services/celda.service.js';
+import { sendPage } from '../utils/paginacion.util.js';
 
 export async function listarCeldas(req, res) {
   const { celdas, total, page, perPage } = await celdaService.listarCeldas(req.query);
-  res.status(200).json({ data: celdas, meta: { page, perPage, total } });
+  sendPage(res, celdas, { page, perPage, total });
 }
 
 export async function obtenerCeldaPorId(req, res) {

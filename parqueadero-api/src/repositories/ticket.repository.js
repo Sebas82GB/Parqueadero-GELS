@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../config/database.js';
 import { Ticket } from '../models/ticket.js';
 import { ConflictError } from '../errors/index.js';
+import { toSkipTake } from '../utils/paginacion.util.js';
 
 const DETALLE = {
   vehiculo: true,
@@ -79,8 +80,7 @@ export async function findMany({
       where,
       include: { vehiculo: true, celda: true },
       orderBy: { horaEntrada: 'desc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+      ...toSkipTake(page, perPage),
     }),
     prisma.ticket.count({ where }),
   ]);

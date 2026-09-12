@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +7,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:parqueadero_app/core/network/api_exception.dart';
+import 'package:parqueadero_app/core/theme/app_breakpoints.dart';
 import 'package:parqueadero_app/core/theme/app_colors.dart';
 import 'package:parqueadero_app/features/auth/data/auth_repository_impl.dart';
 import 'package:parqueadero_app/features/auth/domain/auth_repository.dart';
 import 'package:parqueadero_app/features/auth/domain/usuario.dart';
 import 'package:parqueadero_app/features/auth/presentation/login_screen.dart';
+
+/// Luminancia relativa y contraste WCAG 2.x — misma fórmula reimplementada en
+/// `status_style_test.dart`, repetida acá (en vez de compartirse) para poder
+/// assertar el contraste real de los colores del panel de marca en vez de
+/// solo fijar los hex.
+double _luminanciaRelativa(Color color) {
+  double canal(double c) => c <= 0.03928 ? c / 12.92 : math.pow((c + 0.055) / 1.055, 2.4).toDouble();
+  return 0.2126 * canal(color.r) + 0.7152 * canal(color.g) + 0.0722 * canal(color.b);
+}
+
+double _contraste(Color a, Color b) {
+  final la = _luminanciaRelativa(a);
+  final lb = _luminanciaRelativa(b);
+  final claro = la > lb ? la : lb;
+  final oscuro = la > lb ? lb : la;
+  return (claro + 0.05) / (oscuro + 0.05);
+}
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -145,10 +164,10 @@ void main() {
     expect(emailField.autofocus, isTrue);
   });
 
-  // Hallazgo de la auditoría UX: la pantalla no llevaba ningún token de
-  // marca. El acento vive solo en el borde de foco (demarcación), sin
-  // agregar ningún elemento decorativo nuevo a una pantalla que debe
-  // quedarse tranquila fuera de la cuadrícula de celdas.
+  // Hallazgo de la auditoría UX original: la pantalla no llevaba ningún
+  // token de marca. Sigue valiendo con el panel de marca del rediseño: el
+  // foco de ambos campos se tiñe de demarcación, no del verdeSenal genérico
+  // del tema.
   testWidgets('acento de marca: el borde de foco de ambos campos es demarcación', (tester) async {
     await pumpLoginScreen(tester);
 
@@ -158,5 +177,55 @@ void main() {
       final focusedBorder = campo.decoration?.focusedBorder as OutlineInputBorder?;
       expect(focusedBorder?.borderSide.color, AppColors.demarcacion);
     }
+  });
+
+  // Regresión responsive: el viewport de test por defecto (800×600) ya cae
+  // en la rama angosta, así que sin el segundo test acá nada ejercita
+  // realmente el split screen de escritorio.
+  group('responsive según ancho de pantalla', () {
+    Future<void> conAncho(WidgetTester tester, double width) async {
+      final view = tester.view;
+      view.physicalSize = Size(width, 800);
+      view.devicePixelRatio = 1.0;
+      addTearDown(view.resetPhysicalSize);
+      addTearDown(view.resetDevicePixelRatio);
+      await pumpLoginScreen(tester);
+    }
+
+    testWidgets('angosta (<1024): panel de marca apilado arriba del formulario', (tester) async {
+      await conAncho(tester, AppBreakpoints.tablet - 1);
+
+      expect(find.byKey(const ValueKey('loginLayoutAngosto')), findsOneWidget);
+      expect(find.byKey(const ValueKey('loginLayoutAncho')), findsNothing);
+    });
+
+    testWidgets('ancha (≥1024, escritorio/web): split screen con el panel de marca al lado', (tester) async {
+      await conAncho(tester, AppBreakpoints.tablet);
+
+      expect(find.byKey(const ValueKey('loginLayoutAncho')), findsOneWidget);
+      expect(find.byKey(const ValueKey('loginLayoutAngosto')), findsNothing);
+    });
+  });
+
+  // Regresión de contraste: `demarcacion` solo puede vivir como texto sobre
+  // `asfalto` (nunca sobre una superficie clara). El panel de marca la usa
+  // como texto en dos combinaciones — opacidad plena y la bajada al 80% — y
+  // ambas deben pasar WCAG AA (4.5:1) sobre el fondo real donde se pintan.
+  group('contraste AA del panel de marca', () {
+    test('demarcación a opacidad plena sobre asfalto', () {
+      final contraste = _contraste(AppColors.demarcacion, AppColors.asfalto);
+      expect(contraste, greaterThanOrEqualTo(4.5), reason: 'contraste real: $contraste');
+    });
+
+    test('demarcación al 80% de opacidad sobre asfalto', () {
+      final colorEfectivo = Color.alphaBlend(AppColors.demarcacion.withValues(alpha: 0.8), AppColors.asfalto);
+      final contraste = _contraste(colorEfectivo, AppColors.asfalto);
+      expect(contraste, greaterThanOrEqualTo(4.5), reason: 'contraste real: $contraste');
+    });
+
+    test('concreto sobre asfalto', () {
+      final contraste = _contraste(AppColors.concreto, AppColors.asfalto);
+      expect(contraste, greaterThanOrEqualTo(4.5), reason: 'contraste real: $contraste');
+    });
   });
 }

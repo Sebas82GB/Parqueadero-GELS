@@ -1,8 +1,9 @@
 import * as horarioService from '../services/horario-operacion.service.js';
+import { sendPage } from '../utils/paginacion.util.js';
 
 export async function listarHorarios(req, res) {
   const { horarios, total, page, perPage } = await horarioService.listarHorarios(req.query);
-  res.status(200).json({ data: horarios, meta: { page, perPage, total } });
+  sendPage(res, horarios, { page, perPage, total });
 }
 
 export async function obtenerHorarioPorId(req, res) {

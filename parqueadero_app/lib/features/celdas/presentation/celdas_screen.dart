@@ -15,6 +15,28 @@ import 'widgets/celda_filtros_bar.dart';
 import 'widgets/celda_grid_skeleton.dart';
 import 'widgets/zona_header.dart';
 
+/// `true` una vez que esta sesión de la app vio la grilla con datos reales
+/// al menos una vez. Vive en un provider SIN `autoDispose` a propósito: a
+/// diferencia de `celdaListNotifierProvider` (que sí lo es y por eso arranca
+/// cada instancia nueva en `isLoading: true, celdas: []` — ver su doc), esta
+/// bandera debe sobrevivir a esos ciclos de disposal para que `build()` de
+/// abajo pueda distinguir "primera carga real, sin nada que mostrar todavía"
+/// de "recarga tras autoDispose, ya sabemos que esto resuelve rápido". Solo
+/// decide qué feedback de carga mostrar; no reemplaza el fetch real ni
+/// revive ningún timer en segundo plano.
+class CeldaGridYaVioDatosNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void marcar() {
+    if (!state) state = true;
+  }
+}
+
+final celdaGridYaVioDatosProvider = NotifierProvider<CeldaGridYaVioDatosNotifier, bool>(
+  CeldaGridYaVioDatosNotifier.new,
+);
+
 class CeldasScreen extends ConsumerStatefulWidget {
   const CeldasScreen({super.key});
 
@@ -60,6 +82,17 @@ class _CeldasScreenState extends ConsumerState<CeldasScreen> with SingleTickerPr
     final state = ref.watch(celdaListNotifierProvider);
     final notifier = ref.read(celdaListNotifierProvider.notifier);
 
+    // Efecto secundario, no un valor leído en este build: `ref.listen` (a
+    // diferencia de `ref.watch`) puede escribir en otro provider de forma
+    // segura, sin el "Tried to modify a provider while the widget tree was
+    // building" que daría escribir directo acá.
+    ref.listen(celdaListNotifierProvider, (previous, next) {
+      if (next.celdas.isNotEmpty) {
+        ref.read(celdaGridYaVioDatosProvider.notifier).marcar();
+      }
+    });
+    final yaSeVioConDatos = ref.watch(celdaGridYaVioDatosProvider);
+
     if (!_entradaDisparada && state.celdas.isNotEmpty) {
       _entradaDisparada = true;
       _entradaController.forward();
@@ -67,7 +100,7 @@ class _CeldasScreenState extends ConsumerState<CeldasScreen> with SingleTickerPr
 
     Widget body;
     if (state.celdas.isEmpty && state.isLoading) {
-      body = const CeldaGridSkeleton();
+      body = yaSeVioConDatos ? const CeldaGridRecargaSilenciosa() : const CeldaGridSkeleton();
     } else if (state.celdas.isEmpty && state.errorMessage != null) {
       body = ErrorState(message: state.errorMessage!, onRetry: notifier.refrescar);
     } else if (state.celdas.isEmpty) {

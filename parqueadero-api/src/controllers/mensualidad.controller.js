@@ -1,10 +1,11 @@
 import * as mensualidadService from '../services/mensualidad.service.js';
+import { sendPage } from '../utils/paginacion.util.js';
 
 export async function listarMensualidades(req, res) {
   const { mensualidades, total, page, perPage } = await mensualidadService.listarMensualidades(
     req.query,
   );
-  res.status(200).json({ data: mensualidades, meta: { page, perPage, total } });
+  sendPage(res, mensualidades, { page, perPage, total });
 }
 
 export async function obtenerMensualidadPorId(req, res) {

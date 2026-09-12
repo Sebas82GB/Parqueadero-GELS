@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { HorarioOperacion } from '../models/horario-operacion.js';
 import { ConflictError } from '../errors/index.js';
+import { toSkipTake } from '../utils/paginacion.util.js';
 
 function buildWhere({ vigente, ahora }) {
   return {
@@ -21,8 +22,7 @@ export async function findMany({ vigente, page, perPage, ahora = new Date() }) {
     prisma.horarioOperacion.findMany({
       where,
       orderBy: { vigenteDesde: 'desc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+      ...toSkipTake(page, perPage),
     }),
     prisma.horarioOperacion.count({ where }),
   ]);

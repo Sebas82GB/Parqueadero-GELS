@@ -1,8 +1,9 @@
 import * as tarifaService from '../services/tarifa.service.js';
+import { sendPage } from '../utils/paginacion.util.js';
 
 export async function listarTarifas(req, res) {
   const { tarifas, total, page, perPage } = await tarifaService.listarTarifas(req.query);
-  res.status(200).json({ data: tarifas, meta: { page, perPage, total } });
+  sendPage(res, tarifas, { page, perPage, total });
 }
 
 export async function obtenerTarifaPorId(req, res) {

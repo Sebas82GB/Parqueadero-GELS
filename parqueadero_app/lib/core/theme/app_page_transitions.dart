@@ -26,6 +26,19 @@ class AppPageTransitionsBuilder extends PageTransitionsBuilder {
       return child;
     }
 
+    // La ruta que ya terminó de entrar y solo está siendo tapada por otra
+    // empujada encima llega acá con `animation` estático en 1.0 (nunca
+    // vuelve a moverse mientras espera): envolverla en FadeTransition no
+    // cambia nada visible (opacidad ya fija en 1.0, offset ya en 0,0), pero
+    // sí fuerza una capa de composición sobre todo su contenido en cada
+    // frame de la transición — `RenderAnimatedOpacity.isRepaintBoundary` es
+    // `true` para cualquier alpha > 0 (proxy_box.dart del SDK de Flutter).
+    // Devolver el child sin envolver evita ese costo sin tocar cómo se ve
+    // la ruta saliente.
+    if (animation.isCompleted) {
+      return child;
+    }
+
     final curved = CurvedAnimation(parent: animation, curve: AppMotion.curve);
     return FadeTransition(
       opacity: curved,

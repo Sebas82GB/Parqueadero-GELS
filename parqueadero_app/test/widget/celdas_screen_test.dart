@@ -176,6 +176,41 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets(
+    'recarga tras autoDispose con datos ya vistos antes: no repite el skeleton grande',
+    (tester) async {
+      final completer = Completer<List<Celda>>();
+      when(() => celdaRepository.listarTodas()).thenAnswer((_) => completer.future);
+
+      // `celdaGridYaVioDatosProvider` vive fuera de `celdaListNotifierProvider`
+      // justamente para sobrevivir a su `autoDispose` — acá se simula
+      // directamente el estado "ya se vio la grilla con datos antes" en vez
+      // de forzar un ciclo real de disposal con el timing de Riverpod, que
+      // no tiene un punto de enganche estable desde un widget test.
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            celdaRepositoryProvider.overrideWithValue(celdaRepository),
+            authRepositoryProvider.overrideWithValue(authRepository),
+            ticketRepositoryProvider.overrideWithValue(ticketRepository),
+            celdaGridYaVioDatosProvider.overrideWithBuild((ref, notifier) => true),
+          ],
+          child: const MaterialApp(home: CeldasScreen()),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byType(CeldaGridSkeleton), findsNothing);
+      expect(find.byType(CeldaGridRecargaSilenciosa), findsOneWidget);
+
+      completer.complete([celda(id: 'c1', codigo: 'A-01', zona: 'Zona A')]);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CeldaGridRecargaSilenciosa), findsNothing);
+      expect(find.text('A-01'), findsOneWidget);
+    },
+  );
+
   testWidgets('OPERADOR: muestra el indicador de turno activo sobre la grilla', (tester) async {
     final operador = Usuario(
       id: 'op1',

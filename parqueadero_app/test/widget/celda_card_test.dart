@@ -13,7 +13,9 @@ import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
 import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_accion_rapida_sheet.dart';
 import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_card.dart';
 import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
+import 'package:parqueadero_app/features/tickets/domain/ticket.dart';
 import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
+import 'package:parqueadero_app/features/tickets/domain/vehiculo.dart';
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
@@ -156,6 +158,63 @@ void main() {
     await pumpCard(tester, rol: RolUsuario.admin, estado: EstadoCelda.libre);
 
     expect(find.textContaining('min'), findsNothing);
+  });
+
+  testWidgets('OCUPADA: muestra la placa del ticket abierto cuando ya se conoce', (tester) async {
+    when(() => authRepository.restoreSession()).thenAnswer((_) async => usuario(RolUsuario.admin));
+    when(() => celdaRepository.listarTodas()).thenAnswer((_) async => [celda(EstadoCelda.ocupada)]);
+    // Sobreescribe el stub por defecto de stubsComunes() (lista vacía): el
+    // mismo GET que ya arma `ticketInfoPorCeldaId` (sin celdaId, todos los
+    // ABIERTOS) esta vez sí trae un ticket para 'c1'.
+    when(
+      () => ticketRepository.listar(estado: EstadoTicket.abierto, perPage: 100),
+    ).thenAnswer(
+      (_) async => TicketPageResult(
+        data: [
+          Ticket(
+            id: 't1',
+            codigo: 'T-1',
+            vehiculoId: 'v1',
+            celdaId: 'c1',
+            horaEntrada: DateTime.now().toUtc().subtract(const Duration(minutes: 5)),
+            tarifaId: 'tar1',
+            estado: EstadoTicket.abierto,
+            operadorEntradaId: 'op1',
+            createdAt: DateTime.utc(2026, 1, 1),
+            updatedAt: DateTime.utc(2026, 1, 1),
+            vehiculo: Vehiculo(
+              id: 'v1',
+              placa: 'ABC123',
+              tipo: TipoVehiculo.carro,
+              createdAt: DateTime.utc(2026, 1, 1),
+              updatedAt: DateTime.utc(2026, 1, 1),
+            ),
+          ),
+        ],
+        page: 1,
+        perPage: 100,
+        total: 1,
+      ),
+    );
+    final router = GoRouter(
+      initialLocation: '/celdas',
+      routes: [
+        GoRoute(path: '/celdas', builder: (context, state) => const Scaffold(body: CeldaCard(celdaId: 'c1'))),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(authRepository),
+          celdaRepositoryProvider.overrideWithValue(celdaRepository),
+          ticketRepositoryProvider.overrideWithValue(ticketRepository),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('ABC123'), findsOneWidget);
   });
 
   testWidgets('long press: abre las acciones rápidas sin cambiar de pantalla', (tester) async {

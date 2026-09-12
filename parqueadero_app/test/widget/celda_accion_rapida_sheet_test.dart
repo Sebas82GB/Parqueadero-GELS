@@ -14,6 +14,7 @@ import 'package:parqueadero_app/features/auth/domain/usuario.dart';
 import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_accion_rapida_sheet.dart';
 import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
 import 'package:parqueadero_app/features/tickets/domain/cobro_preview.dart';
+import 'package:parqueadero_app/features/tickets/domain/desglose_item.dart';
 import 'package:parqueadero_app/features/tickets/domain/pago.dart';
 import 'package:parqueadero_app/features/tickets/domain/ticket.dart';
 import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
@@ -265,31 +266,38 @@ void main() {
     expect(find.byType(CeldaAccionRapidaSheet), findsOneWidget);
   });
 
-  testWidgets('Ver historial: navega a /tickets con la placa como filtro', (tester) async {
+  testWidgets('Ver detalle de factura: expande el desglose en vez de navegar al historial', (tester) async {
     stubTicketAbierto(ticket());
     when(() => ticketRepository.previsualizarCobro('t1')).thenAnswer(
       (_) async => CobroPreview(
         valorTotal: 5000,
-        desglose: const [],
+        desglose: [
+          DesgloseBloque(
+            dia: 1,
+            bloqueNumero: 1,
+            inicio: DateTime.utc(2026, 1, 1, 8),
+            fin: DateTime.utc(2026, 1, 1, 9),
+            minutos: 60,
+            tipoCobro: TipoCobro.parcial,
+            valor: 5000,
+          ),
+        ],
         horaEntrada: DateTime.utc(2026, 1, 1),
         horaSalida: DateTime.utc(2026, 1, 1, 1),
       ),
     );
-    when(
-      () => ticketRepository.listar(
-        estado: any(named: 'estado'),
-        placa: any(named: 'placa'),
-        desde: any(named: 'desde'),
-        hasta: any(named: 'hasta'),
-        page: any(named: 'page'),
-        perPage: any(named: 'perPage'),
-      ),
-    ).thenAnswer((_) async => const TicketPageResult(data: [], page: 1, perPage: 20, total: 0));
 
     await pumpSheet(tester);
-    await tester.tap(find.text('Ver historial'));
+
+    expect(find.text('Ver historial'), findsNothing);
+    expect(find.text('Ver detalle de factura'), findsOneWidget);
+    expect(find.textContaining('bloque 1'), findsNothing);
+
+    await tester.tap(find.text('Ver detalle de factura'));
     await tester.pumpAndSettle();
 
-    expect(rutaVisitada, '/tickets');
+    expect(find.textContaining('bloque 1'), findsOneWidget);
+    expect(find.text('Ocultar detalle de factura'), findsOneWidget);
+    expect(rutaVisitada, isNull);
   });
 }

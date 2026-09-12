@@ -1,4 +1,5 @@
 import * as turnoService from '../services/turno.service.js';
+import { sendPage } from '../utils/paginacion.util.js';
 
 export async function abrirTurno(req, res) {
   const turno = await turnoService.abrirTurno(req.body, { operadorId: req.user.id });
@@ -34,5 +35,5 @@ export async function listarTurnos(req, res) {
     usuarioId: req.user.id,
     rol: req.user.rol,
   });
-  res.status(200).json({ data: turnos, meta: { page, perPage, total } });
+  sendPage(res, turnos, { page, perPage, total });
 }

@@ -19,7 +19,7 @@ import '../../../tickets/presentation/salida_notifier.dart';
 import '../../../tickets/presentation/salida_state.dart';
 import '../../../tickets/presentation/ticket_abierto_de_celda_notifier.dart';
 import '../../../tickets/presentation/ticket_detail_notifier.dart';
-import '../../../tickets/presentation/ticket_list_notifier.dart';
+import '../../../tickets/presentation/widgets/desglose_view.dart';
 import '../../../tickets/presentation/widgets/metodo_pago_label.dart';
 
 /// Panel de acción rápida al tocar una celda OCUPADA (skill
@@ -42,9 +42,13 @@ Future<void> showCeldaAccionRapida(BuildContext context, String celdaId) {
       builder: (context) => Dialog(
         backgroundColor: AppColors.asfalto,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: AppBreakpoints.contentMaxWidth),
+          constraints: const BoxConstraints(
+            maxWidth: AppBreakpoints.contentMaxWidth,
+          ),
           child: CeldaAccionRapidaSheet(celdaId: celdaId, mostrarHandle: false),
         ),
       ),
@@ -85,7 +89,11 @@ class _HandleBar extends StatelessWidget {
 }
 
 class CeldaAccionRapidaSheet extends ConsumerStatefulWidget {
-  const CeldaAccionRapidaSheet({super.key, required this.celdaId, this.mostrarHandle = true});
+  const CeldaAccionRapidaSheet({
+    super.key,
+    required this.celdaId,
+    this.mostrarHandle = true,
+  });
 
   final String celdaId;
 
@@ -95,13 +103,16 @@ class CeldaAccionRapidaSheet extends ConsumerStatefulWidget {
   final bool mostrarHandle;
 
   @override
-  ConsumerState<CeldaAccionRapidaSheet> createState() => _CeldaAccionRapidaSheetState();
+  ConsumerState<CeldaAccionRapidaSheet> createState() =>
+      _CeldaAccionRapidaSheetState();
 }
 
-class _CeldaAccionRapidaSheetState extends ConsumerState<CeldaAccionRapidaSheet> {
+class _CeldaAccionRapidaSheetState
+    extends ConsumerState<CeldaAccionRapidaSheet> {
   bool _buscando = true;
   String? _ticketId;
   MetodoPago? _metodo;
+  bool _mostrarDetalle = false;
   final _montoRecibidoController = TextEditingController();
 
   @override
@@ -118,7 +129,9 @@ class _CeldaAccionRapidaSheetState extends ConsumerState<CeldaAccionRapidaSheet>
   }
 
   Future<void> _buscar() async {
-    final id = await ref.read(ticketAbiertoDeCeldaNotifierProvider(widget.celdaId).notifier).buscar();
+    final id = await ref
+        .read(ticketAbiertoDeCeldaNotifierProvider(widget.celdaId).notifier)
+        .buscar();
     if (!mounted) return;
     setState(() {
       _buscando = false;
@@ -139,7 +152,9 @@ class _CeldaAccionRapidaSheetState extends ConsumerState<CeldaAccionRapidaSheet>
     // en vuelo, Riverpod desecha este `autoDispose` a mitad de camino y
     // `ref.mounted` se vuelve falso antes de que la búsqueda pueda leer la
     // respuesta real.
-    final busquedaTicket = ref.watch(ticketAbiertoDeCeldaNotifierProvider(widget.celdaId));
+    final busquedaTicket = ref.watch(
+      ticketAbiertoDeCeldaNotifierProvider(widget.celdaId),
+    );
 
     if (_buscando) {
       return _EstadoCentrado(
@@ -153,7 +168,8 @@ class _CeldaAccionRapidaSheetState extends ConsumerState<CeldaAccionRapidaSheet>
       return _EstadoCentrado(
         handle: widget.mostrarHandle ? const _HandleBar() : null,
         child: Text(
-          busquedaTicket.errorMessage ?? 'No se encontró un ticket abierto para esta celda.',
+          busquedaTicket.errorMessage ??
+              'No se encontró un ticket abierto para esta celda.',
           style: const TextStyle(color: AppColors.demarcacion),
           textAlign: TextAlign.center,
         ),
@@ -194,8 +210,11 @@ class _CeldaAccionRapidaSheetState extends ConsumerState<CeldaAccionRapidaSheet>
     // que ya está excluido de esta sección por `esOtro` — igual se maneja
     // acá porque el tipo estático sigue siendo `int?`.
     final totalEsperado = preview.preview?.valorTotal;
-    final cambio = (montoRecibido != null && totalEsperado != null) ? montoRecibido - totalEsperado : null;
-    final faltaMontoRecibido = metodoEsEfectivo && (cambio == null || cambio < 0);
+    final cambio = (montoRecibido != null && totalEsperado != null)
+        ? montoRecibido - totalEsperado
+        : null;
+    final faltaMontoRecibido =
+        metodoEsEfectivo && (cambio == null || cambio < 0);
     final enviando = salida.step == SalidaStep.enviando;
 
     Future<void> confirmar() async {
@@ -204,145 +223,219 @@ class _CeldaAccionRapidaSheetState extends ConsumerState<CeldaAccionRapidaSheet>
         context.push('/tickets/$ticketId/salida');
         return;
       }
-      final ok = await ref.read(salidaNotifierProvider(ticketId).notifier).confirmarSalida(metodo: _metodo);
+      final ok = await ref
+          .read(salidaNotifierProvider(ticketId).notifier)
+          .confirmarSalida(metodo: _metodo);
       if (ok && context.mounted) Navigator.of(context).pop();
     }
 
-    void verHistorial() {
-      final placa = ticket.vehiculo?.placa;
-      if (placa != null) {
-        ref.read(ticketListNotifierProvider.notifier).setPlacaFiltro(placa);
-      }
-      Navigator.of(context).pop();
-      context.push('/tickets');
-    }
-
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.lg),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (widget.mostrarHandle) const _HandleBar(),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.sm,
+        AppSpacing.lg,
+        AppSpacing.lg,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (widget.mostrarHandle) const _HandleBar(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Celda ${ticket.celda?.codigo ?? '—'} · ${tipoVehiculoLabel(tipo)}',
+                        style: const TextStyle(
+                          color: AppColors.demarcacion,
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        ticket.vehiculo?.placa ?? '—',
+                        style: const TextStyle(
+                          color: AppColors.demarcacion,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      'Celda ${ticket.celda?.codigo ?? '—'} · ${tipoVehiculoLabel(tipo)}',
-                      style: const TextStyle(color: AppColors.demarcacion, fontSize: 11),
+                    const Text(
+                      'Tiempo',
+                      style: TextStyle(
+                        color: AppColors.demarcacion,
+                        fontSize: 11,
+                      ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      ticket.vehiculo?.placa ?? '—',
-                      style: const TextStyle(color: AppColors.demarcacion, fontSize: 20),
+                    TiempoTranscurridoText(
+                      horaEntrada: ticket.horaEntrada,
+                      style: const TextStyle(
+                        color: AppColors.demarcacion,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            _TarjetaMonto(preview: preview),
+            if (!esOtro) ...[
+              const SizedBox(height: AppSpacing.md),
+              Wrap(
+                spacing: AppSpacing.sm,
                 children: [
-                  const Text('Tiempo', style: TextStyle(color: AppColors.demarcacion, fontSize: 11)),
-                  const SizedBox(height: 2),
-                  TiempoTranscurridoText(
-                    horaEntrada: ticket.horaEntrada,
-                    style: const TextStyle(color: AppColors.demarcacion, fontSize: 16),
-                  ),
+                  for (final metodo in MetodoPago.values)
+                    ChoiceChip(
+                      label: Text(metodoPagoLabel(metodo)),
+                      selected: _metodo == metodo,
+                      onSelected: enviando
+                          ? null
+                          : (sel) =>
+                                setState(() => _metodo = sel ? metodo : null),
+                      // Relleno opaco, no transparente: un chip transparente
+                      // deja ver lo que quede detrás y perdía contraste. Con
+                      // relleno propio se lee igual sin depender de eso.
+                      backgroundColor: AppColors.asfalto,
+                      selectedColor: AppColors.demarcacion,
+                      side: const BorderSide(
+                        color: AppColors.demarcacion,
+                        width: 1.5,
+                      ),
+                      elevation: 0,
+                      pressElevation: 0,
+                      shadowColor: Colors.transparent,
+                      surfaceTintColor: Colors.transparent,
+                      checkmarkColor: AppColors.asfalto,
+                      labelStyle: TextStyle(
+                        color: _metodo == metodo
+                            ? AppColors.asfalto
+                            : AppColors.demarcacion,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _TarjetaMonto(preview: preview),
-          if (!esOtro) ...[
-            const SizedBox(height: AppSpacing.md),
-            Wrap(
-              spacing: AppSpacing.sm,
-              children: [
-                for (final metodo in MetodoPago.values)
-                  ChoiceChip(
-                    label: Text(metodoPagoLabel(metodo)),
-                    selected: _metodo == metodo,
-                    onSelected: enviando ? null : (sel) => setState(() => _metodo = sel ? metodo : null),
-                    backgroundColor: Colors.transparent,
-                    selectedColor: AppColors.demarcacion,
-                    side: const BorderSide(color: AppColors.demarcacion),
-                    labelStyle: TextStyle(
-                      color: _metodo == metodo ? AppColors.asfalto : AppColors.demarcacion,
+              if (metodoEsEfectivo) ...[
+                const SizedBox(height: AppSpacing.sm),
+                TextField(
+                  controller: _montoRecibidoController,
+                  enabled: !enviando,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  style: const TextStyle(color: AppColors.concreto),
+                  decoration: const InputDecoration(
+                    labelText: 'Monto recibido',
+                    labelStyle: TextStyle(color: AppColors.demarcacion),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: AppColors.demarcacion),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppColors.demarcacion,
+                        width: 2,
+                      ),
                     ),
                   ),
-              ],
-            ),
-            if (metodoEsEfectivo) ...[
-              const SizedBox(height: AppSpacing.sm),
-              TextField(
-                controller: _montoRecibidoController,
-                enabled: !enviando,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: const TextStyle(color: AppColors.concreto),
-                decoration: const InputDecoration(
-                  labelText: 'Monto recibido',
-                  labelStyle: TextStyle(color: AppColors.demarcacion),
-                  enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.demarcacion)),
-                  focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: AppColors.demarcacion, width: 2)),
+                  onChanged: (_) => setState(() {}),
                 ),
-                onChanged: (_) => setState(() {}),
-              ),
-              if (montoRecibido != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  cambio != null && cambio >= 0
-                      ? 'Cambio a devolver: ${formatMoney(cambio)}'
-                      : cambio != null
-                      ? 'Faltan ${formatMoney(-cambio)} para cubrir el total'
-                      : 'Calculando el total a cobrar...',
-                  style: const TextStyle(color: AppColors.concreto),
-                ),
+                if (montoRecibido != null) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    cambio != null && cambio >= 0
+                        ? 'Cambio a devolver: ${formatMoney(cambio)}'
+                        : cambio != null
+                        ? 'Faltan ${formatMoney(-cambio)} para cubrir el total'
+                        : 'Calculando el total a cobrar...',
+                    style: const TextStyle(color: AppColors.concreto),
+                  ),
+                ],
               ],
             ],
-          ],
-          const SizedBox(height: AppSpacing.md),
-          if (salida.error != null) ...[
-            Text(
-              salida.error!.message,
-              style: const TextStyle(color: AppColors.demarcacion),
-              textAlign: TextAlign.center,
+            const SizedBox(height: AppSpacing.md),
+            if (salida.error != null) ...[
+              Text(
+                salida.error!.message,
+                style: const TextStyle(color: AppColors.demarcacion),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+            SizedBox(
+              height: 56,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.verdeSenal,
+                  foregroundColor: AppColors.concreto,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                ),
+                onPressed:
+                    (enviando || preview.esTerminal || faltaMontoRecibido)
+                    ? null
+                    : confirmar,
+                child: enviando
+                    ? const ButtonSpinner()
+                    : Text(
+                        esOtro
+                            ? 'Ir a registrar salida'
+                            : 'Registrar salida y cobrar',
+                      ),
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              height: 48,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.demarcacion,
+                  side: const BorderSide(color: AppColors.demarcacion),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.sm),
+                  ),
+                ),
+                onPressed: preview.preview == null
+                    ? null
+                    : () => setState(() => _mostrarDetalle = !_mostrarDetalle),
+                icon: Icon(
+                  _mostrarDetalle ? Icons.expand_less : Icons.receipt_long,
+                ),
+                label: Text(
+                  _mostrarDetalle
+                      ? 'Ocultar detalle de factura'
+                      : 'Ver detalle de factura',
+                ),
+              ),
+            ),
+            if (_mostrarDetalle && preview.preview != null) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(AppSpacing.gutter),
+                decoration: BoxDecoration(
+                  color: AppColors.concreto,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: DesgloseView(
+                  desglose: preview.preview!.desglose,
+                  valorTotal: preview.preview!.valorTotal,
+                ),
+              ),
+            ],
           ],
-          SizedBox(
-            height: 56,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.verdeSenal,
-                foregroundColor: AppColors.concreto,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.md)),
-              ),
-              onPressed: (enviando || preview.esTerminal || faltaMontoRecibido) ? null : confirmar,
-              child: enviando
-                  ? const ButtonSpinner()
-                  : Text(esOtro ? 'Ir a registrar salida' : 'Registrar salida y cobrar'),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          SizedBox(
-            height: 48,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.demarcacion,
-                side: const BorderSide(color: AppColors.demarcacion),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
-              ),
-              onPressed: verHistorial,
-              child: const Text('Ver historial'),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -357,11 +450,19 @@ class _EstadoCentrado extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xl),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        AppSpacing.sm,
+        AppSpacing.lg,
+        AppSpacing.xl,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (handle != null) ...[handle!, const SizedBox(height: AppSpacing.md)],
+          if (handle != null) ...[
+            handle!,
+            const SizedBox(height: AppSpacing.md),
+          ],
           Center(child: child),
         ],
       ),
@@ -392,12 +493,18 @@ class _TarjetaMonto extends StatelessWidget {
       // día cambia esa condición.
       valor = Text(
         'Se define al confirmar',
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontSize: 13,
+        ),
       );
     } else if (preview.error != null) {
       valor = Text(
         preview.error!.message,
-        style: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 13),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.error,
+          fontSize: 13,
+        ),
         textAlign: TextAlign.end,
       );
     } else {
@@ -409,16 +516,27 @@ class _TarjetaMonto extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter, vertical: AppSpacing.sm),
-      decoration: BoxDecoration(color: AppColors.concreto, borderRadius: BorderRadius.circular(AppRadius.sm)),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.gutter,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.concreto,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'Total a cobrar',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 13),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 13,
+            ),
           ),
-          Flexible(child: Align(alignment: Alignment.centerRight, child: valor)),
+          Flexible(
+            child: Align(alignment: Alignment.centerRight, child: valor),
+          ),
         ],
       ),
     );

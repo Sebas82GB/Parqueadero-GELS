@@ -44,3 +44,18 @@ class CeldaGridSkeleton extends StatelessWidget {
     );
   }
 }
+
+/// Se usa en vez de [CeldaGridSkeleton] cuando esta sesión ya mostró la
+/// grilla con datos reales al menos una vez (ver
+/// `celdaGridYaVioDatosProvider` en `celdas_screen.dart`) y
+/// `celdaListNotifierProvider` volvió a arrancar desde cero por su
+/// `autoDispose`: el fetch debería resolver rápido, así que repetir las 8
+/// tarjetas fantasma se sentiría como un parpadeo, no como una carga real.
+class CeldaGridRecargaSilenciosa extends StatelessWidget {
+  const CeldaGridRecargaSilenciosa({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: CircularProgressIndicator());
+  }
+}

@@ -1,8 +1,9 @@
 import * as ticketService from '../services/ticket.service.js';
+import { sendPage } from '../utils/paginacion.util.js';
 
 export async function listarTickets(req, res) {
   const { tickets, total, page, perPage } = await ticketService.listarTickets(req.query);
-  res.status(200).json({ data: tickets, meta: { page, perPage, total } });
+  sendPage(res, tickets, { page, perPage, total });
 }
 
 export async function obtenerTicketPorId(req, res) {

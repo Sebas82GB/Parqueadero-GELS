@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../config/database.js';
 import { Usuario } from '../models/usuario.js';
 import { ConflictError } from '../errors/index.js';
+import { toSkipTake } from '../utils/paginacion.util.js';
 
 function buildWhere({ rol, activo }) {
   return {
@@ -24,8 +25,7 @@ export async function findMany({ rol, activo, page, perPage }) {
     prisma.usuario.findMany({
       where,
       orderBy: { nombre: 'asc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+      ...toSkipTake(page, perPage),
     }),
     prisma.usuario.count({ where }),
   ]);

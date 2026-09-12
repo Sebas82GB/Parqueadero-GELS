@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { Mensualidad } from '../models/mensualidad.js';
 import { ConflictError } from '../errors/index.js';
+import { toSkipTake } from '../utils/paginacion.util.js';
 
 const UN_DIA_MS = 24 * 60 * 60 * 1000;
 
@@ -46,8 +47,7 @@ export async function findMany({
       where,
       include: { vehiculo: true },
       orderBy: { fechaFin: 'desc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+      ...toSkipTake(page, perPage),
     }),
     prisma.mensualidad.count({ where }),
   ]);

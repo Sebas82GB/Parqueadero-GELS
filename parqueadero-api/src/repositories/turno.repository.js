@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { Turno } from '../models/turno.js';
 import { ConflictError } from '../errors/index.js';
+import { toSkipTake } from '../utils/paginacion.util.js';
 
 export async function findById(id) {
   const record = await prisma.turno.findUnique({ where: { id } });
@@ -109,8 +110,7 @@ export async function findMany({ operadorId, estado, desde, hasta, page, perPage
     prisma.turno.findMany({
       where,
       orderBy: { apertura: 'desc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+      ...toSkipTake(page, perPage),
     }),
     prisma.turno.count({ where }),
   ]);

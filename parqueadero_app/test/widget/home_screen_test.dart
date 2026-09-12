@@ -49,8 +49,8 @@ void main() {
         perPage: any(named: 'perPage'),
       ),
     ).thenAnswer((_) async => const TurnoPageResult(data: [], page: 1, perPage: 1, total: 0));
-    // Solo lo usa el dashboard de OPERADOR, pero se deja stubeado siempre:
-    // ADMIN nunca lo lee, así que no afecta ese caso.
+    // Lo leen los dos dashboards (Operador: "Celdas libres"; Admin: "Celdas
+    // ocupadas"), así que se deja stubeado siempre.
     when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
     when(
       () => ticketRepository.listar(estado: any(named: 'estado'), perPage: any(named: 'perPage')),
@@ -80,9 +80,10 @@ void main() {
     expect(find.widgetWithText(ElevatedButton, 'Buscar por placa'), findsNothing);
   });
 
-  testWidgets('ADMIN: también ve el botón Buscar por placa', (tester) async {
+  testWidgets('ADMIN: ve su propio dashboard agrupado, con Buscar por placa entre las acciones', (tester) async {
     await pumpHome(tester, RolUsuario.admin);
 
-    expect(find.widgetWithText(ElevatedButton, 'Buscar por placa'), findsOneWidget);
+    expect(find.text('Panel general'), findsOneWidget);
+    expect(find.text('Buscar por placa'), findsOneWidget);
   });
 }

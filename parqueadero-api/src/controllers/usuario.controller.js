@@ -1,8 +1,9 @@
 import * as usuarioService from '../services/usuario.service.js';
+import { sendPage } from '../utils/paginacion.util.js';
 
 export async function listarUsuarios(req, res) {
   const { usuarios, total, page, perPage } = await usuarioService.listarUsuarios(req.query);
-  res.status(200).json({ data: usuarios, meta: { page, perPage, total } });
+  sendPage(res, usuarios, { page, perPage, total });
 }
 
 export async function obtenerUsuarioPorId(req, res) {

@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../config/database.js';
 import { Celda } from '../models/celda.js';
 import { ConflictError } from '../errors/index.js';
+import { toSkipTake } from '../utils/paginacion.util.js';
 
 function buildWhere({ zona, estado, tipoPermitido }) {
   return {
@@ -28,8 +29,7 @@ export async function findMany({ zona, estado, tipoPermitido, page, perPage }) {
     prisma.celda.findMany({
       where,
       orderBy: { codigo: 'asc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+      ...toSkipTake(page, perPage),
     }),
     prisma.celda.count({ where }),
   ]);

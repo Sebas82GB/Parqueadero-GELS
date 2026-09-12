@@ -202,4 +202,27 @@ class CeldaListState {
   /// Celdas filtradas, agrupadas por zona en orden alfabético. Una zona sin
   /// celdas que coincidan con el filtro no aparece en el mapa.
   Map<String, List<Celda>> get celdasFiltradasPorZona => _derivados.celdasFiltradasPorZona;
+
+  /// Todas las celdas LIBRE cuyo `tipoPermitido` coincide con [tipo], en el
+  /// mismo orden en que aparecen en la cuadrícula (zona, luego código).
+  /// Vacía si no hay ninguna disponible. Ignora los filtros activos de la
+  /// pantalla de celdas a propósito: lo usa el flujo rápido de "Registrar
+  /// entrada" del dashboard, que no depende de qué filtro haya quedado
+  /// puesto en la cuadrícula.
+  ///
+  /// Una celda con `estado: LIBRE` puede seguir rechazando la entrada del
+  /// backend (reservada por una mensualidad vigente de otro vehículo,
+  /// ocupada un instante antes por una carrera con otro operador, etc.) —
+  /// `GET /celdas` no trae esa información, así que no se puede filtrar acá.
+  /// Por eso esto devuelve la lista completa de candidatas en vez de solo la
+  /// primera: quien llama intenta con la primera y, si el backend la
+  /// rechaza por un motivo específico de esa celda, sigue con la próxima.
+  List<Celda> celdasLibresDeTipo(TipoVehiculo tipo) {
+    final candidatas = celdas.where((c) => c.estado == EstadoCelda.libre && c.tipoPermitido == tipo).toList()
+      ..sort((a, b) {
+        final porZona = a.zona.compareTo(b.zona);
+        return porZona != 0 ? porZona : a.codigo.compareTo(b.codigo);
+      });
+    return candidatas;
+  }
 }

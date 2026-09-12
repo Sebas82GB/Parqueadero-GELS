@@ -3,7 +3,7 @@
 // Compartido por tarifa-calculo.service.js (cortes de apertura/cierre por
 // bloque) y turno.service.js (ventana de apertura/cierre automática de
 // turno): los dos necesitan la misma conversión hora-local↔instante UTC.
-export const BOGOTA_OFFSET_MS = 5 * 60 * 60 * 1000;
+const BOGOTA_OFFSET_MS = 5 * 60 * 60 * 1000;
 export const MINUTO_MS = 60 * 1000;
 export const HORA_MS = 60 * MINUTO_MS;
 
@@ -19,13 +19,13 @@ export function bogotaParts(date) {
   };
 }
 
-export function bogotaInstant(year, month, day, hour, minute, second) {
+function bogotaInstant(year, month, day, hour, minute, second) {
   return new Date(Date.UTC(year, month, day, hour, minute, second) + BOGOTA_OFFSET_MS);
 }
 
 // horario.apertura/horario.cierre llegan como strings "HH:mm" (hora local),
 // tal como los expone HorarioOperacion.toDomain.
-export function parseHora(hhmm) {
+function parseHora(hhmm) {
   const [hora, minuto] = hhmm.split(':').map(Number);
   return { hora, minuto };
 }

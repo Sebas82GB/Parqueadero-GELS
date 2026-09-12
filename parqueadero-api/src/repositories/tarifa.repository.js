@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { Tarifa } from '../models/tarifa.js';
 import { ConflictError } from '../errors/index.js';
+import { toSkipTake } from '../utils/paginacion.util.js';
 
 function buildWhere({ tipoVehiculo, vigente, ahora }) {
   return {
@@ -22,8 +23,7 @@ export async function findMany({ tipoVehiculo, vigente, page, perPage, ahora = n
     prisma.tarifa.findMany({
       where,
       orderBy: { vigenteDesde: 'desc' },
-      skip: (page - 1) * perPage,
-      take: perPage,
+      ...toSkipTake(page, perPage),
     }),
     prisma.tarifa.count({ where }),
   ]);
