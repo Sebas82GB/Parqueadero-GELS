@@ -1,4 +1,4 @@
-# AGENTS.md — Raíz del espacio de trabajo
+﻿# AGENTS.md — Raíz del espacio de trabajo
 
 <mark>El CLAUDE.md de la raíz es la autoridad. Este archivo es solo el puente para los agentes.</mark>
 
@@ -29,6 +29,49 @@ Nunca adivines la forma de un DTO. Consulta, en orden:
 2. `parqueadero-api/src/validators/*.validator.js` — esquemas Zod.
 3. `parqueadero-api/src/models/*.js` — entidades de dominio serializadas.
 4. `parqueadero-api/prisma/schema.prisma` — enums y restricciones.
+
+## Grafo de conocimiento (graphify)
+
+Cada proyecto tiene el suyo, en su propia carpeta. **No hay grafo en la raiz y no debe crearse**: backend (JS) y app (Dart) no comparten imports, asi que un grafo unificado seria dos islas sin una sola arista entre ellas.
+
+| Proyecto | Grafo | Tamano |
+| --- | --- | --- |
+| `parqueadero-api` | `parqueadero-api/graphify-out/` | ~587 nodos |
+| `parqueadero_app` | `parqueadero_app/graphify-out/` | ~2848 nodos |
+
+**Regla de oro: actualiza antes de confiar.** Un grafo desactualizado no da error, da una respuesta incompleta que parece valida: responde "no existe" sobre un archivo que si existe. Antes de la primera consulta de una sesion, dentro del proyecto:
+
+```bash
+cd parqueadero-api        # o parqueadero_app
+graphify update .         # AST local, sin LLM
+```
+
+Si una consulta devuelve algo inesperado o vacio, **sospecha del grafo antes que del codigo**.
+
+### Que comando usar (de mas barato a mas caro)
+
+Ejecuta siempre desde la carpeta del proyecto. En PowerShell es `graphify`, sin barra inicial.
+
+| Comando | Coste | Cuando |
+| --- | --- | --- |
+| `graphify path "A" "B"` | ~2 lineas | Como se conectan dos cosas |
+| `graphify explain "archivo.js"` | ~30 lineas | **El mas util.** Un archivo: que importa y quien lo importa, con linea exacta |
+| `graphify query "..." --budget 600` | ~22 lineas | Solo si no sabes por que archivo empezar |
+| `graphify query "..."` | ~62 lineas | Evitalo: satura el contexto sin ser mas preciso |
+
+Prefiere **`explain` sobre un archivo concreto** antes que `query`. Las preguntas amplias devuelven cientos de nodos truncados y mezclan fixtures de test irrelevantes; `--depth` no los acota (se ignora), solo `--budget` recorta, y recortar ruido no lo vuelve senal.
+
+### Para que sirve en esta cadena
+
+- **Alcance real de una fase.** `explain` sobre lo que vas a tocar lista sus dependientes. Es lo que dice si una fase cabe en 6 archivos *antes* de planearla en detalle.
+- **Auditar la arquitectura por capas.** Si un `*.controller.js` importa un `*.repository.js` directamente, el grafo lo ensena: se salto `service`.
+- **Encontrar el precedente completo.** Para replicar un patron, `explain` sobre la entidad modelo devuelve su cadena de archivos de una vez.
+
+**Quien lo usa:** el coordinador para medir alcance, el refinador para localizar precedente y dependientes. **El implementador no lo usa**: recibe archivos ya decididos y explorar contradice su alcance literal.
+
+**Lo que no hace:** da estructura (que importa a que), no logica de negocio. Para saber *por que* un ticket se anula en vez de borrarse, sigue siendo el `CLAUDE.md` y el servicio. El grafo no sustituye leer el codigo, solo te dice que leer.
+
+Tras `git pull` el grafo queda desfasado: usa `git gpull` (alias configurado) o ejecuta `graphify update .` a mano.
 
 ## Lo que debe mantenerse sincronizado
 

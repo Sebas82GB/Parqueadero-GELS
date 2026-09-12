@@ -60,10 +60,10 @@
     "semantic_hash": "0e969acb4a5cd89556dea3c2097e8b06"
   },
   "src/controllers/celda.controller.js": {
-    "mtime": 1789219442.5550785,
-    "seen": 1789225400.3323143,
-    "ast_hash": "1039404aa577fe5baff1422358391532",
-    "semantic_hash": "1039404aa577fe5baff1422358391532"
+    "mtime": 1789235045.8965585,
+    "seen": 1789240050.5883875,
+    "ast_hash": "141570ba31878229fabd941fed8c2672",
+    "semantic_hash": ""
   },
   "src/controllers/establecimiento.controller.js": {
     "mtime": 1787280291.728462,
@@ -78,40 +78,40 @@
     "semantic_hash": "96c098c0d7ee426c2fa68cad6330a22f"
   },
   "src/controllers/horario-operacion.controller.js": {
-    "mtime": 1789219442.5560799,
-    "seen": 1789225400.3323176,
-    "ast_hash": "8b106dd557b91c51516a07891c919743",
-    "semantic_hash": "8b106dd557b91c51516a07891c919743"
+    "mtime": 1789235045.8980048,
+    "seen": 1789240050.589696,
+    "ast_hash": "42c8195d0354a5ea709ecd27b16be56e",
+    "semantic_hash": ""
   },
   "src/controllers/mensualidad.controller.js": {
-    "mtime": 1789219442.5580845,
-    "seen": 1789225400.3323188,
-    "ast_hash": "cdbdd018f4e3e9717219b4e81cd7c20d",
-    "semantic_hash": "cdbdd018f4e3e9717219b4e81cd7c20d"
+    "mtime": 1789235045.899116,
+    "seen": 1789240050.589703,
+    "ast_hash": "9526584560f7024e0b76ef0db4dc9a9e",
+    "semantic_hash": ""
   },
   "src/controllers/tarifa.controller.js": {
-    "mtime": 1789219442.5590818,
-    "seen": 1789225400.3323197,
-    "ast_hash": "7b9a6737364893912bd1b239b3888bc7",
-    "semantic_hash": "7b9a6737364893912bd1b239b3888bc7"
+    "mtime": 1789235045.9005058,
+    "seen": 1789240050.5897093,
+    "ast_hash": "17ea8f2eb1e158c45a65dad1ad652f72",
+    "semantic_hash": ""
   },
   "src/controllers/ticket.controller.js": {
-    "mtime": 1789219442.5614836,
-    "seen": 1789225400.332321,
-    "ast_hash": "d47e7ad7022cb5786e3cee447551699e",
-    "semantic_hash": "d47e7ad7022cb5786e3cee447551699e"
+    "mtime": 1789235045.901814,
+    "seen": 1789240050.5897155,
+    "ast_hash": "e1cd19e98c1e70196048c1bd879871de",
+    "semantic_hash": ""
   },
   "src/controllers/turno.controller.js": {
-    "mtime": 1789219442.5634925,
-    "seen": 1789225400.332322,
-    "ast_hash": "67166afebbb30fb5fbeb69ae7fc117e0",
-    "semantic_hash": "67166afebbb30fb5fbeb69ae7fc117e0"
+    "mtime": 1789235045.903028,
+    "seen": 1789240050.58972,
+    "ast_hash": "df14f3450c0329db66edcac9812c9f0b",
+    "semantic_hash": ""
   },
   "src/controllers/usuario.controller.js": {
-    "mtime": 1789219442.565492,
-    "seen": 1789225400.3323228,
-    "ast_hash": "dd2568bdb9d50e8c66722ff230bb3256",
-    "semantic_hash": "dd2568bdb9d50e8c66722ff230bb3256"
+    "mtime": 1789235045.9040315,
+    "seen": 1789240050.5897257,
+    "ast_hash": "2ca18468f231fc8c0e349b1ba5fddfad",
+    "semantic_hash": ""
   },
   "src/errors/app-error.js": {
     "mtime": 1787008117.5946465,
@@ -246,10 +246,10 @@
     "semantic_hash": "1b05d361da9abee181beedd31a5fc343"
   },
   "src/models/usuario.js": {
-    "mtime": 1789219442.5674868,
-    "seen": 1789225400.3323462,
-    "ast_hash": "b463aa98918fb439ccaac423314d41dc",
-    "semantic_hash": "b463aa98918fb439ccaac423314d41dc"
+    "mtime": 1789235045.9050317,
+    "seen": 1789240050.6046193,
+    "ast_hash": "abacf9a280d4983f02d28459e964b941",
+    "semantic_hash": ""
   },
   "src/models/vehiculo.js": {
     "mtime": 1787061397.3128657,
@@ -258,10 +258,10 @@
     "semantic_hash": "e20fd7d592a09b3a2008e0fc96e139af"
   },
   "src/repositories/celda.repository.js": {
-    "mtime": 1789219442.569721,
-    "seen": 1789225400.3323483,
-    "ast_hash": "5508a6e94198c7f58bcb738fd3d92bcd",
-    "semantic_hash": "5508a6e94198c7f58bcb738fd3d92bcd"
+    "mtime": 1789235045.907032,
+    "seen": 1789240050.6054556,
+    "ast_hash": "84da2304b8a9d0cb2a32fbbe0d1c29e1",
+    "semantic_hash": ""
   },
   "src/repositories/health.repository.js": {
     "mtime": 1787008143.6113915,
@@ -270,16 +270,16 @@
     "semantic_hash": "cfea7bd74e39a8785932a32f2500e318"
   },
   "src/repositories/horario-operacion.repository.js": {
-    "mtime": 1789219442.57072,
-    "seen": 1789225400.3323505,
-    "ast_hash": "c9b6a64b60080e1ae5ffa2232d7192f4",
-    "semantic_hash": "c9b6a64b60080e1ae5ffa2232d7192f4"
+    "mtime": 1789235045.9094458,
+    "seen": 1789240050.607037,
+    "ast_hash": "1c3bb07029844f8261329e209a78cd5d",
+    "semantic_hash": ""
   },
   "src/repositories/mensualidad.repository.js": {
-    "mtime": 1789219442.5730827,
-    "seen": 1789225400.3323514,
-    "ast_hash": "7053598d2b3a35056df98cb452c2dbcf",
-    "semantic_hash": "7053598d2b3a35056df98cb452c2dbcf"
+    "mtime": 1789235045.9106493,
+    "seen": 1789240050.6070457,
+    "ast_hash": "b3ebee5e6639ee710b9d2491c5649eec",
+    "semantic_hash": ""
   },
   "src/repositories/pago.repository.js": {
     "mtime": 1787406747.9445329,
@@ -294,28 +294,28 @@
     "semantic_hash": "18aa7c7951e3c254ab3de2dae8ef2894"
   },
   "src/repositories/tarifa.repository.js": {
-    "mtime": 1789219442.5750837,
-    "seen": 1789225400.3323548,
-    "ast_hash": "557bf05dbf91a869660c19d63881e3cb",
-    "semantic_hash": "557bf05dbf91a869660c19d63881e3cb"
+    "mtime": 1789235045.9122934,
+    "seen": 1789240050.6079078,
+    "ast_hash": "b93e615b5de3bfec8b911088544ee1a9",
+    "semantic_hash": ""
   },
   "src/repositories/ticket.repository.js": {
-    "mtime": 1789219442.5778334,
-    "seen": 1789225400.3323555,
-    "ast_hash": "195c40c5467990e298359938e3cfd8b2",
-    "semantic_hash": "195c40c5467990e298359938e3cfd8b2"
+    "mtime": 1789235045.9143078,
+    "seen": 1789240050.607915,
+    "ast_hash": "a8913aa05eb79112c3c856a6ecb51062",
+    "semantic_hash": ""
   },
   "src/repositories/turno.repository.js": {
-    "mtime": 1789219442.579843,
-    "seen": 1789225400.3323567,
-    "ast_hash": "1561c4e9394ad044fe969d6f147f90e6",
-    "semantic_hash": "1561c4e9394ad044fe969d6f147f90e6"
+    "mtime": 1789235045.9163086,
+    "seen": 1789240050.6079202,
+    "ast_hash": "ae4d67d22a5524cf9796f8f416ee703d",
+    "semantic_hash": ""
   },
   "src/repositories/usuario.repository.js": {
-    "mtime": 1789219442.5818393,
-    "seen": 1789225400.3323576,
-    "ast_hash": "756561c55cc8c5094259193c390c711d",
-    "semantic_hash": "756561c55cc8c5094259193c390c711d"
+    "mtime": 1789235045.9183095,
+    "seen": 1789240050.607924,
+    "ast_hash": "c26866d25d11a41531aa9537fba8178a",
+    "semantic_hash": ""
   },
   "src/repositories/vehiculo.repository.js": {
     "mtime": 1787061404.5840168,
@@ -468,10 +468,10 @@
     "semantic_hash": "5d566603e82c4f46329b4156c65606bd"
   },
   "src/utils/bogota-time.js": {
-    "mtime": 1789219442.5838344,
-    "seen": 1789225400.3323832,
-    "ast_hash": "14e6df32aac4f02a3bf227cf217c12a3",
-    "semantic_hash": "14e6df32aac4f02a3bf227cf217c12a3"
+    "mtime": 1789235045.9203124,
+    "seen": 1789240050.6223752,
+    "ast_hash": "e2e4cd9e1da8e8345ff8db4570371467",
+    "semantic_hash": ""
   },
   "src/utils/codigo.util.js": {
     "mtime": 1787061458.7094572,
@@ -748,5 +748,35 @@
     "seen": 1789225400.3324413,
     "ast_hash": "dfbf435f48ab6dfd4075bfbfb5ef79c5",
     "semantic_hash": "dfbf435f48ab6dfd4075bfbfb5ef79c5"
+  },
+  "src/utils/paginacion.util.js": {
+    "mtime": 1789235046.060328,
+    "seen": 1789240050.6237795,
+    "ast_hash": "365ef39d01c7fcf7ff8e6bddd37bf425",
+    "semantic_hash": ""
+  },
+  ".postman/resources.yaml": {
+    "mtime": 1787021360.12491,
+    "seen": 1789240050.6496274,
+    "ast_hash": "9a0d7caeceb6628a2b739fb526fbcb15",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1789225277.5235674,
+    "seen": 1789240050.6496353,
+    "ast_hash": "ad345a9d9655c1c21d8f0d5a1fd71a64",
+    "semantic_hash": ""
+  },
+  "docker-compose.yml": {
+    "mtime": 1787017400.9611182,
+    "seen": 1789240050.6496415,
+    "ast_hash": "7a1822179fda963837e34f480623b483",
+    "semantic_hash": ""
+  },
+  "postman/globals/workspace.globals.yaml": {
+    "mtime": 1787021360.588618,
+    "seen": 1789240050.6496484,
+    "ast_hash": "1f31f0e4d6a7b594d17c1e596c93528c",
+    "semantic_hash": ""
   }
 }
