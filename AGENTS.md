@@ -90,6 +90,27 @@ Prefiere **`explain` sobre un archivo concreto** antes que `query`. Las pregunta
 
 Tras `git pull` el grafo queda desfasado: usa `git gpull` (alias configurado) o ejecuta `graphify update .` a mano.
 
+## Skills de ingenieria (agent-skills)
+
+Cuatro skills de `addyosmani/agent-skills` (MIT) instalados en `~/.config/opencode/skills/`, disponibles en los dos proyectos. Se eligieron **solo los que cubren huecos** de esta cadena: no se instalo el pack completo porque sus skills de spec/plan/build duplican lo que ya hacen coordinador, refinador e implementador.
+
+| Skill | Cuando | Quien |
+| --- | --- | --- |
+| `code-review-and-quality` | Revisar un diff antes de dar por buena una fase | coordinador |
+| `security-and-hardening` | Entrada de usuario, auth, datos sensibles, dependencias | coordinador al planear, refinador al enumerar tests |
+| `debugging-and-error-recovery` | Un test falla, algo se rompe, comportamiento inesperado | cualquiera |
+| `code-simplification` | El codigo funciona pero cuesta leerlo | coordinador al revisar |
+
+Se invocan con la herramienta `skill` cuando la situacion aplica. **No hay activacion automatica a proposito**: el pack oficial propone un intent-mapping que invoca skills antes de actuar, y eso desplazaria la cadena coordinador -> refinador -> implementador. Aqui la cadena manda y el skill es una consulta puntual.
+
+**PRECEDENCIA (regla dura):** si un skill choca con el `CLAUDE.md` del proyecto o con el flujo de esta cadena, **manda el `CLAUDE.md`**. Casos concretos que van a ocurrir:
+
+- `code-review-and-quality` sugiere cambios de ~100 lineas. La regla de aqui son fases de hasta 6 archivos con aprobacion humana. Gana la fase.
+- Varios skills piden crear documentos propios (PRD, `CONSTRAINTS.md`). **No se crean**: la autoridad es el `CLAUDE.md` que ya existe, y dos fuentes de reglas compitiendo es peor que una.
+- Si un skill propone saltarse una capa o abstraer "por si acaso", pierde: mandan la arquitectura por capas y YAGNI.
+
+Los skills no sustituyen la puerta de aprobacion. Un hallazgo de `code-review-and-quality` o `security-and-hardening` se reporta al humano; no autoriza a ampliar el alcance de una fase en curso.
+
 ## Lo que debe mantenerse sincronizado
 
 Cuando algo cambia en el backend, revisa en la app: DTO/modelo del feature, `switch` de enums, manejo de `code` en el notifier, repositorio del feature, `API_BASE_URL`/`CORS_ORIGINS`. Si detectas desalineación, avísala aunque no sea parte de la tarea.
