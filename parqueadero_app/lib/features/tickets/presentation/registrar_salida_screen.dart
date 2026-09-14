@@ -20,7 +20,6 @@ import '../../turnos/presentation/widgets/turno_activo_indicator.dart';
 import '../domain/pago.dart';
 import '../domain/ticket.dart';
 import 'cobro_preview_notifier.dart';
-import 'cobro_preview_state.dart';
 import 'salida_notifier.dart';
 import 'salida_state.dart';
 import 'ticket_detail_notifier.dart';
@@ -48,7 +47,8 @@ class RegistrarSalidaScreen extends ConsumerStatefulWidget {
   final String ticketId;
 
   @override
-  ConsumerState<RegistrarSalidaScreen> createState() => _RegistrarSalidaScreenState();
+  ConsumerState<RegistrarSalidaScreen> createState() =>
+      _RegistrarSalidaScreenState();
 }
 
 class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
@@ -70,15 +70,23 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
     // El monto exacto viene del último preview conocido; para vehículos
     // OTRO el preview nunca calcula un valor (lo digita el operador), así
     // que ahí se muestra lo que el operador ya escribió en el formulario.
-    final previewValor = ref.read(cobroPreviewNotifierProvider(widget.ticketId)).preview?.valorTotal;
+    final previewValor = ref
+        .read(cobroPreviewNotifierProvider(widget.ticketId))
+        .preview
+        ?.valorTotal;
     final total = valorManual ?? previewValor;
-    final montoTexto = total != null ? formatMoney(total) : 'el valor calculado por el sistema';
+    final montoTexto = total != null
+        ? formatMoney(total)
+        : 'el valor calculado por el sistema';
 
     // El cambio nunca viaja al backend ni se persiste: es aritmética de
     // presentación sobre un total que el backend ya calculó, igual que la
     // diferencia de caja en `TurnoCierreScreen`.
     final montoRecibido = int.tryParse(_montoRecibidoController.text.trim());
-    final cambioTexto = (_metodo == MetodoPago.efectivo && montoRecibido != null && total != null)
+    final cambioTexto =
+        (_metodo == MetodoPago.efectivo &&
+            montoRecibido != null &&
+            total != null)
         ? ' Recibe ${formatMoney(montoRecibido)} y debe dar ${formatMoney(montoRecibido - total)} de cambio.'
         : '';
 
@@ -90,8 +98,14 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
           'El ticket se cerrará con un cobro de $montoTexto.$cambioTexto Esta acción no se puede deshacer.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancelar')),
-          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Confirmar')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Confirmar'),
+          ),
         ],
       ),
     );
@@ -108,7 +122,10 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
 
     if (salida.step == SalidaStep.exito) {
       final montoRecibido = int.tryParse(_montoRecibidoController.text.trim());
-      return _ReciboSalida(ticket: salida.ticketCerrado!, montoRecibido: montoRecibido);
+      return _ReciboSalida(
+        ticket: salida.ticketCerrado!,
+        montoRecibido: montoRecibido,
+      );
     }
 
     final detalle = ref.watch(ticketDetailNotifierProvider(widget.ticketId));
@@ -124,7 +141,9 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
         appBar: AppBar(title: const Text('Registrar salida')),
         body: ErrorState(
           message: detalle.errorMessage!,
-          onRetry: ref.read(ticketDetailNotifierProvider(widget.ticketId).notifier).cargar,
+          onRetry: ref
+              .read(ticketDetailNotifierProvider(widget.ticketId).notifier)
+              .cargar,
         ),
       );
     }
@@ -132,15 +151,17 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
     final ticket = detalle.ticket!;
     final esOtro = ticket.vehiculo?.tipo == TipoVehiculo.otro;
     final enviando = salida.step == SalidaStep.enviando;
-    final preview = ref.watch(cobroPreviewNotifierProvider(widget.ticketId));
 
-    final valorManualTexto = _valorManualController.text.trim();
-    final valorManual = valorManualTexto.isEmpty ? null : int.tryParse(valorManualTexto);
-    final totalEsperado = valorManual ?? preview.preview?.valorTotal;
-    final metodoEsEfectivo = _metodo == MetodoPago.efectivo;
-    final montoRecibido = int.tryParse(_montoRecibidoController.text.trim());
-    final cambio = (montoRecibido != null && totalEsperado != null) ? montoRecibido - totalEsperado : null;
-    final faltaMontoRecibido = metodoEsEfectivo && (cambio == null || cambio < 0);
+    // `horaSalida` cambia en cada respuesta del backend (cada tick de 30s),
+    // así que el estado completo del preview solo se observa dentro de
+    // `_PreviewCobroSection` —que es quien lo muestra—; acá la pantalla mira
+    // únicamente los dos campos que necesita, vía un `.select` con record
+    // (comparan por valor), para que ese tick no reconstruya todo el form.
+    final (:esTerminal, :valorTotal) = ref.watch(
+      cobroPreviewNotifierProvider(widget.ticketId).select(
+        (s) => (esTerminal: s.esTerminal, valorTotal: s.preview?.valorTotal),
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Registrar salida')),
@@ -149,119 +170,189 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
           const TurnoActivoIndicator(),
           Expanded(
             child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Placa ${ticket.vehiculo?.placa ?? '—'}', style: Theme.of(context).textTheme.titleMedium),
-                      if (ticket.vehiculo != null) Text('Tipo: ${tipoVehiculoLabel(ticket.vehiculo!.tipo)}'),
-                      Text('Celda: ${ticket.celda?.codigo ?? '—'}'),
-                      Text('Entrada: ${formatBogota(ticket.horaEntrada)}'),
-                      const SizedBox(height: AppSpacing.sm),
-                      Row(
-                        children: [
-                          Text('Tiempo transcurrido: ', style: Theme.of(context).textTheme.titleMedium),
-                          TiempoTranscurridoText(
-                            horaEntrada: ticket.horaEntrada,
-                            style: Theme.of(context).textTheme.titleMedium,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Placa ${ticket.vehiculo?.placa ?? '—'}',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            if (ticket.vehiculo != null)
+                              Text(
+                                'Tipo: ${tipoVehiculoLabel(ticket.vehiculo!.tipo)}',
+                              ),
+                            Text('Celda: ${ticket.celda?.codigo ?? '—'}'),
+                            Text(
+                              'Entrada: ${formatBogota(ticket.horaEntrada)}',
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            Row(
+                              children: [
+                                Text(
+                                  'Tiempo transcurrido: ',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                                TiempoTranscurridoText(
+                                  horaEntrada: ticket.horaEntrada,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    _PreviewCobroSection(ticketId: widget.ticketId),
+                    const SizedBox(height: AppSpacing.lg),
+                    DropdownButtonFormField<MetodoPago?>(
+                      initialValue: _metodo,
+                      decoration: const InputDecoration(
+                        labelText: 'Método de pago',
+                      ),
+                      items: [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Sin especificar'),
+                        ),
+                        for (final metodo in MetodoPago.values)
+                          DropdownMenuItem(
+                            value: metodo,
+                            child: Text(metodoPagoLabel(metodo)),
                           ),
+                      ],
+                      onChanged: enviando
+                          ? null
+                          : (value) => setState(() => _metodo = value),
+                    ),
+                    if (esOtro) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      TextFormField(
+                        controller: _valorManualController,
+                        enabled: !enviando,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
                         ],
+                        decoration: const InputDecoration(
+                          labelText: 'Valor a cobrar (vehículo tipo Otro)',
+                        ),
                       ),
                     ],
-                  ),
+                    if (_metodo == MetodoPago.efectivo) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      TextFormField(
+                        controller: _montoRecibidoController,
+                        enabled: !enviando,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        decoration: const InputDecoration(
+                          labelText: 'Monto recibido',
+                        ),
+                      ),
+                    ],
+                    ListenableBuilder(
+                      listenable: Listenable.merge([
+                        _valorManualController,
+                        _montoRecibidoController,
+                      ]),
+                      builder: (context, _) {
+                        final valorManualTexto = _valorManualController.text
+                            .trim();
+                        final valorManual = valorManualTexto.isEmpty
+                            ? null
+                            : int.tryParse(valorManualTexto);
+                        final totalEsperado = valorManual ?? valorTotal;
+                        final metodoEsEfectivo = _metodo == MetodoPago.efectivo;
+                        final montoRecibido = int.tryParse(
+                          _montoRecibidoController.text.trim(),
+                        );
+                        final cambio =
+                            (montoRecibido != null && totalEsperado != null)
+                            ? montoRecibido - totalEsperado
+                            : null;
+                        final faltaMontoRecibido =
+                            metodoEsEfectivo && (cambio == null || cambio < 0);
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (metodoEsEfectivo && montoRecibido != null) ...[
+                              const SizedBox(height: AppSpacing.sm),
+                              Text(
+                                cambio != null && cambio >= 0
+                                    ? 'Cambio a devolver: ${formatMoney(cambio)}'
+                                    : cambio != null
+                                    ? 'Faltan ${formatMoney(-cambio)} para cubrir el total'
+                                    : 'Calculando el total a cobrar...',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ],
+                            if (salida.error != null) ...[
+                              const SizedBox(height: AppSpacing.md),
+                              ErrorBanner(error: salida.error!),
+                              if (salida.error case ApiException(
+                                code: 'OPERADOR_SIN_TURNO_ABIERTO',
+                              )) ...[
+                                const SizedBox(height: AppSpacing.sm),
+                                OutlinedButton(
+                                  onPressed: () =>
+                                      context.push('/turnos/abrir'),
+                                  child: const Text('Abrir turno'),
+                                ),
+                              ],
+                            ],
+                            const SizedBox(height: AppSpacing.lg),
+                            ElevatedButton(
+                              onPressed:
+                                  (enviando || esTerminal || faltaMontoRecibido)
+                                  ? null
+                                  : _confirmarYRegistrar,
+                              child: enviando
+                                  ? const ButtonSpinner()
+                                  : const Text('Registrar salida'),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.lg),
-              _PreviewCobroSection(preview: preview),
-              const SizedBox(height: AppSpacing.lg),
-              DropdownButtonFormField<MetodoPago?>(
-                initialValue: _metodo,
-                decoration: const InputDecoration(labelText: 'Método de pago'),
-                items: [
-                  const DropdownMenuItem(value: null, child: Text('Sin especificar')),
-                  for (final metodo in MetodoPago.values)
-                    DropdownMenuItem(value: metodo, child: Text(metodoPagoLabel(metodo))),
-                ],
-                onChanged: enviando ? null : (value) => setState(() => _metodo = value),
-              ),
-              if (esOtro) ...[
-                const SizedBox(height: AppSpacing.md),
-                TextFormField(
-                  controller: _valorManualController,
-                  enabled: !enviando,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(labelText: 'Valor a cobrar (vehículo tipo Otro)'),
-                  onChanged: (_) => setState(() {}),
-                ),
-              ],
-              if (metodoEsEfectivo) ...[
-                const SizedBox(height: AppSpacing.md),
-                TextFormField(
-                  controller: _montoRecibidoController,
-                  enabled: !enviando,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(labelText: 'Monto recibido'),
-                  onChanged: (_) => setState(() {}),
-                ),
-                if (montoRecibido != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Text(
-                    cambio != null && cambio >= 0
-                        ? 'Cambio a devolver: ${formatMoney(cambio)}'
-                        : cambio != null
-                        ? 'Faltan ${formatMoney(-cambio)} para cubrir el total'
-                        : 'Calculando el total a cobrar...',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ],
-              ],
-              if (salida.error != null) ...[
-                const SizedBox(height: AppSpacing.md),
-                ErrorBanner(error: salida.error!),
-                if (salida.error case ApiException(code: 'OPERADOR_SIN_TURNO_ABIERTO')) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  OutlinedButton(
-                    onPressed: () => context.push('/turnos/abrir'),
-                    child: const Text('Abrir turno'),
-                  ),
-                ],
-              ],
-              const SizedBox(height: AppSpacing.lg),
-              ElevatedButton(
-                onPressed: (enviando || preview.esTerminal || faltaMontoRecibido) ? null : _confirmarYRegistrar,
-                child: enviando ? const ButtonSpinner() : const Text('Registrar salida'),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
           ),
         ],
       ),
     );
   }
-
 }
 
 /// Vista previa en vivo de `GET /tickets/:id/preview-cobro`. Reutiliza
 /// [DesgloseView] tal cual — ya distingue bloques/mensualidad/manual con
 /// títulos claros, así que el preview y el recibo final se ven consistentes.
-class _PreviewCobroSection extends StatelessWidget {
-  const _PreviewCobroSection({required this.preview});
+class _PreviewCobroSection extends ConsumerWidget {
+  const _PreviewCobroSection({required this.ticketId});
 
-  final CobroPreviewState preview;
+  final String ticketId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final preview = ref.watch(cobroPreviewNotifierProvider(ticketId));
+
     if (preview.esTerminal) {
       return Card(
         child: Padding(
@@ -302,9 +393,15 @@ class _PreviewCobroSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Vista previa del cobro', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Vista previa del cobro',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: AppSpacing.sm),
-            DesgloseView(desglose: datos.desglose, valorTotal: datos.valorTotal),
+            DesgloseView(
+              desglose: datos.desglose,
+              valorTotal: datos.valorTotal,
+            ),
             const SizedBox(height: AppSpacing.xs),
             Text(
               preview.error != null
@@ -373,7 +470,10 @@ class _ReciboSalida extends StatelessWidget {
                   label: const Text('Imprimir'),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                ElevatedButton(onPressed: () => context.go('/celdas'), child: const Text('Volver a celdas')),
+                ElevatedButton(
+                  onPressed: () => context.go('/celdas'),
+                  child: const Text('Volver a celdas'),
+                ),
               ],
             ),
           ),

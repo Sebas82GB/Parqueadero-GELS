@@ -154,9 +154,12 @@ class _CeldaAccionRapidaSheetState
     // con este mismo provider): si nadie lo mira mientras `buscar()` sigue
     // en vuelo, Riverpod desecha este `autoDispose` a mitad de camino y
     // `ref.mounted` se vuelve falso antes de que la búsqueda pueda leer la
-    // respuesta real.
-    final busquedaTicket = ref.watch(
-      ticketAbiertoDeCeldaNotifierProvider(widget.celdaId),
+    // respuesta real. Un `.select` sigue siendo un watch del mismo provider
+    // y mantiene la suscripción viva, así que el invariante se respeta.
+    final errorBusqueda = ref.watch(
+      ticketAbiertoDeCeldaNotifierProvider(
+        widget.celdaId,
+      ).select((s) => s.errorMessage),
     );
 
     if (_buscando) {
@@ -171,8 +174,7 @@ class _CeldaAccionRapidaSheetState
       return _EstadoCentrado(
         handle: widget.mostrarHandle ? const _HandleBar() : null,
         child: Text(
-          busquedaTicket.errorMessage ??
-              'No se encontró un ticket abierto para esta celda.',
+          errorBusqueda ?? 'No se encontró un ticket abierto para esta celda.',
           style: const TextStyle(color: AppColors.demarcacion),
           textAlign: TextAlign.center,
         ),
