@@ -1,7 +1,8 @@
 import * as tarifaRepository from '../repositories/tarifa.repository.js';
 import * as horarioRepository from '../repositories/horario-operacion.repository.js';
+import * as ticketRepository from '../repositories/ticket.repository.js';
 import { previsualizarTarifa } from './tarifa-calculo.service.js';
-import { NotFoundError, UnprocessableEntityError } from '../errors/index.js';
+import { NotFoundError, ConflictError, UnprocessableEntityError } from '../errors/index.js';
 
 export async function listarTarifas(query) {
   const { tipoVehiculo, vigente, page, perPage } = query;
@@ -33,6 +34,19 @@ export async function crearTarifa(data) {
 export async function cerrarTarifa(id) {
   await obtenerTarifaPorId(id);
   return tarifaRepository.cerrar(id, new Date());
+}
+
+export async function actualizarTarifa(id, data) {
+  await obtenerTarifaPorId(id);
+
+  if (await ticketRepository.existsByTarifaId(id)) {
+    throw new ConflictError(
+      'No se puede editar una tarifa que ya tiene tickets asociados',
+      'TARIFA_CON_TICKETS_ASOCIADOS',
+    );
+  }
+
+  return tarifaRepository.update(id, data);
 }
 
 // Sirve para probar una tarifa hipotética antes de guardarla. horaEntrada es

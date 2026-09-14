@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { NotFoundError, UnprocessableEntityError } from '../../src/errors/index.js';
+import { NotFoundError, ConflictError, UnprocessableEntityError } from '../../src/errors/index.js';
 import * as tarifaRepository from '../../src/repositories/tarifa.repository.js';
 import * as horarioRepository from '../../src/repositories/horario-operacion.repository.js';
+import * as ticketRepository from '../../src/repositories/ticket.repository.js';
 import {
   listarTarifas,
   obtenerTarifaPorId,
   crearTarifa,
   cerrarTarifa,
+  actualizarTarifa,
   simularTarifa,
 } from '../../src/services/tarifa.service.js';
 
@@ -15,10 +17,15 @@ vi.mock('../../src/repositories/tarifa.repository.js', () => ({
   findById: vi.fn(),
   crearConAutoCierre: vi.fn(),
   cerrar: vi.fn(),
+  update: vi.fn(),
 }));
 
 vi.mock('../../src/repositories/horario-operacion.repository.js', () => ({
   findVigente: vi.fn(),
+}));
+
+vi.mock('../../src/repositories/ticket.repository.js', () => ({
+  existsByTarifaId: vi.fn(),
 }));
 
 function buildHorario(overrides = {}) {
@@ -149,6 +156,58 @@ describe('tarifa.service', () => {
 
       await expect(cerrarTarifa('inexistente')).rejects.toBeInstanceOf(NotFoundError);
       expect(tarifaRepository.cerrar).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('actualizarTarifa', () => {
+    it('actualiza campos parciales y llama a repository.update con lo recibido', async () => {
+      const tarifa = buildTarifa();
+      tarifaRepository.findById.mockResolvedValue(tarifa);
+      ticketRepository.existsByTarifaId.mockResolvedValue(false);
+      const actualizada = buildTarifa({ valorMinuto: 150 });
+      tarifaRepository.update.mockResolvedValue(actualizada);
+
+      const result = await actualizarTarifa(tarifa.id, { valorMinuto: 150 });
+
+      expect(result).toBe(actualizada);
+      expect(tarifaRepository.update).toHaveBeenCalledWith(tarifa.id, { valorMinuto: 150 });
+    });
+
+    it('permite valorMinuto 0', async () => {
+      const tarifa = buildTarifa();
+      tarifaRepository.findById.mockResolvedValue(tarifa);
+      ticketRepository.existsByTarifaId.mockResolvedValue(false);
+      const actualizada = buildTarifa({ valorMinuto: 0 });
+      tarifaRepository.update.mockResolvedValue(actualizada);
+
+      const result = await actualizarTarifa(tarifa.id, { valorMinuto: 0 });
+
+      expect(result.valorMinuto).toBe(0);
+      expect(tarifaRepository.update).toHaveBeenCalledWith(tarifa.id, { valorMinuto: 0 });
+    });
+
+    it('lanza NotFoundError si el id no existe', async () => {
+      tarifaRepository.findById.mockResolvedValue(null);
+
+      await expect(actualizarTarifa('inexistente', { valorMinuto: 150 })).rejects.toBeInstanceOf(
+        NotFoundError,
+      );
+      expect(tarifaRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('lanza ConflictError TARIFA_CON_TICKETS_ASOCIADOS si tiene tickets y no llama a update', async () => {
+      const tarifa = buildTarifa();
+      tarifaRepository.findById.mockResolvedValue(tarifa);
+      ticketRepository.existsByTarifaId.mockResolvedValue(true);
+      expect.assertions(3);
+
+      try {
+        await actualizarTarifa(tarifa.id, { valorMinuto: 150 });
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConflictError);
+        expect(err.code).toBe('TARIFA_CON_TICKETS_ASOCIADOS');
+      }
+      expect(tarifaRepository.update).not.toHaveBeenCalled();
     });
   });
 

@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { NotFoundError } from '../../src/errors/index.js';
+import { NotFoundError, ConflictError, UnprocessableEntityError } from '../../src/errors/index.js';
 import * as horarioRepository from '../../src/repositories/horario-operacion.repository.js';
+import * as ticketRepository from '../../src/repositories/ticket.repository.js';
 import {
   listarHorarios,
   obtenerHorarioPorId,
   crearHorario,
   cerrarHorario,
+  actualizarHorario,
 } from '../../src/services/horario-operacion.service.js';
 
 vi.mock('../../src/repositories/horario-operacion.repository.js', () => ({
@@ -13,6 +15,11 @@ vi.mock('../../src/repositories/horario-operacion.repository.js', () => ({
   findById: vi.fn(),
   crearConAutoCierre: vi.fn(),
   cerrar: vi.fn(),
+  update: vi.fn(),
+}));
+
+vi.mock('../../src/repositories/ticket.repository.js', () => ({
+  existsByHorarioId: vi.fn(),
 }));
 
 function buildHorario(overrides = {}) {
@@ -119,6 +126,73 @@ describe('horario-operacion.service', () => {
 
       await expect(cerrarHorario('inexistente')).rejects.toBeInstanceOf(NotFoundError);
       expect(horarioRepository.cerrar).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('actualizarHorario', () => {
+    it('actualiza campos parciales y llama a repository.update con lo recibido', async () => {
+      const horario = buildHorario();
+      horarioRepository.findById.mockResolvedValue(horario);
+      ticketRepository.existsByHorarioId.mockResolvedValue(false);
+      const actualizado = buildHorario({ cierre: '22:00' });
+      horarioRepository.update.mockResolvedValue(actualizado);
+
+      const result = await actualizarHorario(horario.id, { cierre: '22:00' });
+
+      expect(result).toBe(actualizado);
+      expect(horarioRepository.update).toHaveBeenCalledWith(horario.id, { cierre: '22:00' });
+    });
+
+    it('lanza NotFoundError si el id no existe', async () => {
+      horarioRepository.findById.mockResolvedValue(null);
+
+      await expect(
+        actualizarHorario('inexistente', { cierre: '22:00' }),
+      ).rejects.toBeInstanceOf(NotFoundError);
+      expect(horarioRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('lanza ConflictError HORARIO_CON_TICKETS_ASOCIADOS si tiene tickets y no llama a update', async () => {
+      const horario = buildHorario();
+      horarioRepository.findById.mockResolvedValue(horario);
+      ticketRepository.existsByHorarioId.mockResolvedValue(true);
+      expect.assertions(3);
+
+      try {
+        await actualizarHorario(horario.id, { cierre: '22:00' });
+      } catch (err) {
+        expect(err).toBeInstanceOf(ConflictError);
+        expect(err.code).toBe('HORARIO_CON_TICKETS_ASOCIADOS');
+      }
+      expect(horarioRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('devuelve 422 HORARIO_RANGO_INVALIDO si se manda solo apertura y queda >= al cierre actual', async () => {
+      const horario = buildHorario({ apertura: '08:00', cierre: '21:30' });
+      horarioRepository.findById.mockResolvedValue(horario);
+      ticketRepository.existsByHorarioId.mockResolvedValue(false);
+      expect.assertions(3);
+
+      try {
+        await actualizarHorario(horario.id, { apertura: '22:00' });
+      } catch (err) {
+        expect(err).toBeInstanceOf(UnprocessableEntityError);
+        expect(err.code).toBe('HORARIO_RANGO_INVALIDO');
+      }
+      expect(horarioRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('OK si se manda solo cierre y queda posterior a la apertura actual', async () => {
+      const horario = buildHorario({ apertura: '08:00', cierre: '21:30' });
+      horarioRepository.findById.mockResolvedValue(horario);
+      ticketRepository.existsByHorarioId.mockResolvedValue(false);
+      const actualizado = buildHorario({ apertura: '08:00', cierre: '23:00' });
+      horarioRepository.update.mockResolvedValue(actualizado);
+
+      const result = await actualizarHorario(horario.id, { cierre: '23:00' });
+
+      expect(result).toBe(actualizado);
+      expect(horarioRepository.update).toHaveBeenCalledWith(horario.id, { cierre: '23:00' });
     });
   });
 });

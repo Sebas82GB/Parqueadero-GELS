@@ -345,6 +345,61 @@ describe('tarifa-calculo.service', () => {
         expect.objectContaining({ dia: 2, minutos: 75, tipoCobro: 'PARCIAL', valor: 7500 }),
       ]);
     });
+
+    it('entrada antes de la apertura (7:30 a.m.), salida mismo día 2:00 p.m.: 2 bloques dentro del mismo día', () => {
+      const { valorTotal, desglose } = calcularTarifa({
+        horaEntrada: bogota(2026, 1, 5, 7, 30),
+        horaSalida: bogota(2026, 1, 5, 14, 0),
+        tarifa: TARIFA_CARRO,
+        horario: HORARIO_NUEVO,
+      });
+
+      expect(valorTotal).toBe(23000);
+      expect(desglose).toEqual([
+        expect.objectContaining({
+          dia: 1,
+          bloqueNumero: 1,
+          tipoCobro: 'PLENA',
+          minutos: 360,
+          valor: 20000,
+        }),
+        expect.objectContaining({
+          dia: 1,
+          bloqueNumero: 2,
+          tipoCobro: 'PARCIAL',
+          minutos: 30,
+          valor: 3000,
+        }),
+      ]);
+    });
+
+    it('entrada antes de la apertura (7:30 a.m.), salida 9:00 p.m.: topa en 2 bloques del mismo día', () => {
+      const { valorTotal, desglose } = calcularTarifa({
+        horaEntrada: bogota(2026, 1, 5, 7, 30),
+        horaSalida: bogota(2026, 1, 5, 21, 0),
+        tarifa: TARIFA_CARRO,
+        horario: HORARIO_NUEVO,
+      });
+
+      expect(valorTotal).toBe(40000);
+      expect(desglose).toHaveLength(2);
+      expect(desglose).toEqual([
+        expect.objectContaining({
+          dia: 1,
+          bloqueNumero: 1,
+          tipoCobro: 'PLENA',
+          minutos: 360,
+          valor: 20000,
+        }),
+        expect.objectContaining({
+          dia: 1,
+          bloqueNumero: 2,
+          tipoCobro: 'PLENA',
+          minutos: 360,
+          valor: 20000,
+        }),
+      ]);
+    });
   });
 
   describe('previsualizarTarifa', () => {

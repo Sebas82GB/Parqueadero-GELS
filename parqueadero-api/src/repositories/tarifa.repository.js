@@ -80,6 +80,14 @@ export async function crearConAutoCierre({
   });
 }
 
+export async function update(id, data) {
+  const record = await prisma.tarifa.update({
+    where: { id },
+    data: Tarifa.toPersistence(data),
+  });
+  return Tarifa.toDomain(record);
+}
+
 // Guardia de concurrencia: solo cierra si seguía vigente. Si otra petición ya
 // la cerró entre el findById del servicio y este update, count queda en 0.
 export async function cerrar(id, vigenteHasta) {

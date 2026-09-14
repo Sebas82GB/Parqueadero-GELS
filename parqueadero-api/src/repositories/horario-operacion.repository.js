@@ -66,6 +66,14 @@ export async function crearConAutoCierre({ apertura, cierre, vigenteDesde }) {
   });
 }
 
+export async function update(id, data) {
+  const record = await prisma.horarioOperacion.update({
+    where: { id },
+    data: HorarioOperacion.toPersistence(data),
+  });
+  return HorarioOperacion.toDomain(record);
+}
+
 // Guardia de concurrencia: solo cierra si seguía vigente. Si otra petición ya
 // lo cerró entre el findById del servicio y este update, count queda en 0.
 export async function cerrar(id, vigenteHasta) {

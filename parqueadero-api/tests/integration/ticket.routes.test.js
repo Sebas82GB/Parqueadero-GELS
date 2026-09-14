@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterAll } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, afterAll, vi } from 'vitest';
 import request from 'supertest';
 import { randomUUID } from 'node:crypto';
 import { createApp } from '../../src/app.js';
@@ -48,6 +48,15 @@ afterAll(async () => {
 });
 
 describe('POST /api/v1/tickets', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-01-05T14:30:00.000Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('registra la entrada, ocupa la celda y crea el vehículo normalizado', async () => {
     const celda = await createCeldaInDb({ tipoPermitido: 'CARRO', estado: 'LIBRE' });
     await createTarifaInDb({ tipoVehiculo: 'CARRO' });
@@ -201,6 +210,21 @@ describe('POST /api/v1/tickets', () => {
     expect(res.body.error.code).toBe('HORARIO_NO_VIGENTE');
   });
 
+  it('devuelve 422 FUERA_DE_HORARIO si la entrada es igual o posterior al cierre del horario vigente', async () => {
+    const celda = await createCeldaInDb({ tipoPermitido: 'CARRO', estado: 'LIBRE' });
+    await createTarifaInDb({ tipoVehiculo: 'CARRO' });
+    await createHorarioInDb();
+    vi.setSystemTime(new Date('2026-01-06T02:30:00.000Z'));
+
+    const res = await request(app)
+      .post('/api/v1/tickets')
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({ ...buildEntradaPayload({ tipoVehiculo: 'CARRO' }), celdaId: celda.id });
+
+    expect(res.status).toBe(422);
+    expect(res.body.error.code).toBe('FUERA_DE_HORARIO');
+  });
+
   it('devuelve 409 CELDA_RESERVADA_MENSUALIDAD si la celda tiene mensualidad vigente de otro vehículo', async () => {
     const celda = await createCeldaInDb({ tipoPermitido: 'CARRO', estado: 'LIBRE' });
     const dueño = await createVehiculoInDb({ tipo: 'CARRO' });
@@ -242,6 +266,39 @@ describe('POST /api/v1/tickets', () => {
 });
 
 describe('POST /api/v1/tickets/:id/salida', () => {
+  it('conserva el horario de la entrada si se crea uno nuevo antes de la salida', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-01-05T14:30:00.000Z'));
+    const celda = await createCeldaInDb({ tipoPermitido: 'CARRO', estado: 'LIBRE' });
+    await createTarifaInDb({ tipoVehiculo: 'CARRO' });
+    const horarioInicial = await createHorarioInDb();
+
+    const entrada = await request(app)
+      .post('/api/v1/tickets')
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({ ...buildEntradaPayload({ tipoVehiculo: 'CARRO' }), celdaId: celda.id });
+    expect(entrada.status).toBe(201);
+
+    vi.setSystemTime(new Date('2026-01-05T15:00:00.000Z'));
+    const nuevoHorario = await request(app)
+      .post('/api/v1/horarios')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ apertura: '09:00', cierre: '09:45' });
+    expect(nuevoHorario.status).toBe(201);
+    await createTurnoInDb({ operadorId: operador.id });
+
+    const salida = await request(app)
+      .post(`/api/v1/tickets/${entrada.body.id}/salida`)
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({ metodo: 'EFECTIVO' });
+
+    expect(salida.status).toBe(200);
+    const ticketEnDb = await prisma.ticket.findUnique({ where: { id: entrada.body.id } });
+    expect(ticketEnDb.horarioId).toBe(horarioInicial.id);
+    expect(salida.body.valorTotal).toBe(3000);
+    vi.useRealTimers();
+  });
+
   it('cobra usando la tarifa guardada en el ticket, no la vigente hoy', async () => {
     const celda = await createCeldaInDb({ tipoPermitido: 'CARRO', estado: 'OCUPADA' });
     const vehiculo = await createVehiculoInDb({ tipo: 'CARRO' });

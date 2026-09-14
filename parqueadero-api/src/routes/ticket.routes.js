@@ -158,7 +158,7 @@ ticketRouter.get(
  *       409:
  *         description: Celda ocupada o el vehículo ya tiene un ticket abierto
  *       422:
- *         description: Celda incompatible con el tipo de vehículo, o sin tarifa u horario de operación vigente
+ *         description: Celda incompatible con el tipo de vehículo, sin tarifa u horario de operación vigente, o hora de entrada igual o posterior al cierre
  */
 ticketRouter.post(
   '/',

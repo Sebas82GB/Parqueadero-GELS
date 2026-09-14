@@ -20,3 +20,8 @@ export async function cerrarHorario(req, res) {
   const horario = await horarioService.cerrarHorario(req.params.id);
   res.status(200).json(horario);
 }
+
+export async function actualizarHorario(req, res) {
+  const horario = await horarioService.actualizarHorario(req.params.id, req.body);
+  res.status(200).json(horario);
+}

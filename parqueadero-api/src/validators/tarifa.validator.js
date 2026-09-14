@@ -37,6 +37,18 @@ export const simularTarifaBodySchema = z
   })
   .strict();
 
+export const actualizarTarifaBodySchema = z
+  .object({
+    valorMinuto: z.number().int('valorMinuto debe ser un entero').nonnegative().optional(),
+    valorPlena: z.number().int('valorPlena debe ser un entero').nonnegative().optional(),
+    valorNocturna: z.number().int('valorNocturna debe ser un entero').nonnegative().optional(),
+    valorMes: z.number().int('valorMes debe ser un entero').nonnegative().optional(),
+  })
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'Debe incluir al menos un campo para actualizar',
+  });
+
 export const listarTarifasQuerySchema = z.object({
   tipoVehiculo: tipoVehiculoSchema.optional(),
   // z.coerce.boolean() no sirve acá: Boolean("false") === true, así que

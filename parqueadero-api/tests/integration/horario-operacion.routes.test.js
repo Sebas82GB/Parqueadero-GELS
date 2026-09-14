@@ -5,6 +5,7 @@ import { createApp } from '../../src/app.js';
 import { signTestToken } from '../helpers/jwt.js';
 import { createUsuarioInDb } from '../helpers/usuario-fixture.js';
 import { buildHorarioPayload, createHorarioInDb } from '../helpers/horario-fixture.js';
+import { createTicketInDb } from '../helpers/ticket-fixture.js';
 import {
   resetOperacion,
   resetRefreshTokens,
@@ -176,6 +177,93 @@ describe('POST /api/v1/horarios', () => {
       .post('/api/v1/horarios')
       .set('Authorization', `Bearer ${operadorToken}`)
       .send(buildHorarioPayload());
+    expect(res.status).toBe(403);
+  });
+});
+
+describe('PATCH /api/v1/horarios/:id', () => {
+  it('edita sin tickets y el GET posterior refleja los valores nuevos', async () => {
+    const horario = await createHorarioInDb();
+
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${horario.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ apertura: '07:00', cierre: '22:00' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.apertura).toBe('07:00');
+    expect(res.body.cierre).toBe('22:00');
+
+    const resGet = await request(app)
+      .get(`/api/v1/horarios/${horario.id}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(resGet.body.apertura).toBe('07:00');
+    expect(resGet.body.cierre).toBe('22:00');
+  });
+
+  it('devuelve 409 HORARIO_CON_TICKETS_ASOCIADOS si el horario tiene un ticket asociado', async () => {
+    const horario = await createHorarioInDb();
+    await createTicketInDb({ horarioId: horario.id });
+
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${horario.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ cierre: '22:00' });
+
+    expect(res.status).toBe(409);
+    expect(res.body.error.code).toBe('HORARIO_CON_TICKETS_ASOCIADOS');
+  });
+
+  it('devuelve 404 si no existe', async () => {
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${randomUUID()}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ cierre: '22:00' });
+    expect(res.status).toBe(404);
+  });
+
+  it('devuelve 400 con body vacío', async () => {
+    const horario = await createHorarioInDb();
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${horario.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({});
+    expect(res.status).toBe(400);
+  });
+
+  it('devuelve 400 con campo prohibido (vigenteDesde)', async () => {
+    const horario = await createHorarioInDb();
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${horario.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ vigenteDesde: new Date().toISOString() });
+    expect(res.status).toBe(400);
+  });
+
+  it('devuelve 422 HORARIO_RANGO_INVALIDO si el cierre resultante no es posterior a la apertura', async () => {
+    const horario = await createHorarioInDb({ apertura: '08:00', cierre: '21:30' });
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${horario.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ apertura: '22:00' });
+    expect(res.status).toBe(422);
+    expect(res.body.error.code).toBe('HORARIO_RANGO_INVALIDO');
+  });
+
+  it('devuelve 401 sin token', async () => {
+    const horario = await createHorarioInDb();
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${horario.id}`)
+      .send({ cierre: '22:00' });
+    expect(res.status).toBe(401);
+  });
+
+  it('devuelve 403 con token OPERADOR', async () => {
+    const horario = await createHorarioInDb();
+    const res = await request(app)
+      .patch(`/api/v1/horarios/${horario.id}`)
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({ cierre: '22:00' });
     expect(res.status).toBe(403);
   });
 });

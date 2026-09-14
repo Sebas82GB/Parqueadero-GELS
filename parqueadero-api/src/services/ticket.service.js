@@ -8,6 +8,7 @@ import * as turnoRepository from '../repositories/turno.repository.js';
 import { calcularTarifa, previsualizarTarifa } from './tarifa-calculo.service.js';
 import { construirRecibo } from './recibo.service.js';
 import { generarCodigoTicket } from '../utils/codigo.util.js';
+import { bogotaParts, horaInstant } from '../utils/bogota-time.js';
 import { NotFoundError, ConflictError, UnprocessableEntityError } from '../errors/index.js';
 
 export async function listarTickets(query) {
@@ -96,6 +97,15 @@ export async function registrarEntrada(
     throw new UnprocessableEntityError(
       'No hay un horario de operación vigente',
       'HORARIO_NO_VIGENTE',
+    );
+  }
+
+  const { year, month, day } = bogotaParts(horaEntrada);
+  const cierre = horaInstant(year, month, day, horario.cierre);
+  if (horaEntrada >= cierre) {
+    throw new UnprocessableEntityError(
+      'La hora de entrada está fuera del horario de operación: ya pasó la hora de cierre',
+      'FUERA_DE_HORARIO',
     );
   }
 

@@ -7,6 +7,7 @@ import { signTestToken } from '../helpers/jwt.js';
 import { createUsuarioInDb } from '../helpers/usuario-fixture.js';
 import { buildTarifaPayload, createTarifaInDb } from '../helpers/tarifa-fixture.js';
 import { createHorarioInDb } from '../helpers/horario-fixture.js';
+import { createTicketInDb } from '../helpers/ticket-fixture.js';
 import {
   resetOperacion,
   resetRefreshTokens,
@@ -200,6 +201,92 @@ describe('POST /api/v1/tarifas', () => {
       .post('/api/v1/tarifas')
       .set('Authorization', `Bearer ${operadorToken}`)
       .send(buildTarifaPayload());
+    expect(res.status).toBe(403);
+  });
+});
+
+describe('PATCH /api/v1/tarifas/:id', () => {
+  it('edita sin tickets y el GET posterior refleja los valores nuevos', async () => {
+    const tarifa = await createTarifaInDb({ tipoVehiculo: 'CARRO' });
+
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${tarifa.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ valorMinuto: 150, valorPlena: 25000 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.valorMinuto).toBe(150);
+    expect(res.body.valorPlena).toBe(25000);
+
+    const resGet = await request(app)
+      .get(`/api/v1/tarifas/${tarifa.id}`)
+      .set('Authorization', `Bearer ${adminToken}`);
+    expect(resGet.body.valorMinuto).toBe(150);
+    expect(resGet.body.valorPlena).toBe(25000);
+  });
+
+  it('devuelve 409 TARIFA_CON_TICKETS_ASOCIADOS si la tarifa tiene un ticket asociado', async () => {
+    const tarifa = await createTarifaInDb({ tipoVehiculo: 'CARRO' });
+    await createTicketInDb({ tarifaId: tarifa.id, tipoVehiculo: 'CARRO' });
+
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${tarifa.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ valorMinuto: 150 });
+
+    expect(res.status).toBe(409);
+    expect(res.body.error.code).toBe('TARIFA_CON_TICKETS_ASOCIADOS');
+  });
+
+  it('devuelve 404 si no existe', async () => {
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${randomUUID()}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ valorMinuto: 150 });
+    expect(res.status).toBe(404);
+  });
+
+  it('devuelve 400 con body vacío', async () => {
+    const tarifa = await createTarifaInDb();
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${tarifa.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({});
+    expect(res.status).toBe(400);
+  });
+
+  it('devuelve 400 con campo prohibido (tipoVehiculo)', async () => {
+    const tarifa = await createTarifaInDb();
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${tarifa.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ tipoVehiculo: 'MOTO' });
+    expect(res.status).toBe(400);
+  });
+
+  it('devuelve 400 con valor negativo', async () => {
+    const tarifa = await createTarifaInDb();
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${tarifa.id}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ valorMinuto: -1 });
+    expect(res.status).toBe(400);
+  });
+
+  it('devuelve 401 sin token', async () => {
+    const tarifa = await createTarifaInDb();
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${tarifa.id}`)
+      .send({ valorMinuto: 150 });
+    expect(res.status).toBe(401);
+  });
+
+  it('devuelve 403 con token OPERADOR', async () => {
+    const tarifa = await createTarifaInDb();
+    const res = await request(app)
+      .patch(`/api/v1/tarifas/${tarifa.id}`)
+      .set('Authorization', `Bearer ${operadorToken}`)
+      .send({ valorMinuto: 150 });
     expect(res.status).toBe(403);
   });
 });

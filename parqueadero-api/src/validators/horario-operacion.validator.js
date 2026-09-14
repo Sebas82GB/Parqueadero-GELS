@@ -19,6 +19,16 @@ export const crearHorarioBodySchema = z
     path: ['cierre'],
   });
 
+export const actualizarHorarioBodySchema = z
+  .object({
+    apertura: horaLocalSchema('apertura').optional(),
+    cierre: horaLocalSchema('cierre').optional(),
+  })
+  .strict()
+  .refine((data) => Object.keys(data).length > 0, {
+    message: 'Debe incluir al menos un campo para actualizar',
+  });
+
 export const listarHorariosQuerySchema = z.object({
   // z.coerce.boolean() no sirve acá: Boolean("false") === true, así que
   // "?vigente=false" coercería a true. Se compara el string explícitamente.

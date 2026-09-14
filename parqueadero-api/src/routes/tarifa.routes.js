@@ -5,6 +5,7 @@ import { validate } from '../middlewares/validate.js';
 import {
   idParamSchema,
   crearTarifaBodySchema,
+  actualizarTarifaBodySchema,
   simularTarifaBodySchema,
   listarTarifasQuerySchema,
 } from '../validators/tarifa.validator.js';
@@ -12,6 +13,7 @@ import {
   listarTarifas,
   obtenerTarifaPorId,
   crearTarifa,
+  actualizarTarifa,
   cerrarTarifa,
   simularTarifa,
 } from '../controllers/tarifa.controller.js';
@@ -109,6 +111,51 @@ tarifaRouter.post(
   authorize('ADMIN'),
   validate({ body: crearTarifaBodySchema }),
   crearTarifa,
+);
+
+/**
+ * @openapi
+ * /tarifas/{id}:
+ *   patch:
+ *     summary: Actualizar una tarifa (solo si no tiene tickets asociados)
+ *     tags: [Tarifas]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               valorMinuto: { type: integer, minimum: 0, example: 100 }
+ *               valorPlena: { type: integer, minimum: 0, example: 20000 }
+ *               valorNocturna: { type: integer, minimum: 0, example: 16000 }
+ *               valorMes: { type: integer, minimum: 0, example: 180000 }
+ *     responses:
+ *       200:
+ *         description: Tarifa actualizada
+ *       400:
+ *         description: Datos inválidos o body vacío
+ *       401:
+ *         description: No autenticado
+ *       403:
+ *         description: Sin permisos (requiere ADMIN)
+ *       404:
+ *         description: Tarifa no encontrada
+ *       409:
+ *         description: La tarifa ya tiene tickets asociados
+ */
+tarifaRouter.patch(
+  '/:id',
+  auth,
+  authorize('ADMIN'),
+  validate({ params: idParamSchema, body: actualizarTarifaBodySchema }),
+  actualizarTarifa,
 );
 
 /**

@@ -5,12 +5,14 @@ import { validate } from '../middlewares/validate.js';
 import {
   idParamSchema,
   crearHorarioBodySchema,
+  actualizarHorarioBodySchema,
   listarHorariosQuerySchema,
 } from '../validators/horario-operacion.validator.js';
 import {
   listarHorarios,
   obtenerHorarioPorId,
   crearHorario,
+  actualizarHorario,
   cerrarHorario,
 } from '../controllers/horario-operacion.controller.js';
 
@@ -111,6 +113,51 @@ horarioOperacionRouter.post(
   authorize('ADMIN'),
   validate({ body: crearHorarioBodySchema }),
   crearHorario,
+);
+
+/**
+ * @openapi
+ * /horarios/{id}:
+ *   patch:
+ *     summary: Actualizar un horario de operación (solo si no tiene tickets asociados)
+ *     tags: [Horarios]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string, format: uuid }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               apertura: { type: string, example: "08:00", description: "Hora local, formato HH:mm" }
+ *               cierre: { type: string, example: "21:30", description: "Hora local, formato HH:mm" }
+ *     responses:
+ *       200:
+ *         description: Horario actualizado
+ *       400:
+ *         description: Datos inválidos o body vacío
+ *       401:
+ *         description: No autenticado
+ *       403:
+ *         description: Sin permisos (requiere ADMIN)
+ *       404:
+ *         description: Horario no encontrado
+ *       409:
+ *         description: El horario ya tiene tickets asociados
+ *       422:
+ *         description: El cierre resultante no es posterior a la apertura
+ */
+horarioOperacionRouter.patch(
+  '/:id',
+  auth,
+  authorize('ADMIN'),
+  validate({ params: idParamSchema, body: actualizarHorarioBodySchema }),
+  actualizarHorario,
 );
 
 /**

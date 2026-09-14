@@ -206,6 +206,17 @@ export async function anularTransaccional({ ticketId, celdaId, motivo, anuladoPo
   });
 }
 
+// Cuenta cualquier ticket asociado, incluidos los ANULADO: un ticket anulado
+// ya se mostró al cliente y sigue en el histórico, así que la tarifa/horario
+// no se puede modificar una vez que existe al menos un ticket que la referencie.
+export async function existsByTarifaId(tarifaId) {
+  return (await prisma.ticket.count({ where: { tarifaId } })) > 0;
+}
+
+export async function existsByHorarioId(horarioId) {
+  return (await prisma.ticket.count({ where: { horarioId } })) > 0;
+}
+
 export async function marcarEntregado(id, { entregadoPorId, entregadoEn }) {
   const { count } = await prisma.ticket.updateMany({
     where: { id, estado: 'PAGADO' },

@@ -42,7 +42,11 @@ function validarRango(horaEntrada, horaSalida) {
 
 function calcularBloques({ horaEntrada, horaSalida, tarifa, horario }) {
   let t = horaEntrada;
-  let diaAncla = horaEntrada;
+  const { year, month, day } = bogotaParts(horaEntrada);
+  const aperturaHoy = aperturaInstant(year, month, day, horario);
+  const cierreHoy = cierreInstant(year, month, day, horario);
+  let diaAncla =
+    horaEntrada < cierreHoy ? aperturaHoy : aperturaInstant(year, month, day + 1, horario);
   let cierreDia = cierreInstant(
     bogotaParts(diaAncla).year,
     bogotaParts(diaAncla).month,

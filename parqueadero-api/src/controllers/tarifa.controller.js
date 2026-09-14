@@ -21,6 +21,11 @@ export async function cerrarTarifa(req, res) {
   res.status(200).json(tarifa);
 }
 
+export async function actualizarTarifa(req, res) {
+  const tarifa = await tarifaService.actualizarTarifa(req.params.id, req.body);
+  res.status(200).json(tarifa);
+}
+
 export async function simularTarifa(req, res) {
   const resultado = await tarifaService.simularTarifa(req.body);
   res.status(200).json(resultado);
