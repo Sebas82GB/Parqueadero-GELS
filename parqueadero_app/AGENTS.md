@@ -2,7 +2,7 @@
 
 <mark>Este `AGENTS.md` es el puente. Las reglas completas están en `CLAUDE.md` (este directorio). Léelo entero antes de tocar código.</mark>
 
-> **OBLIGATORIO antes de tocar nada:** ejecuta `graphify update .` en este directorio (~36 s). Es la primera accion de la sesion, antes de leer codigo o planear. Un grafo desfasado no falla: responde "no existe" sobre archivos que si existen, y ese dato falso se propaga al refinador y al implementador. Detalle en el `AGENTS.md` de la raiz.
+> **OBLIGATORIO antes de tocar nada:** ejecuta `graphify update .` en este directorio (~36 s). Si PowerShell responde `El término 'graphify' no se reconoce`, el binario no está en el PATH: invócalo por ruta completa con `& "$env:USERPROFILE\.local\bin\graphify.exe" update .` (misma sintaxis para `explain`, `path` y `query`). Es la primera accion de la sesion, antes de leer codigo o planear. Un grafo desfasado no falla: responde "no existe" sobre archivos que si existen, y ese dato falso se propaga al refinador y al implementador. Detalle en el `AGENTS.md` de la raiz.
 
 Cliente Flutter para la API de parqueadero. Plataforma actual: **web (Chrome)**; Android/iOS después (no cerrar esa puerta). Feature-first en 3 capas (presentación → dominio → datos). Aplicación operada de pie: objetivos táctiles grandes, poca escritura, confirmaciones claras.
 
