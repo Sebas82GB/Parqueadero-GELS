@@ -53,7 +53,16 @@ class _ChipsFiltro extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(celdaListNotifierProvider);
+    // `.select`: el poll de 30s de `CeldaListNotifier` notifica en CADA
+    // refresco (`CeldaListState` no implementa `==`), así que observar el
+    // estado completo repintaba los 6 ChoiceChip cada medio minuto aunque el
+    // filtro no hubiera cambiado. Un `record` sí compara por valor: mientras
+    // estado y tipo sigan iguales, Riverpod no notifica.
+    final (:estadoFiltro, :tipoFiltro) = ref.watch(
+      celdaListNotifierProvider.select(
+        (s) => (estadoFiltro: s.estadoFiltro, tipoFiltro: s.tipoFiltro),
+      ),
+    );
     final notifier = ref.read(celdaListNotifierProvider.notifier);
 
     Widget chip({required String label, required bool activo, required VoidCallback onTap}) {
@@ -74,7 +83,7 @@ class _ChipsFiltro extends ConsumerWidget {
         children: [
           chip(
             label: 'Todas',
-            activo: state.estadoFiltro == null && state.tipoFiltro == null,
+            activo: estadoFiltro == null && tipoFiltro == null,
             onTap: () {
               notifier.setEstadoFiltro(null);
               notifier.setTipoFiltro(null);
@@ -83,9 +92,9 @@ class _ChipsFiltro extends ConsumerWidget {
           const SizedBox(width: AppSpacing.sm),
           chip(
             label: 'Libres',
-            activo: state.estadoFiltro == EstadoCelda.libre,
+            activo: estadoFiltro == EstadoCelda.libre,
             onTap: () {
-              final activo = state.estadoFiltro == EstadoCelda.libre;
+              final activo = estadoFiltro == EstadoCelda.libre;
               notifier.setEstadoFiltro(activo ? null : EstadoCelda.libre);
               notifier.setTipoFiltro(null);
             },
@@ -93,9 +102,9 @@ class _ChipsFiltro extends ConsumerWidget {
           const SizedBox(width: AppSpacing.sm),
           chip(
             label: 'Ocupadas',
-            activo: state.estadoFiltro == EstadoCelda.ocupada,
+            activo: estadoFiltro == EstadoCelda.ocupada,
             onTap: () {
-              final activo = state.estadoFiltro == EstadoCelda.ocupada;
+              final activo = estadoFiltro == EstadoCelda.ocupada;
               notifier.setEstadoFiltro(activo ? null : EstadoCelda.ocupada);
               notifier.setTipoFiltro(null);
             },
@@ -103,9 +112,9 @@ class _ChipsFiltro extends ConsumerWidget {
           const SizedBox(width: AppSpacing.sm),
           chip(
             label: 'Carro',
-            activo: state.tipoFiltro == TipoVehiculo.carro,
+            activo: tipoFiltro == TipoVehiculo.carro,
             onTap: () {
-              final activo = state.tipoFiltro == TipoVehiculo.carro;
+              final activo = tipoFiltro == TipoVehiculo.carro;
               notifier.setTipoFiltro(activo ? null : TipoVehiculo.carro);
               notifier.setEstadoFiltro(null);
             },
@@ -113,9 +122,9 @@ class _ChipsFiltro extends ConsumerWidget {
           const SizedBox(width: AppSpacing.sm),
           chip(
             label: 'Moto',
-            activo: state.tipoFiltro == TipoVehiculo.moto,
+            activo: tipoFiltro == TipoVehiculo.moto,
             onTap: () {
-              final activo = state.tipoFiltro == TipoVehiculo.moto;
+              final activo = tipoFiltro == TipoVehiculo.moto;
               notifier.setTipoFiltro(activo ? null : TipoVehiculo.moto);
               notifier.setEstadoFiltro(null);
             },
@@ -123,9 +132,9 @@ class _ChipsFiltro extends ConsumerWidget {
           const SizedBox(width: AppSpacing.sm),
           chip(
             label: 'Bicicleta',
-            activo: state.tipoFiltro == TipoVehiculo.bicicleta,
+            activo: tipoFiltro == TipoVehiculo.bicicleta,
             onTap: () {
-              final activo = state.tipoFiltro == TipoVehiculo.bicicleta;
+              final activo = tipoFiltro == TipoVehiculo.bicicleta;
               notifier.setTipoFiltro(activo ? null : TipoVehiculo.bicicleta);
               notifier.setEstadoFiltro(null);
             },

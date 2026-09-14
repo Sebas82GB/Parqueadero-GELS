@@ -22,6 +22,13 @@ class AppMotion {
   /// Único punto que toda animación nueva debe consultar para respetar la
   /// preferencia de movimiento reducido del sistema: devuelve
   /// [Duration.zero] si está activa, o [normal] si no.
+  ///
+  /// `disableAnimationsOf` y no `MediaQuery.of(context).disableAnimations`:
+  /// el segundo suscribe al widget a TODO el `MediaQueryData`, así que
+  /// redimensionar la ventana (la plataforma actual es web) o abrir el
+  /// teclado reconstruiría a todos los que llaman acá aunque solo les
+  /// importe la preferencia de movimiento. El accessor por aspecto suscribe
+  /// únicamente a ese campo.
   static Duration effective(BuildContext context, Duration normal) =>
-      MediaQuery.of(context).disableAnimations ? Duration.zero : normal;
+      MediaQuery.disableAnimationsOf(context) ? Duration.zero : normal;
 }

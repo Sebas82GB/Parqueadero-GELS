@@ -362,7 +362,7 @@ class CeldaCard extends ConsumerWidget {
       ),
     );
 
-    if (MediaQuery.of(context).disableAnimations) return tarjeta;
+    if (MediaQuery.disableAnimationsOf(context)) return tarjeta;
 
     // Tramo de esta tarjeta dentro del controller COMPARTIDO: antes de
     // `beginFrac` vale 0, después de `endFrac` vale 1 — mismo efecto que el
