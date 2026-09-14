@@ -73,6 +73,30 @@ class TarifaRepositoryImpl implements TarifaRepository {
   }
 
   @override
+  Future<Tarifa> actualizar(
+    String id, {
+    int? valorMinuto,
+    int? valorPlena,
+    int? valorNocturna,
+    int? valorMes,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        '/tarifas/$id',
+        data: {
+          if (valorMinuto != null) 'valorMinuto': valorMinuto,
+          if (valorPlena != null) 'valorPlena': valorPlena,
+          if (valorNocturna != null) 'valorNocturna': valorNocturna,
+          if (valorMes != null) 'valorMes': valorMes,
+        },
+      );
+      return TarifaDto.fromJson(response.data as Map<String, dynamic>).toDomain();
+    } on DioException catch (e) {
+      throw AppException.fromDioException(e);
+    }
+  }
+
+  @override
   Future<int?> simular({
     required TipoVehiculo tipoVehiculo,
     required int valorMinuto,

@@ -7,6 +7,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/money.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/button_spinner.dart';
+import '../../../core/widgets/detail_skeleton.dart';
 import '../../../core/widgets/error_banner.dart';
 import '../../../core/widgets/error_state.dart';
 import '../domain/turno.dart';
@@ -14,6 +15,7 @@ import 'turno_cierre_notifier.dart';
 import 'turno_cierre_state.dart';
 import 'turno_detail_notifier.dart';
 import 'widgets/arqueo_summary_view.dart';
+import 'widgets/diferencia_texto.dart';
 
 /// Muestra el esperado (arqueo en vivo del propio turno, vía
 /// `turnoDetailNotifierProvider`), pide el efectivo contado, recalcula la
@@ -117,7 +119,7 @@ class _TurnoCierreScreenState extends ConsumerState<TurnoCierreScreen> {
     if (detalle.isLoading) {
       return Scaffold(
         appBar: AppBar(title: const Text('Cerrar turno')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const DetailSkeleton(),
       );
     }
     if (detalle.errorMessage != null) {

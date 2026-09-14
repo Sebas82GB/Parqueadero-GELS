@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:parqueadero_app/core/network/api_exception.dart';
 import 'package:parqueadero_app/core/utils/money.dart';
+import 'package:parqueadero_app/core/widgets/detail_skeleton.dart';
 import 'package:parqueadero_app/features/auth/data/auth_repository_impl.dart';
 import 'package:parqueadero_app/features/auth/domain/auth_repository.dart';
 import 'package:parqueadero_app/features/auth/domain/usuario.dart';
@@ -255,6 +258,36 @@ void main() {
     await tester.pumpAndSettle();
     if (responderIniciar) await responderIniciarTurnoSiAparece(tester);
   }
+
+  testWidgets('cargando: muestra el skeleton y no un CircularProgressIndicator', (tester) async {
+    final completer = Completer<Ticket>();
+    when(() => ticketRepository.obtenerPorId('t1')).thenAnswer((_) => completer.future);
+
+    final router = GoRouter(
+      initialLocation: '/salida',
+      routes: [
+        GoRoute(path: '/salida', builder: (context, state) => const RegistrarSalidaScreen(ticketId: 't1')),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          ticketRepositoryProvider.overrideWithValue(ticketRepository),
+          celdaRepositoryProvider.overrideWithValue(celdaRepository),
+          turnoRepositoryProvider.overrideWithValue(turnoRepository),
+          authRepositoryProvider.overrideWithValue(authRepository),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(DetailSkeleton), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    completer.complete(ticketAbierto());
+    await tester.pumpAndSettle();
+  });
 
   testWidgets('muestra los datos del ticket: placa, tipo y celda', (tester) async {
     await pumpSalidaScreen(tester);

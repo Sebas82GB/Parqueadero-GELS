@@ -8,9 +8,12 @@ import '../../../../core/theme/app_breakpoints.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/money.dart';
 import '../../../../core/utils/tipo_vehiculo_label.dart';
 import '../../../../core/widgets/button_spinner.dart';
+import '../../../../core/widgets/error_banner.dart';
+import '../../../../core/widgets/loading_skeleton.dart';
 import '../../../../core/widgets/tiempo_transcurrido_text.dart';
 import '../../../tickets/domain/pago.dart';
 import '../../../tickets/presentation/cobro_preview_notifier.dart';
@@ -46,8 +49,9 @@ Future<void> showCeldaAccionRapida(BuildContext context, String celdaId) {
           borderRadius: BorderRadius.circular(AppRadius.lg),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
+          constraints: BoxConstraints(
             maxWidth: AppBreakpoints.contentMaxWidth,
+            maxHeight: MediaQuery.sizeOf(context).height * 0.9,
           ),
           child: CeldaAccionRapidaSheet(celdaId: celdaId, mostrarHandle: false),
         ),
@@ -112,7 +116,6 @@ class _CeldaAccionRapidaSheetState
   bool _buscando = true;
   String? _ticketId;
   MetodoPago? _metodo;
-  bool _mostrarDetalle = false;
   final _montoRecibidoController = TextEditingController();
 
   @override
@@ -159,7 +162,7 @@ class _CeldaAccionRapidaSheetState
     if (_buscando) {
       return _EstadoCentrado(
         handle: widget.mostrarHandle ? const _HandleBar() : null,
-        child: const CircularProgressIndicator(color: AppColors.demarcacion),
+        child: const _SheetSkeleton(),
       );
     }
 
@@ -180,7 +183,7 @@ class _CeldaAccionRapidaSheetState
     if (detalle.isLoading) {
       return _EstadoCentrado(
         handle: widget.mostrarHandle ? const _HandleBar() : null,
-        child: const CircularProgressIndicator(color: AppColors.demarcacion),
+        child: const _SheetSkeleton(),
       );
     }
     if (detalle.errorMessage != null) {
@@ -223,10 +226,58 @@ class _CeldaAccionRapidaSheetState
         context.push('/tickets/$ticketId/salida');
         return;
       }
+      final montoTexto = totalEsperado != null
+          ? formatMoney(totalEsperado)
+          : 'el valor calculado por el sistema';
+      final cambioTexto =
+          (metodoEsEfectivo && montoRecibido != null && totalEsperado != null)
+          ? ' Recibe ${formatMoney(montoRecibido)} y debe dar ${formatMoney(cambio!)} de cambio.'
+          : '';
+      final confirmado = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('¿Confirmar salida?'),
+          content: Text(
+            'El ticket se cerrará con un cobro de $montoTexto.$cambioTexto Esta acción no se puede deshacer.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        ),
+      );
+      if (confirmado != true || !context.mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      final router = GoRouter.of(context);
       final ok = await ref
           .read(salidaNotifierProvider(ticketId).notifier)
           .confirmarSalida(metodo: _metodo);
-      if (ok && context.mounted) Navigator.of(context).pop();
+      if (ok && context.mounted) {
+        final recibo = ref
+            .read(salidaNotifierProvider(ticketId))
+            .ticketCerrado
+            ?.recibo;
+        Navigator.of(context).pop();
+        if (recibo != null) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                'Salida registrada · ${recibo.placa} · ${formatMoney(recibo.total)} cobrados',
+              ),
+              action: SnackBarAction(
+                label: 'Ver recibo',
+                onPressed: () => router.push('/tickets/$ticketId/recibo'),
+              ),
+            ),
+          );
+        }
+      }
     }
 
     return Padding(
@@ -365,11 +416,7 @@ class _CeldaAccionRapidaSheetState
             ],
             const SizedBox(height: AppSpacing.md),
             if (salida.error != null) ...[
-              Text(
-                salida.error!.message,
-                style: const TextStyle(color: AppColors.demarcacion),
-                textAlign: TextAlign.center,
-              ),
+              ErrorBanner(error: salida.error!),
               const SizedBox(height: AppSpacing.sm),
             ],
             SizedBox(
@@ -391,35 +438,13 @@ class _CeldaAccionRapidaSheetState
                     : Text(
                         esOtro
                             ? 'Ir a registrar salida'
+                            : totalEsperado != null
+                            ? 'Cobrar ${formatMoney(totalEsperado)}'
                             : 'Registrar salida y cobrar',
                       ),
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            SizedBox(
-              height: 48,
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.demarcacion,
-                  side: const BorderSide(color: AppColors.demarcacion),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.sm),
-                  ),
-                ),
-                onPressed: preview.preview == null
-                    ? null
-                    : () => setState(() => _mostrarDetalle = !_mostrarDetalle),
-                icon: Icon(
-                  _mostrarDetalle ? Icons.expand_less : Icons.receipt_long,
-                ),
-                label: Text(
-                  _mostrarDetalle
-                      ? 'Ocultar detalle de factura'
-                      : 'Ver detalle de factura',
-                ),
-              ),
-            ),
-            if (_mostrarDetalle && preview.preview != null) ...[
+            if (preview.preview != null) ...[
               const SizedBox(height: AppSpacing.sm),
               Container(
                 width: double.infinity,
@@ -436,6 +461,48 @@ class _CeldaAccionRapidaSheetState
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SheetSkeleton extends StatelessWidget {
+  const _SheetSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      width: double.infinity,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  LoadingSkeleton(width: 80, height: 12),
+                  SizedBox(height: AppSpacing.xs),
+                  LoadingSkeleton(width: 120, height: 20),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  LoadingSkeleton(width: 48, height: 12),
+                  SizedBox(height: AppSpacing.xs),
+                  LoadingSkeleton(width: 64, height: 16),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: AppSpacing.md),
+          LoadingSkeleton(height: 48, borderRadius: AppRadius.sm),
+          SizedBox(height: AppSpacing.md),
+          LoadingSkeleton(height: 56, borderRadius: AppRadius.md),
+        ],
       ),
     );
   }
@@ -484,7 +551,7 @@ class _TarjetaMonto extends StatelessWidget {
     if (total != null) {
       valor = Text(
         formatMoney(total),
-        style: const TextStyle(color: AppColors.asfalto, fontSize: 20),
+        style: AppTypography.montoDestacado.copyWith(color: AppColors.asfalto),
       );
     } else if (preview.preview != null) {
       // `valorTotal` null con preview ya cargado: tipo OTRO, sin valor

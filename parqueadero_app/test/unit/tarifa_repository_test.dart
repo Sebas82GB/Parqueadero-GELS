@@ -196,6 +196,75 @@ void main() {
     });
   });
 
+  group('actualizar', () {
+    test('éxito: envía solo los campos no nulos, devuelve la tarifa actualizada', () async {
+      when(
+        () => dio.patch('/tarifas/tar1', data: {'valorMinuto': 200}),
+      ).thenAnswer((_) async => _jsonResponse('/tarifas/tar1', _tarifaJson(valorMinuto: 200)));
+
+      final tarifa = await repository.actualizar('tar1', valorMinuto: 200);
+
+      expect(tarifa.valorMinuto, 200);
+      verify(() => dio.patch('/tarifas/tar1', data: {'valorMinuto': 200})).called(1);
+    });
+
+    test('varios campos: incluye solo los que no son nulos', () async {
+      when(
+        () => dio.patch('/tarifas/tar1', data: {'valorPlena': 9000, 'valorMes': 160000}),
+      ).thenAnswer(
+        (_) async => _jsonResponse('/tarifas/tar1', _tarifaJson(valorPlena: 9000, valorMes: 160000)),
+      );
+
+      final tarifa = await repository.actualizar('tar1', valorPlena: 9000, valorMes: 160000);
+
+      expect(tarifa.valorPlena, 9000);
+      expect(tarifa.valorMes, 160000);
+      verify(() => dio.patch('/tarifas/tar1', data: {'valorPlena': 9000, 'valorMes': 160000})).called(1);
+    });
+
+    test('400 VALIDATION_ERROR (body vacío): lanza ApiException con ese code', () async {
+      when(() => dio.patch('/tarifas/tar1', data: any(named: 'data'))).thenThrow(
+        _dioError(
+          '/tarifas/tar1',
+          statusCode: 400,
+          errorBody: {
+            'error': {
+              'code': 'VALIDATION_ERROR',
+              'message': 'Debe incluir al menos un campo para actualizar',
+              'details': [],
+            },
+          },
+        ),
+      );
+
+      await expectLater(
+        () => repository.actualizar('tar1'),
+        throwsA(isA<ApiException>().having((e) => e.code, 'code', 'VALIDATION_ERROR')),
+      );
+    });
+
+    test('409 TARIFA_CON_TICKETS_ASOCIADOS: lanza ApiException con ese code', () async {
+      when(() => dio.patch('/tarifas/tar1', data: any(named: 'data'))).thenThrow(
+        _dioError(
+          '/tarifas/tar1',
+          statusCode: 409,
+          errorBody: {
+            'error': {
+              'code': 'TARIFA_CON_TICKETS_ASOCIADOS',
+              'message': 'No se puede editar una tarifa que ya tiene tickets asociados',
+              'details': [],
+            },
+          },
+        ),
+      );
+
+      await expectLater(
+        () => repository.actualizar('tar1', valorMinuto: 200),
+        throwsA(isA<ApiException>().having((e) => e.code, 'code', 'TARIFA_CON_TICKETS_ASOCIADOS')),
+      );
+    });
+  });
+
   group('simular', () {
     test('bloques: envía los 5 campos y devuelve valorTotal', () async {
       when(

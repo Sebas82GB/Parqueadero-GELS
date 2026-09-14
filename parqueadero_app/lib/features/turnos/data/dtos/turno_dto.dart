@@ -17,6 +17,8 @@ class TurnoDto {
     this.efectivoEsperado,
     this.diferencia,
     required this.estado,
+    this.validadoPorId,
+    this.validadoEn,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -33,6 +35,8 @@ class TurnoDto {
   final int? efectivoEsperado;
   final int? diferencia;
   final String estado;
+  final String? validadoPorId;
+  final String? validadoEn;
   final String createdAt;
   final String updatedAt;
 
@@ -47,6 +51,8 @@ class TurnoDto {
     efectivoEsperado: efectivoEsperado,
     diferencia: diferencia,
     estado: EstadoTurno.fromBackend(estado),
+    validadoPorId: validadoPorId,
+    validadoEn: validadoEn == null ? null : DateTime.parse(validadoEn!),
     createdAt: DateTime.parse(createdAt),
     updatedAt: DateTime.parse(updatedAt),
   );

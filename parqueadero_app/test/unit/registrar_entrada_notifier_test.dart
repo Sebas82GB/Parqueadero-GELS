@@ -89,7 +89,7 @@ void main() {
         .registrar(placa: 'ABC123', tipoVehiculo: TipoVehiculo.carro, celdaId: 'cel1');
 
     expect(resultado?.codigo, 'T-260101-ABC123');
-    expect(container.read(registrarEntradaNotifierProvider).errorMessage, isNull);
+    expect(container.read(registrarEntradaNotifierProvider).error, isNull);
   });
 
   for (final code in [
@@ -118,7 +118,7 @@ void main() {
           .registrar(placa: 'ABC123', tipoVehiculo: TipoVehiculo.carro, celdaId: 'cel1');
 
       expect(resultado, isNull);
-      expect(container.read(registrarEntradaNotifierProvider).errorMessage, 'mensaje $code');
+      expect(container.read(registrarEntradaNotifierProvider).error?.message, 'mensaje $code');
     });
   }
 }

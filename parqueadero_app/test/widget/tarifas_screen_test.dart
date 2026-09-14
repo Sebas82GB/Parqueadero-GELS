@@ -161,6 +161,104 @@ void main() {
     verify(() => tarifaRepository.cerrar('tar1')).called(1);
   });
 
+  testWidgets('Editar: abre el diálogo precargado y al guardar un valor cambiado llama al repositorio', (
+    tester,
+  ) async {
+    when(() => tarifaRepository.listarTodas()).thenAnswer((_) async => [tarifa()]);
+
+    await pumpTarifasScreen(tester);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Editar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Editar tarifa'), findsOneWidget);
+    // Precargado con los valores actuales de la tarifa vigente.
+    expect(find.widgetWithText(TextFormField, '100'), findsOneWidget);
+    expect(find.widgetWithText(TextFormField, '8000'), findsOneWidget);
+
+    when(
+      () => tarifaRepository.actualizar(
+        'tar1',
+        valorMinuto: 200,
+        valorPlena: null,
+        valorNocturna: null,
+        valorMes: null,
+      ),
+    ).thenAnswer((_) async => tarifa());
+
+    await tester.enterText(find.widgetWithText(TextFormField, '100'), '200');
+    await tester.tap(find.widgetWithText(FilledButton, 'Guardar'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => tarifaRepository.actualizar(
+        'tar1',
+        valorMinuto: 200,
+        valorPlena: null,
+        valorNocturna: null,
+        valorMes: null,
+      ),
+    ).called(1);
+    expect(find.text('Editar tarifa'), findsNothing);
+  });
+
+  testWidgets('Editar sin cambios: cierra el diálogo sin llamar al repositorio', (tester) async {
+    when(() => tarifaRepository.listarTodas()).thenAnswer((_) async => [tarifa()]);
+
+    await pumpTarifasScreen(tester);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Editar'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Guardar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Editar tarifa'), findsNothing);
+    verifyNever(
+      () => tarifaRepository.actualizar(
+        any(),
+        valorMinuto: any(named: 'valorMinuto'),
+        valorPlena: any(named: 'valorPlena'),
+        valorNocturna: any(named: 'valorNocturna'),
+        valorMes: any(named: 'valorMes'),
+      ),
+    );
+  });
+
+  testWidgets('Editar con 409 TARIFA_CON_TICKETS_ASOCIADOS: muestra el mensaje del backend', (tester) async {
+    when(() => tarifaRepository.listarTodas()).thenAnswer((_) async => [tarifa()]);
+
+    await pumpTarifasScreen(tester);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Editar'));
+    await tester.pumpAndSettle();
+
+    when(
+      () => tarifaRepository.actualizar(
+        'tar1',
+        valorMinuto: 200,
+        valorPlena: null,
+        valorNocturna: null,
+        valorMes: null,
+      ),
+    ).thenThrow(
+      const ApiException(
+        code: 'TARIFA_CON_TICKETS_ASOCIADOS',
+        message: 'No se puede editar una tarifa que ya tiene tickets asociados',
+        statusCode: 409,
+      ),
+    );
+
+    await tester.enterText(find.widgetWithText(TextFormField, '100'), '200');
+    await tester.tap(find.widgetWithText(FilledButton, 'Guardar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No se puede editar una tarifa que ya tiene tickets asociados'), findsOneWidget);
+  });
+
   testWidgets('filtro por tipo: solo muestra el grupo del tipo elegido', (tester) async {
     when(
       () => tarifaRepository.listarTodas(),

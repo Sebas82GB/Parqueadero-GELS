@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_motion.dart';
 import '../theme/app_radius.dart';
 
 /// Caja rectangular con un pulso de opacidad, para dar la sensación de
@@ -20,12 +21,30 @@ class _LoadingSkeletonState extends State<LoadingSkeleton> with SingleTickerProv
   late final AnimationController _controller = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 900),
-  )..repeat(reverse: true);
+  );
 
   late final Animation<double> _opacity = Tween<double>(
     begin: 0.4,
     end: 1,
   ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final effectiveDuration = AppMotion.effective(
+      context,
+      const Duration(milliseconds: 900),
+    );
+    if (effectiveDuration == Duration.zero) {
+      _controller.stop();
+      _controller.value = 1.0;
+    } else {
+      _controller.duration = effectiveDuration;
+      if (!_controller.isAnimating) {
+        _controller.repeat(reverse: true);
+      }
+    }
+  }
 
   @override
   void dispose() {

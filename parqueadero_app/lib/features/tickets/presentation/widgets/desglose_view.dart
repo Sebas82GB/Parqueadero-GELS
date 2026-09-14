@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/bogota_time.dart';
 import '../../../../core/utils/money.dart';
 import '../../domain/desglose_item.dart';
@@ -29,9 +30,12 @@ class DesgloseView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Total', style: Theme.of(context).textTheme.titleMedium),
-            Text(
-              valorTotal != null ? formatMoney(valorTotal!) : 'Por definir',
-              style: Theme.of(context).textTheme.titleLarge,
+            Flexible(
+              child: Text(
+                valorTotal != null ? formatMoney(valorTotal!) : 'Por definir',
+                style: AppTypography.montoDestacado,
+                textAlign: TextAlign.end,
+              ),
             ),
           ],
         ),

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:parqueadero_app/core/network/api_exception.dart';
+import 'package:parqueadero_app/core/widgets/detail_skeleton.dart';
 import 'package:parqueadero_app/core/widgets/empty_state.dart';
 import 'package:parqueadero_app/core/widgets/error_state.dart';
 import 'package:parqueadero_app/features/auth/data/auth_repository_impl.dart';
@@ -152,6 +153,12 @@ void main() {
           ),
         ),
         GoRoute(path: '/entrada', builder: (context, state) => const RegistrarEntradaScreen(celdaId: 'cel1')),
+        // Solo la usa el test del 409 VEHICULO_CON_TICKET_ABIERTO (botón
+        // "Buscar placa"); no navegado desde el resto de los tests.
+        GoRoute(
+          path: '/tickets/buscar',
+          builder: (context, state) => const Scaffold(body: Text('BUSCAR_PLACA_STUB')),
+        ),
       ],
     );
     await tester.pumpWidget(
@@ -222,14 +229,15 @@ void main() {
     if (responderIniciar) await responderIniciarTurnoSiAparece(tester);
   }
 
-  testWidgets('celdas cargando: muestra el spinner, no "celda no encontrada"', (tester) async {
+  testWidgets('celdas cargando: muestra el skeleton, no "celda no encontrada"', (tester) async {
     when(() => celdaRepository.listarTodas()).thenAnswer(
       (_) => Future.delayed(const Duration(milliseconds: 50), () => [celdaLibre()]),
     );
 
     await pumpEntradaScreenDirecto(tester);
 
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.byType(DetailSkeleton), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(
       find.text('No se encontró la celda seleccionada. Vuelve a la cuadrícula e inténtalo de nuevo.'),
       findsNothing,
@@ -592,4 +600,209 @@ void main() {
       expect(find.byType(RegistrarEntradaScreen), findsOneWidget);
     });
   }
+
+  testWidgets('placa demasiado corta: no llama al repositorio y muestra el aviso bajo el campo', (tester) async {
+    await pumpEntradaScreen(tester);
+    await tester.enterText(find.byType(TextFormField).first, 'AB');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Registrar entrada'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('La placa debe tener al menos 3 caracteres'), findsOneWidget);
+    verifyNever(
+      () => ticketRepository.registrarEntrada(
+        placa: any(named: 'placa'),
+        tipoVehiculo: any(named: 'tipoVehiculo'),
+        celdaId: any(named: 'celdaId'),
+        propietarioNombre: any(named: 'propietarioNombre'),
+        propietarioTelefono: any(named: 'propietarioTelefono'),
+      ),
+    );
+  });
+
+  testWidgets(
+    '400 del backend con details: muestra el mensaje y el detalle del campo, sin cerrar la pantalla ni perder la placa escrita',
+    (tester) async {
+      when(
+        () => ticketRepository.registrarEntrada(
+          placa: any(named: 'placa'),
+          tipoVehiculo: any(named: 'tipoVehiculo'),
+          celdaId: any(named: 'celdaId'),
+          propietarioNombre: any(named: 'propietarioNombre'),
+          propietarioTelefono: any(named: 'propietarioTelefono'),
+        ),
+      ).thenThrow(
+        const ApiException(
+          code: 'VALIDATION_ERROR',
+          message: 'Datos de entrada inválidos',
+          statusCode: 400,
+          details: [ApiErrorDetail(field: 'placa', message: 'La placa ya está registrada')],
+        ),
+      );
+
+      await pumpEntradaScreen(tester);
+      // Con formato colombiano válido (pasa `placaConTipoValidator` en el
+      // cliente, ver placa_tipo_test.dart): este test cubre el 400 que
+      // devuelve el BACKEND sobre una placa con formato válido, no el
+      // validador de formato de la app.
+      await tester.enterText(find.byType(TextFormField).first, 'ABC123');
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Registrar entrada'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Datos de entrada inválidos'), findsOneWidget);
+      expect(find.text('La placa ya está registrada'), findsOneWidget);
+      expect(find.byType(RegistrarEntradaScreen), findsOneWidget);
+      expect(find.text('ABC123'), findsOneWidget);
+    },
+  );
+
+  group('autodetección de tipo por formato de placa colombiana', () {
+    testWidgets('escribir ABC123 (formato carro) selecciona Carro automáticamente', (tester) async {
+      await pumpEntradaScreen(tester);
+
+      await tester.enterText(find.byType(TextFormField).first, 'ABC123');
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<DropdownButtonFormField<TipoVehiculo>>(find.byType(DropdownButtonFormField<TipoVehiculo>)).initialValue,
+        TipoVehiculo.carro,
+      );
+      expect(find.text('Detectado por la placa'), findsOneWidget);
+    });
+
+    testWidgets('escribir ABC12D (formato moto) selecciona Moto automáticamente', (tester) async {
+      await pumpEntradaScreen(tester);
+
+      await tester.enterText(find.byType(TextFormField).first, 'ABC12D');
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<DropdownButtonFormField<TipoVehiculo>>(find.byType(DropdownButtonFormField<TipoVehiculo>)).initialValue,
+        TipoVehiculo.moto,
+      );
+      expect(find.text('Detectado por la placa'), findsOneWidget);
+    });
+
+    testWidgets('elegir "Otro" a mano y seguir escribiendo no sobrescribe la elección', (tester) async {
+      await pumpEntradaScreen(tester);
+
+      await tester.enterText(find.byType(TextFormField).first, 'ABC123');
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<DropdownButtonFormField<TipoVehiculo>>(find.byType(DropdownButtonFormField<TipoVehiculo>)).initialValue,
+        TipoVehiculo.carro,
+      );
+
+      await tester.tap(find.byType(DropdownButtonFormField<TipoVehiculo>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Otro').last);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Detectado por la placa'), findsNothing);
+
+      // Placa que autodetectaría CARRO si la elección manual no mandara.
+      await tester.enterText(find.byType(TextFormField).first, 'XYZ789');
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<DropdownButtonFormField<TipoVehiculo>>(find.byType(DropdownButtonFormField<TipoVehiculo>)).initialValue,
+        TipoVehiculo.otro,
+      );
+      expect(find.text('Detectado por la placa'), findsNothing);
+    });
+
+    testWidgets(
+      'AAA1234 (caso real del usuario) sin elección manual: no llama al repositorio y muestra el aviso de formato',
+      (tester) async {
+        await pumpEntradaScreen(tester);
+
+        await tester.enterText(find.byType(TextFormField).first, 'AAA1234');
+        await tester.tap(find.widgetWithText(ElevatedButton, 'Registrar entrada'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(
+            'No reconocemos el formato. Un carro es ABC123 y una moto ABC12D. '
+            'Si es otro vehículo, elige "Otro".',
+          ),
+          findsOneWidget,
+        );
+        verifyNever(
+          () => ticketRepository.registrarEntrada(
+            placa: any(named: 'placa'),
+            tipoVehiculo: any(named: 'tipoVehiculo'),
+            celdaId: any(named: 'celdaId'),
+            propietarioNombre: any(named: 'propietarioNombre'),
+            propietarioTelefono: any(named: 'propietarioTelefono'),
+          ),
+        );
+      },
+    );
+
+    testWidgets('AAA1234 con "Otro" elegido a mano: sí deja enviar', (tester) async {
+      when(
+        () => ticketRepository.registrarEntrada(
+          placa: any(named: 'placa'),
+          tipoVehiculo: any(named: 'tipoVehiculo'),
+          celdaId: any(named: 'celdaId'),
+          propietarioNombre: any(named: 'propietarioNombre'),
+          propietarioTelefono: any(named: 'propietarioTelefono'),
+        ),
+      ).thenAnswer((_) async => ticketCreado());
+
+      await pumpEntradaScreen(tester);
+
+      await tester.tap(find.byType(DropdownButtonFormField<TipoVehiculo>));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Otro').last);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextFormField).first, 'AAA1234');
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Registrar entrada'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Entrada registrada · Ticket T-260101-ABC123'), findsOneWidget);
+      verify(
+        () => ticketRepository.registrarEntrada(
+          placa: 'AAA1234',
+          tipoVehiculo: TipoVehiculo.otro,
+          celdaId: 'cel1',
+          propietarioNombre: any(named: 'propietarioNombre'),
+          propietarioTelefono: any(named: 'propietarioTelefono'),
+        ),
+      ).called(1);
+    });
+  });
+
+  testWidgets('409 VEHICULO_CON_TICKET_ABIERTO: muestra el mensaje del backend y ofrece buscar la placa', (
+    tester,
+  ) async {
+    when(
+      () => ticketRepository.registrarEntrada(
+        placa: any(named: 'placa'),
+        tipoVehiculo: any(named: 'tipoVehiculo'),
+        celdaId: any(named: 'celdaId'),
+        propietarioNombre: any(named: 'propietarioNombre'),
+        propietarioTelefono: any(named: 'propietarioTelefono'),
+      ),
+    ).thenThrow(
+      const ApiException(
+        code: 'VEHICULO_CON_TICKET_ABIERTO',
+        message: 'El vehículo ABC123 ya tiene un ticket abierto',
+        statusCode: 409,
+      ),
+    );
+
+    await pumpEntradaScreen(tester);
+    await tester.enterText(find.byType(TextFormField).first, 'ABC123');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Registrar entrada'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('El vehículo ABC123 ya tiene un ticket abierto'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Buscar placa'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Buscar placa'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('BUSCAR_PLACA_STUB'), findsOneWidget);
+  });
 }

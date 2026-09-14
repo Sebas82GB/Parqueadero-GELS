@@ -72,4 +72,57 @@ void main() {
 
     expect(container.read(tarifaAccionNotifierProvider('tar1')).errorMessage, 'Tarifa no encontrada');
   });
+
+  group('actualizar', () {
+    test('éxito: limpia el error y refresca TarifaListNotifier', () async {
+      when(
+        () => tarifaRepository.actualizar(
+          'tar1',
+          valorMinuto: 200,
+          valorPlena: null,
+          valorNocturna: null,
+          valorMes: null,
+        ),
+      ).thenAnswer((_) async => tarifa());
+      await Future<void>.delayed(Duration.zero);
+
+      final resultado = await container
+          .read(tarifaAccionNotifierProvider('tar1').notifier)
+          .actualizar(valorMinuto: 200);
+
+      expect(resultado, isTrue);
+      final accionState = container.read(tarifaAccionNotifierProvider('tar1'));
+      expect(accionState.isLoading, isFalse);
+      expect(accionState.errorMessage, isNull);
+      verify(() => tarifaRepository.listarTodas()).called(greaterThanOrEqualTo(2));
+    });
+
+    test('falla con 409 TARIFA_CON_TICKETS_ASOCIADOS: expone el mensaje del backend', () async {
+      when(
+        () => tarifaRepository.actualizar(
+          'tar1',
+          valorMinuto: 200,
+          valorPlena: null,
+          valorNocturna: null,
+          valorMes: null,
+        ),
+      ).thenThrow(
+        const ApiException(
+          code: 'TARIFA_CON_TICKETS_ASOCIADOS',
+          message: 'No se puede editar una tarifa que ya tiene tickets asociados',
+          statusCode: 409,
+        ),
+      );
+
+      final resultado = await container
+          .read(tarifaAccionNotifierProvider('tar1').notifier)
+          .actualizar(valorMinuto: 200);
+
+      expect(resultado, isFalse);
+      expect(
+        container.read(tarifaAccionNotifierProvider('tar1')).errorMessage,
+        'No se puede editar una tarifa que ya tiene tickets asociados',
+      );
+    });
+  });
 }

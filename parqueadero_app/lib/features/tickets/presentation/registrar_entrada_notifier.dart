@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/domain/tipo_vehiculo.dart';
-import '../../../core/network/api_exception.dart' show ApiException, AppException;
+import '../../../core/network/api_exception.dart' show AppException;
 import '../../celdas/presentation/celda_list_notifier.dart';
 import '../data/ticket_repository_impl.dart';
 import '../domain/ticket.dart';
@@ -37,7 +37,7 @@ class RegistrarEntradaNotifier extends Notifier<RegistrarEntradaState> {
       return ticket;
     } on AppException catch (e) {
       if (!ref.mounted) return null;
-      state = RegistrarEntradaState(errorMessage: e.message, errorCode: e is ApiException ? e.code : null);
+      state = RegistrarEntradaState(error: e);
       return null;
     }
   }

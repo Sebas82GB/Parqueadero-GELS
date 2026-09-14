@@ -159,4 +159,46 @@ void main() {
     expect(find.widgetWithText(ElevatedButton, 'Completar arqueo'), findsNothing);
     expect(find.widgetWithText(ElevatedButton, 'Cerrar turno'), findsNothing);
   });
+
+  testWidgets('turno cerrado con cifras: el bloque de indicadores se renderiza sobre el resumen', (tester) async {
+    when(
+      () => turnoRepository.obtenerArqueo('tur1'),
+    ).thenAnswer((_) async => arqueo(estado: EstadoTurno.cerrado));
+
+    await pumpDetalle(tester);
+
+    expect(find.text('Indicadores del turno'), findsOneWidget);
+    expect(find.text('Arqueo final'), findsOneWidget);
+    // Los indicadores aparecen antes que el resumen de arqueo en la pantalla.
+    final indicadores = tester.getTopLeft(find.text('Indicadores del turno'));
+    final resumen = tester.getTopLeft(find.text('Arqueo final'));
+    expect(indicadores.dy, lessThan(resumen.dy));
+  });
+
+  testWidgets('turno recién abierto sin recaudo ni tickets: ningún KPI muestra NaN o Infinity', (tester) async {
+    final recienAbierto = ArqueoTurno(
+      turnoId: 'tur1',
+      operadorId: 'op1',
+      estado: EstadoTurno.abierto,
+      apertura: DateTime.utc(2026, 1, 1, 6),
+      cierre: null,
+      baseInicial: 50000,
+      totalesPorMetodo: const TotalesPorMetodo(efectivo: 0, tarjeta: 0, transferencia: 0),
+      totalRecaudado: 0,
+      ticketsCerrados: 0,
+      efectivoEsperado: 50000,
+      efectivoContado: null,
+      diferencia: null,
+    );
+    when(() => turnoRepository.obtenerArqueo('tur1')).thenAnswer((_) async => recienAbierto);
+
+    await pumpDetalle(tester);
+
+    expect(find.text('Indicadores del turno'), findsOneWidget);
+    expect(find.textContaining('NaN'), findsNothing);
+    expect(find.textContaining('Infinity'), findsNothing);
+    // Recaudo por hora, tickets por hora, ticket promedio y % en efectivo
+    // quedan sin denominador válido en el instante de apertura: "—".
+    expect(find.text('—'), findsWidgets);
+  });
 }

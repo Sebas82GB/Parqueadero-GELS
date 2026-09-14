@@ -16,6 +16,7 @@ import 'package:parqueadero_app/features/celdas/domain/celda.dart';
 import 'package:parqueadero_app/features/celdas/domain/celda_repository.dart';
 import 'package:parqueadero_app/features/celdas/presentation/celdas_screen.dart';
 import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_grid_skeleton.dart';
+import 'package:parqueadero_app/features/celdas/presentation/widgets/celda_leyenda.dart';
 import 'package:parqueadero_app/features/tickets/data/ticket_repository_impl.dart';
 import 'package:parqueadero_app/features/tickets/domain/ticket_repository.dart';
 import 'package:parqueadero_app/features/turnos/data/turno_repository_impl.dart';
@@ -247,4 +248,47 @@ void main() {
 
     expect(find.text('Sin turno abierto'), findsOneWidget);
   });
+
+  testWidgets(
+    'leyenda: es visible sin interacción y muestra las etiquetas de los tres estados',
+    (tester) async {
+      when(() => celdaRepository.listarTodas()).thenAnswer(
+        (_) async => [
+          celda(id: 'c1', codigo: 'A-01', zona: 'Zona A', estado: EstadoCelda.libre),
+        ],
+      );
+
+      await pumpCeldasScreen(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CeldaLeyenda), findsOneWidget);
+      expect(
+        find.descendant(of: find.byType(CeldaLeyenda), matching: find.text('Libre')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byType(CeldaLeyenda), matching: find.text('Ocupada')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byType(CeldaLeyenda), matching: find.text('Mantenimiento')),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: find.byKey(const Key('resumen-libre')), matching: find.byType(Icon)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(of: find.byKey(const Key('resumen-ocupada')), matching: find.byType(Icon)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('resumen-mantenimiento')),
+          matching: find.byType(Icon),
+        ),
+        findsNothing,
+      );
+    },
+  );
 }

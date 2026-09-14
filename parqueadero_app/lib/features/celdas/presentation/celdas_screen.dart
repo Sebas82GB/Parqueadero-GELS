@@ -13,6 +13,7 @@ import 'widgets/celda_card.dart';
 import 'widgets/celda_estado_style.dart';
 import 'widgets/celda_filtros_bar.dart';
 import 'widgets/celda_grid_skeleton.dart';
+import 'widgets/celda_leyenda.dart';
 import 'widgets/zona_header.dart';
 
 /// `true` una vez que esta sesión de la app vio la grilla con datos reales
@@ -146,6 +147,7 @@ class _CeldasScreenState extends ConsumerState<CeldasScreen> with SingleTickerPr
                 ),
               ),
             ),
+            const SliverToBoxAdapter(child: CeldaLeyenda()),
             if (grupos.isEmpty)
               SliverToBoxAdapter(
                 child: EmptyState(
@@ -227,10 +229,6 @@ class _EstadoStat extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(style.icon, color: style.color, size: 18),
-        const SizedBox(width: AppSpacing.xs),
-        // Sin teñir con style.color (ver celda_card.dart): el ícono ya
-        // comunica el estado, el número se queda en el color por defecto.
         AnimatedCountText(value: count, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(width: AppSpacing.xs),
         Text(style.label, style: Theme.of(context).textTheme.bodySmall),

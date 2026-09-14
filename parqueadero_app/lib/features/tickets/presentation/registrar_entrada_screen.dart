@@ -3,12 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/placa_tipo.dart';
 import '../../../core/utils/tipo_vehiculo_label.dart';
 import '../../../core/utils/upper_case_text_formatter.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/button_spinner.dart';
+import '../../../core/widgets/detail_skeleton.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/error_banner.dart';
 import '../../../core/widgets/error_state.dart';
 import '../../celdas/domain/celda.dart';
 import '../../celdas/presentation/celda_list_notifier.dart';
@@ -45,6 +49,15 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
   final _placaController = TextEditingController();
   TipoVehiculo? _tipoVehiculo;
   bool _tipoInicializado = false;
+
+  /// `true` en cuanto el operador toca el selector de tipo a mano. Mientras
+  /// siga en `false`, la placa manda: cada tecla recalcula
+  /// [tipoVehiculoDePlaca] y, si detecta un formato colombiano válido,
+  /// actualiza [_tipoVehiculo] solo. En cuanto el operador elige un tipo a
+  /// mano (p.ej. "Otro" para una bicicleta), esta bandera pasa a `true` y la
+  /// autodetección deja de sobrescribir su elección para el resto del
+  /// formulario.
+  bool _tipoElegidoManualmente = false;
 
   /// Solo se usa en el flujo sin celda preseleccionada: "no hay ninguna
   /// libre de este tipo" se sabe recién al intentar enviar, así que no es
@@ -172,7 +185,7 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
       if (celdaPreseleccionada == null) {
         Widget body;
         if (celdaState.isLoading) {
-          body = const Center(child: CircularProgressIndicator());
+          body = const DetailSkeleton();
         } else if (celdaState.errorMessage != null) {
           body = ErrorState(
             message: celdaState.errorMessage!,
@@ -259,19 +272,59 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
                           UpperCaseTextFormatter(),
                         ],
                         decoration: const InputDecoration(labelText: 'Placa'),
-                        validator: placaValidator,
+                        // Mientras el operador no haya elegido el tipo a
+                        // mano, la placa debe coincidir con un formato
+                        // colombiano reconocible (carro/moto): sin eso no
+                        // hay tipo que autoasignar y el envío no tiene
+                        // sentido. En cuanto elige a mano (p.ej. "Otro" para
+                        // una bicicleta), basta con el validador de siempre.
+                        validator: _tipoElegidoManualmente ? placaValidator : placaConTipoValidator,
+                        // Autodetección en vivo: mientras el operador no haya
+                        // tocado el selector, cada tecla recalcula el tipo
+                        // según el formato de placa colombiano y actualiza
+                        // el dropdown de abajo. Si la placa no coincide con
+                        // ningún formato, se deja el último tipo conocido
+                        // (el operador puede seguir escribiendo o elegir a
+                        // mano).
+                        onChanged: (value) {
+                          if (_tipoElegidoManualmente) return;
+                          setState(() {
+                            final detectado = tipoVehiculoDePlaca(value.trim().toUpperCase());
+                            if (detectado != null) _tipoVehiculo = detectado;
+                          });
+                        },
                       ),
                       const SizedBox(height: AppSpacing.md),
                       _TipoVehiculoDropdown(
+                        // Cambia de key cuando la autodetección actualiza
+                        // `_tipoVehiculo` para que el dropdown (que guarda
+                        // su valor en estado interno, ver comentario de la
+                        // clase) se reconstruya con el nuevo `initialValue`
+                        // en vez de ignorarlo. Una vez el operador elige a
+                        // mano, `_tipoVehiculo` ya no cambia por la placa,
+                        // así que la key deja de moverse.
+                        key: ValueKey(_tipoVehiculo),
                         initialValue: _tipoVehiculo!,
                         enabled: !_enviando,
-                        // Sin setState acá: el valor solo lo necesita
-                        // _submit() más adelante (async, on-tap), no ningún
-                        // otro widget de este build(). Guardarlo en un campo
-                        // plano evita reconstruir el formulario por cada
-                        // selección.
-                        onChanged: (value) => _tipoVehiculo = value,
+                        // La elección manual manda sobre la autodetección
+                        // para el resto del formulario: `_TipoVehiculoDropdown`
+                        // ya no se sobrescribe con lo que se siga escribiendo
+                        // en la placa.
+                        onChanged: (value) => setState(() {
+                          _tipoVehiculo = value;
+                          _tipoElegidoManualmente = true;
+                        }),
                       ),
+                      if (!_tipoElegidoManualmente &&
+                          tipoVehiculoDePlaca(_placaController.text.trim().toUpperCase()) == _tipoVehiculo) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          'Detectado por la placa',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -298,16 +351,25 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
                 const SizedBox(height: AppSpacing.md),
-                // Mientras `_enviando` sigue en `true`, `state.errorMessage`
-                // puede traer el fallo de un intento intermedio (una celda
-                // que ya se está reintentando con otra) — no es el resultado
-                // final todavía, así que no se muestra hasta que termine.
-              ] else if (!_enviando && state.errorMessage != null) ...[
-                Text(
-                  state.errorMessage!,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
+                // Mientras `_enviando` sigue en `true`, `state.error` puede
+                // traer el fallo de un intento intermedio (una celda que ya
+                // se está reintentando con otra) — no es el resultado final
+                // todavía, así que no se muestra hasta que termine.
+              ] else if (!_enviando && state.error != null) ...[
+                ErrorBanner(error: state.error!),
+                // El vehículo ya está adentro (probablemente de un intento
+                // anterior que sí se registró): en vez de dejar al operador
+                // sin salida, se ofrece ir directo a buscar esa placa y ver
+                // su ticket abierto. Mismo patrón que
+                // `OPERADOR_SIN_TURNO_ABIERTO` → "Abrir turno" en
+                // `registrar_salida_screen.dart`.
+                if (state.error case ApiException(code: 'VEHICULO_CON_TICKET_ABIERTO')) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  OutlinedButton(
+                    onPressed: () => context.push('/tickets/buscar'),
+                    child: const Text('Buscar placa'),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.md),
               ],
               ElevatedButton(
@@ -329,7 +391,7 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
 /// `_submit()` más adelante (vía [onChanged]), ningún otro widget del
 /// formulario depende de él en cada tecla/selección.
 class _TipoVehiculoDropdown extends StatefulWidget {
-  const _TipoVehiculoDropdown({required this.initialValue, required this.enabled, required this.onChanged});
+  const _TipoVehiculoDropdown({super.key, required this.initialValue, required this.enabled, required this.onChanged});
 
   final TipoVehiculo initialValue;
   final bool enabled;

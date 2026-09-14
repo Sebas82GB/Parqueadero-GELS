@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:parqueadero_app/core/network/api_exception.dart';
 import 'package:parqueadero_app/core/utils/money.dart';
+import 'package:parqueadero_app/core/widgets/detail_skeleton.dart';
 import 'package:parqueadero_app/features/auth/data/auth_repository_impl.dart';
 import 'package:parqueadero_app/features/auth/domain/auth_repository.dart';
 import 'package:parqueadero_app/features/auth/domain/usuario.dart';
@@ -116,6 +119,28 @@ void main() {
     );
     await tester.pumpAndSettle();
   }
+
+  testWidgets('cargando: muestra el skeleton y no un CircularProgressIndicator', (tester) async {
+    final completer = Completer<ArqueoTurno>();
+    when(() => turnoRepository.obtenerArqueo('tur1')).thenAnswer((_) => completer.future);
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          turnoRepositoryProvider.overrideWithValue(turnoRepository),
+          authRepositoryProvider.overrideWithValue(authRepository),
+        ],
+        child: const MaterialApp(home: TurnoCierreScreen(turnoId: 'tur1')),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(DetailSkeleton), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    completer.complete(arqueoEnVivo());
+    await tester.pumpAndSettle();
+  });
 
   testWidgets('muestra el efectivo esperado del arqueo en vivo', (tester) async {
     await pumpCierre(tester);

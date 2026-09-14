@@ -20,7 +20,11 @@ DioException _dioError(String path, {required int statusCode, required Map<Strin
   );
 }
 
-Map<String, dynamic> _turnoJson({String estado = 'ABIERTO'}) => {
+Map<String, dynamic> _turnoJson({
+  String estado = 'ABIERTO',
+  String? validadoPorId,
+  String? validadoEn,
+}) => {
   'id': 'tur1',
   'operadorId': 'op1',
   'apertura': '2026-01-01T06:00:00.000Z',
@@ -28,6 +32,8 @@ Map<String, dynamic> _turnoJson({String estado = 'ABIERTO'}) => {
   'baseInicial': 50000,
   'totalRecaudado': null,
   'estado': estado,
+  'validadoPorId': validadoPorId,
+  'validadoEn': validadoEn,
   'createdAt': '2026-01-01T06:00:00.000Z',
   'updatedAt': '2026-01-01T06:00:00.000Z',
 };
@@ -414,6 +420,44 @@ void main() {
       await repository.listar();
 
       verify(() => dio.get('/turnos', queryParameters: {'page': 1, 'perPage': 20})).called(1);
+    });
+
+    test('mapea validadoPorId y validadoEn de un turno con arqueo ya completado', () async {
+      when(
+        () => dio.get('/turnos', queryParameters: any(named: 'queryParameters')),
+      ).thenAnswer(
+        (_) async => _jsonResponse('/turnos', {
+          'data': [
+            _turnoJson(
+              estado: 'CERRADO',
+              validadoPorId: 'admin1',
+              validadoEn: '2026-01-01T14:05:00.000Z',
+            ),
+          ],
+          'meta': {'page': 1, 'perPage': 20, 'total': 1},
+        }, statusCode: 200),
+      );
+
+      final pagina = await repository.listar();
+
+      expect(pagina.data.single.validadoPorId, 'admin1');
+      expect(pagina.data.single.validadoEn, DateTime.parse('2026-01-01T14:05:00.000Z'));
+    });
+
+    test('validadoPorId y validadoEn en null: no llegan del backend', () async {
+      when(
+        () => dio.get('/turnos', queryParameters: any(named: 'queryParameters')),
+      ).thenAnswer(
+        (_) async => _jsonResponse('/turnos', {
+          'data': [_turnoJson()],
+          'meta': {'page': 1, 'perPage': 20, 'total': 1},
+        }, statusCode: 200),
+      );
+
+      final pagina = await repository.listar();
+
+      expect(pagina.data.single.validadoPorId, isNull);
+      expect(pagina.data.single.validadoEn, isNull);
     });
   });
 }

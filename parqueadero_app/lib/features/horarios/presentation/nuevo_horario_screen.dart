@@ -10,36 +10,15 @@ import '../../../core/widgets/button_spinner.dart';
 import '../../auth/domain/usuario.dart';
 import '../../auth/presentation/session_notifier.dart';
 import 'nuevo_horario_notifier.dart';
+import 'seleccionar_hora.dart';
 
-/// Firma inyectable de la selección de hora: en producción abre el picker
-/// nativo de Flutter; en widget tests se overridea para devolver una
-/// [TimeOfDay] fija sin abrir el diálogo real (no hay precedente en este
-/// proyecto de testear el árbol interno de `TimePickerDialog`, y hacerlo
-/// sería frágil entre versiones del SDK).
-typedef SeleccionarHora = Future<TimeOfDay?> Function(BuildContext context, TimeOfDay? inicial, String helpText);
-
-Future<TimeOfDay?> _seleccionarHoraPorDefecto(BuildContext context, TimeOfDay? inicial, String helpText) {
-  return showTimePicker(
-    context: context,
-    initialTime: inicial ?? TimeOfDay.now(),
-    // Campos de texto para hora/minuto en vez del dial: más rápido y preciso
-    // a una mano bajo sol directo (contexto de uso documentado en la skill
-    // de diseño).
-    initialEntryMode: TimePickerEntryMode.input,
-    helpText: helpText,
-    // Fuerza formato 24h sin depender de la configuración del dispositivo:
-    // el valor mostrado y el que se envía al backend deben ser el mismo
-    // "HH:mm", sin ambigüedad de AM/PM.
-    builder: (context, child) =>
-        MediaQuery(data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true), child: child!),
-  );
-}
-
-String _formatHora(TimeOfDay hora) =>
-    '${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}';
+// Re-exportado: los tests existentes importan `SeleccionarHora` desde este
+// archivo (antes definido acá mismo, ahora compartido con el diálogo de
+// edición de `HorariosScreen`).
+export 'seleccionar_hora.dart';
 
 class NuevoHorarioScreen extends ConsumerStatefulWidget {
-  const NuevoHorarioScreen({super.key, this.seleccionarHora = _seleccionarHoraPorDefecto});
+  const NuevoHorarioScreen({super.key, this.seleccionarHora = seleccionarHoraPorDefecto});
 
   final SeleccionarHora seleccionarHora;
 
@@ -80,8 +59,8 @@ class _NuevoHorarioScreenState extends ConsumerState<NuevoHorarioScreen> {
       return;
     }
 
-    final aperturaStr = _formatHora(apertura);
-    final cierreStr = _formatHora(cierre);
+    final aperturaStr = formatHora(apertura);
+    final cierreStr = formatHora(cierre);
     // Misma comparación que el `.refine()` de `crearHorarioBodySchema` en el
     // backend (`cierre > apertura` como string `HH:mm`): feedback inmediato
     // sin esperar el round-trip.
@@ -198,7 +177,7 @@ class _SelectorHora extends StatelessWidget {
       child: InputDecorator(
         decoration: InputDecoration(labelText: label, suffixIcon: const Icon(Icons.access_time)),
         child: Text(
-          hora == null ? 'Toca para elegir hora' : _formatHora(hora!),
+          hora == null ? 'Toca para elegir hora' : formatHora(hora!),
           style: hora == null ? TextStyle(color: Theme.of(context).colorScheme.outline) : null,
         ),
       ),

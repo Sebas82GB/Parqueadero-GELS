@@ -12,4 +12,17 @@ abstract interface class HorarioRepository {
   /// misma transacción) el vigente anterior. Lanza [ApiException] si la
   /// validación falla (formato `HH:mm` o `cierre` no posterior a `apertura`).
   Future<Horario> crear({required String apertura, required String cierre});
+
+  /// `PATCH /horarios/:id` con body parcial: solo los campos no nulos viajan
+  /// en la petición. Lanza [ApiException] con code `VALIDATION_ERROR` (400,
+  /// body vacío o campo desconocido), `HORARIO_NO_ENCONTRADO` (404),
+  /// `HORARIO_CON_TICKETS_ASOCIADOS` (409, la vigencia ya se usó y no se
+  /// puede editar) o `HORARIO_RANGO_INVALIDO` (422, el cierre resultante no
+  /// es posterior a la apertura).
+  Future<Horario> actualizar(String id, {String? apertura, String? cierre});
+
+  /// `POST /horarios/:id/cerrar` sin body. Cierra la vigencia sin
+  /// reemplazarla. Lanza [ApiException] con code `HORARIO_NO_ENCONTRADO`
+  /// (404) o `HORARIO_YA_CERRADO` (409).
+  Future<Horario> cerrar(String id);
 }

@@ -46,6 +46,32 @@ class HorarioRepositoryImpl implements HorarioRepository {
       throw AppException.fromDioException(e);
     }
   }
+
+  @override
+  Future<Horario> actualizar(String id, {String? apertura, String? cierre}) async {
+    try {
+      final response = await _dio.patch(
+        '/horarios/$id',
+        data: {
+          if (apertura != null) 'apertura': apertura,
+          if (cierre != null) 'cierre': cierre,
+        },
+      );
+      return HorarioDto.fromJson(response.data as Map<String, dynamic>).toDomain();
+    } on DioException catch (e) {
+      throw AppException.fromDioException(e);
+    }
+  }
+
+  @override
+  Future<Horario> cerrar(String id) async {
+    try {
+      final response = await _dio.post('/horarios/$id/cerrar');
+      return HorarioDto.fromJson(response.data as Map<String, dynamic>).toDomain();
+    } on DioException catch (e) {
+      throw AppException.fromDioException(e);
+    }
+  }
 }
 
 final horarioRepositoryProvider = Provider<HorarioRepository>(

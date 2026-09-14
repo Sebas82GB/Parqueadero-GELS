@@ -5,13 +5,29 @@ import 'package:intl/intl.dart';
 import '../../../../core/widgets/filtros_bar.dart';
 import '../../../auth/domain/usuario.dart';
 import '../../../auth/presentation/session_notifier.dart';
+import '../../../usuarios/data/usuario_repository_impl.dart';
 import '../../domain/turno.dart';
 import '../turno_list_notifier.dart';
 import 'turno_estado_style.dart';
 
-/// El campo de `operadorId` solo se muestra para ADMIN: un OPERADOR ya ve
-/// solo los suyos (el backend lo fuerza), y no hay endpoint para listar
-/// usuarios con el que ofrecer un selector por nombre — se filtra por id.
+/// Listado de operadores (`GET /usuarios` filtrado a rol OPERADOR): alimenta
+/// el selector por nombre de este filtro y el mapa id->nombre que usa
+/// `TurnoListItem` para no mostrar el UUID crudo del turno. `GET /usuarios`
+/// es ADMIN-only (403 para un OPERADOR), así que si la sesión no es ADMIN
+/// este provider ni siquiera intenta la llamada — un OPERADOR solo ve sus
+/// propios turnos y no necesita resolver nombres ajenos. No es `.family`
+/// a propósito: una sola instancia compartida por toda la pantalla, para
+/// que la lista completa resuelva los nombres con una única llamada.
+final operadoresProvider = FutureProvider.autoDispose<List<Usuario>>((ref) async {
+  final usuario = ref.watch(sessionNotifierProvider).usuario;
+  if (usuario == null || usuario.rol != RolUsuario.admin) return const [];
+  final pagina = await ref.watch(usuarioRepositoryProvider).listar(rol: RolUsuario.operador, perPage: 100);
+  return pagina.data;
+});
+
+/// El selector de operador solo se muestra para ADMIN: un OPERADOR ya ve
+/// solo los suyos (el backend lo fuerza), así que filtrar por operador no
+/// tiene sentido para él.
 class TurnoFiltrosBar extends ConsumerStatefulWidget {
   const TurnoFiltrosBar({super.key});
 
@@ -20,20 +36,6 @@ class TurnoFiltrosBar extends ConsumerStatefulWidget {
 }
 
 class _TurnoFiltrosBarState extends ConsumerState<TurnoFiltrosBar> {
-  late final TextEditingController _operadorIdController;
-
-  @override
-  void initState() {
-    super.initState();
-    _operadorIdController = TextEditingController(text: ref.read(turnoListNotifierProvider).operadorIdFiltro);
-  }
-
-  @override
-  void dispose() {
-    _operadorIdController.dispose();
-    super.dispose();
-  }
-
   Future<void> _elegirRango() async {
     final state = ref.read(turnoListNotifierProvider);
     final rango = await showDateRangePicker(
@@ -71,15 +73,7 @@ class _TurnoFiltrosBarState extends ConsumerState<TurnoFiltrosBar> {
           ],
           onChanged: notifier.setEstadoFiltro,
         ),
-        if (esAdmin)
-          SizedBox(
-            width: 160,
-            child: TextField(
-              controller: _operadorIdController,
-              decoration: const InputDecoration(labelText: 'ID de operador'),
-              onSubmitted: notifier.setOperadorIdFiltro,
-            ),
-          ),
+        if (esAdmin) _OperadorDropdown(value: state.operadorIdFiltro, onChanged: notifier.setOperadorIdFiltro),
         OutlinedButton.icon(
           onPressed: _elegirRango,
           icon: const Icon(Icons.date_range),
@@ -89,15 +83,39 @@ class _TurnoFiltrosBarState extends ConsumerState<TurnoFiltrosBar> {
                 : 'Rango de fechas',
           ),
         ),
-        if (hayFiltrosActivos)
-          TextButton(
-            onPressed: () {
-              _operadorIdController.clear();
-              notifier.limpiarFiltros();
-            },
-            child: const Text('Limpiar filtros'),
-          ),
+        if (hayFiltrosActivos) TextButton(onPressed: notifier.limpiarFiltros, child: const Text('Limpiar filtros')),
       ],
+    );
+  }
+}
+
+class _OperadorDropdown extends ConsumerWidget {
+  const _OperadorDropdown({required this.value, required this.onChanged});
+
+  final String? value;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final operadoresAsync = ref.watch(operadoresProvider);
+    return operadoresAsync.when(
+      data: (operadores) => DropdownButton<String?>(
+        value: value,
+        hint: const Text('Operador'),
+        items: [
+          const DropdownMenuItem(value: null, child: Text('Todos los operadores')),
+          for (final operador in operadores) DropdownMenuItem(value: operador.id, child: Text(operador.nombre)),
+        ],
+        onChanged: onChanged,
+      ),
+      loading: () => const SizedBox(
+        width: 24,
+        height: 24,
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      ),
+      // Sin lista de operadores no hay con qué armar el selector; el resto
+      // de filtros sigue funcionando igual.
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 }

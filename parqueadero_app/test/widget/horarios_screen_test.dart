@@ -143,6 +143,69 @@ void main() {
     expect(find.textContaining('Sin horario vigente'), findsOneWidget);
   });
 
+  testWidgets('ADMIN con vigente: muestra los botones Editar y Cerrar vigencia', (tester) async {
+    when(() => horarioRepository.listarTodas()).thenAnswer((_) async => [horario()]);
+
+    await pumpHorariosScreen(tester);
+    await tester.pumpAndSettle();
+
+    expect(find.widgetWithText(OutlinedButton, 'Editar'), findsOneWidget);
+    expect(find.widgetWithText(OutlinedButton, 'Cerrar vigencia'), findsOneWidget);
+  });
+
+  testWidgets('Editar: abre el diálogo de edición precargado con la hora actual', (tester) async {
+    when(() => horarioRepository.listarTodas()).thenAnswer((_) async => [horario()]);
+
+    await pumpHorariosScreen(tester);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Editar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Editar horario'), findsOneWidget);
+    expect(find.text('08:00'), findsWidgets);
+    expect(find.text('21:00'), findsWidgets);
+  });
+
+  testWidgets('Cerrar vigencia: pide confirmación antes de llamar al repositorio', (tester) async {
+    when(() => horarioRepository.listarTodas()).thenAnswer((_) async => [horario()]);
+
+    await pumpHorariosScreen(tester);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Cerrar vigencia'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('¿Cerrar vigencia?'), findsOneWidget);
+    verifyNever(() => horarioRepository.cerrar(any()));
+
+    when(() => horarioRepository.cerrar('hor1')).thenAnswer(
+      (_) async => horario(vigenteHasta: DateTime.utc(2026, 2, 1)),
+    );
+    await tester.tap(find.text('Confirmar'));
+    await tester.pumpAndSettle();
+
+    verify(() => horarioRepository.cerrar('hor1')).called(1);
+  });
+
+  testWidgets('Cerrar vigencia con 409 HORARIO_YA_CERRADO: muestra el mensaje del backend', (tester) async {
+    when(() => horarioRepository.listarTodas()).thenAnswer((_) async => [horario()]);
+
+    await pumpHorariosScreen(tester);
+    await tester.pumpAndSettle();
+
+    when(() => horarioRepository.cerrar('hor1')).thenThrow(
+      const ApiException(code: 'HORARIO_YA_CERRADO', message: 'El horario ya está cerrado', statusCode: 409),
+    );
+
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Cerrar vigencia'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Confirmar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('El horario ya está cerrado'), findsOneWidget);
+  });
+
   testWidgets('histórico: se muestra debajo del vigente, sin incluirlo', (tester) async {
     when(() => horarioRepository.listarTodas()).thenAnswer(
       (_) async => [

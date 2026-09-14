@@ -24,6 +24,19 @@ abstract interface class TarifaRepository {
   /// o `TARIFA_YA_CERRADA` (409).
   Future<Tarifa> cerrar(String id);
 
+  /// `PATCH /tarifas/:id` con body parcial: solo los campos no nulos viajan
+  /// en la petición. Lanza [ApiException] con code `VALIDATION_ERROR` (400,
+  /// body vacío o campo desconocido), `TARIFA_NO_ENCONTRADA` (404) o
+  /// `TARIFA_CON_TICKETS_ASOCIADOS` (409, la vigencia ya se usó y no se
+  /// puede editar).
+  Future<Tarifa> actualizar(
+    String id, {
+    int? valorMinuto,
+    int? valorPlena,
+    int? valorNocturna,
+    int? valorMes,
+  });
+
   /// `POST /tarifas/simular`. Solo lectura: no persiste nada, requiere rol
   /// ADMIN (mismo que crear/cerrar). Devuelve el `valorTotal` que resultaría
   /// de esa tarifa hipotética para la duración dada, calculado por el

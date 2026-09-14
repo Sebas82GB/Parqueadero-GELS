@@ -11,6 +11,7 @@ import '../../../core/utils/money.dart';
 import '../../../core/utils/print/print_launcher.dart';
 import '../../../core/utils/tipo_vehiculo_label.dart';
 import '../../../core/widgets/button_spinner.dart';
+import '../../../core/widgets/detail_skeleton.dart';
 import '../../../core/widgets/error_banner.dart';
 import '../../../core/widgets/error_state.dart';
 import '../../../core/widgets/loading_skeleton.dart';
@@ -115,7 +116,7 @@ class _RegistrarSalidaScreenState extends ConsumerState<RegistrarSalidaScreen> {
     if (detalle.isLoading) {
       return Scaffold(
         appBar: AppBar(title: const Text('Registrar salida')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const DetailSkeleton(lineas: 5),
       );
     }
     if (detalle.errorMessage != null) {

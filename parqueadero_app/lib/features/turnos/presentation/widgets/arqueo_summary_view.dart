@@ -7,16 +7,7 @@ import '../../../tickets/domain/pago.dart';
 import '../../../tickets/presentation/widgets/metodo_pago_label.dart';
 import '../../domain/arqueo_turno.dart';
 import '../../domain/turno.dart';
-
-/// Texto sin juicio de valor para una diferencia de caja: mismo tono para
-/// sobrante, faltante o cuadre exacto, con el signo explícito. Se comparte
-/// entre este resumen y el cálculo en vivo de `TurnoCierreScreen` mientras el
-/// operador escribe, para que ambos usen exactamente la misma redacción.
-String diferenciaTexto(int diferencia) {
-  if (diferencia > 0) return 'Sobrante: +${formatMoney(diferencia)}';
-  if (diferencia < 0) return 'Faltante: -${formatMoney(diferencia.abs())}';
-  return 'Cuadre exacto: ${formatMoney(0)}';
-}
+import 'diferencia_texto.dart';
 
 /// Resumen de caja de un turno, en vivo (ABIERTO) o final (CERRADO). Se
 /// reutiliza tal cual desde `TurnoDetailScreen` y desde el resultado del

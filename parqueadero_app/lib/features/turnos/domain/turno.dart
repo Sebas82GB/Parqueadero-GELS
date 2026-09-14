@@ -29,6 +29,8 @@ class Turno {
     this.efectivoEsperado,
     this.diferencia,
     required this.estado,
+    this.validadoPorId,
+    this.validadoEn,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -44,6 +46,12 @@ class Turno {
   final int? efectivoEsperado;
   final int? diferencia;
   final EstadoTurno estado;
+
+  /// Solo distintos de `null` si el turno pasó por
+  /// [EstadoTurno.cerradoPendienteArqueo] y un ADMIN ya completó el arqueo
+  /// (mismo criterio que en `ArqueoTurno`).
+  final String? validadoPorId;
+  final DateTime? validadoEn;
   final DateTime createdAt;
   final DateTime updatedAt;
 }

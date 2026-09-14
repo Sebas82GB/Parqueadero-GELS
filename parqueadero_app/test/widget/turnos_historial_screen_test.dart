@@ -13,14 +13,19 @@ import 'package:parqueadero_app/features/turnos/data/turno_repository_impl.dart'
 import 'package:parqueadero_app/features/turnos/domain/turno.dart';
 import 'package:parqueadero_app/features/turnos/domain/turno_repository.dart';
 import 'package:parqueadero_app/features/turnos/presentation/turnos_historial_screen.dart';
+import 'package:parqueadero_app/features/usuarios/data/usuario_repository_impl.dart';
+import 'package:parqueadero_app/features/usuarios/domain/usuario_repository.dart';
 
 class MockTurnoRepository extends Mock implements TurnoRepository {}
 
 class MockAuthRepository extends Mock implements AuthRepository {}
 
+class MockUsuarioRepository extends Mock implements UsuarioRepository {}
+
 void main() {
   late MockTurnoRepository turnoRepository;
   late MockAuthRepository authRepository;
+  late MockUsuarioRepository usuarioRepository;
 
   Usuario usuario({RolUsuario rol = RolUsuario.operador}) => Usuario(
     id: 'op1',
@@ -49,6 +54,10 @@ void main() {
   setUp(() {
     turnoRepository = MockTurnoRepository();
     authRepository = MockAuthRepository();
+    usuarioRepository = MockUsuarioRepository();
+    when(
+      () => usuarioRepository.listar(rol: any(named: 'rol'), activo: any(named: 'activo'), page: any(named: 'page'), perPage: any(named: 'perPage')),
+    ).thenAnswer((_) async => const UsuarioPageResult(data: [], page: 1, perPage: 100, total: 0));
   });
 
   Future<void> pumpHistorial(WidgetTester tester, {RolUsuario rol = RolUsuario.operador}) async {
@@ -58,6 +67,7 @@ void main() {
         overrides: [
           turnoRepositoryProvider.overrideWithValue(turnoRepository),
           authRepositoryProvider.overrideWithValue(authRepository),
+          usuarioRepositoryProvider.overrideWithValue(usuarioRepository),
         ],
         child: const MaterialApp(home: TurnosHistorialScreen()),
       ),
@@ -135,7 +145,9 @@ void main() {
     await pumpHistorial(tester);
     await tester.pumpAndSettle();
 
-    expect(find.text('Operador op1'), findsOneWidget);
+    // Sesión OPERADOR viendo su propio turno: se resuelve con la propia
+    // sesión, sin llamar a GET /usuarios (403 para un OPERADOR).
+    expect(find.text('Mi turno'), findsOneWidget);
     expect(find.widgetWithText(ElevatedButton, 'Cargar más'), findsOneWidget);
 
     when(
@@ -155,7 +167,7 @@ void main() {
     expect(find.widgetWithText(ElevatedButton, 'Cargar más'), findsNothing);
   });
 
-  testWidgets('filtro por operadorId: solo visible para ADMIN', (tester) async {
+  testWidgets('selector de operador: solo visible para ADMIN', (tester) async {
     when(
       () => turnoRepository.listar(
         operadorId: any(named: 'operadorId'),
@@ -169,10 +181,10 @@ void main() {
 
     await pumpHistorial(tester);
     await tester.pumpAndSettle();
-    expect(find.widgetWithText(TextField, 'ID de operador'), findsNothing);
+    expect(find.text('Operador'), findsNothing);
   });
 
-  testWidgets('filtro por operadorId: visible para ADMIN y dispara la consulta', (tester) async {
+  testWidgets('selector de operador: visible para ADMIN, lista nombres y dispara la consulta', (tester) async {
     when(
       () => turnoRepository.listar(
         operadorId: any(named: 'operadorId'),
@@ -183,13 +195,42 @@ void main() {
         perPage: any(named: 'perPage'),
       ),
     ).thenAnswer((_) async => const TurnoPageResult(data: [], page: 1, perPage: 20, total: 0));
+    when(
+      () => usuarioRepository.listar(
+        rol: any(named: 'rol'),
+        activo: any(named: 'activo'),
+        page: any(named: 'page'),
+        perPage: any(named: 'perPage'),
+      ),
+    ).thenAnswer(
+      (_) async => UsuarioPageResult(
+        data: [
+          Usuario(
+            id: 'op2',
+            nombre: 'Carlos',
+            email: 'carlos@test.com',
+            rol: RolUsuario.operador,
+            activo: true,
+            createdAt: DateTime.utc(2026, 1, 1),
+            updatedAt: DateTime.utc(2026, 1, 1),
+          ),
+        ],
+        page: 1,
+        perPage: 100,
+        total: 1,
+      ),
+    );
 
     await pumpHistorial(tester, rol: RolUsuario.admin);
     await tester.pumpAndSettle();
-    expect(find.widgetWithText(TextField, 'ID de operador'), findsOneWidget);
 
-    await tester.enterText(find.widgetWithText(TextField, 'ID de operador'), 'op2');
-    await tester.testTextInput.receiveAction(TextInputAction.done);
+    // Igual que en `tickets_historial_screen_test.dart`/`tarifas_screen_test.dart`:
+    // con `value == null` y un `DropdownMenuItem(value: null, ...)` en la
+    // lista, Flutter muestra ese item (no el `hint`) como texto visible.
+    await tester.tap(find.text('Todos los operadores'));
+    await tester.pumpAndSettle();
+    expect(find.text('Carlos').last, findsOneWidget);
+    await tester.tap(find.text('Carlos').last);
     await tester.pumpAndSettle();
 
     verify(

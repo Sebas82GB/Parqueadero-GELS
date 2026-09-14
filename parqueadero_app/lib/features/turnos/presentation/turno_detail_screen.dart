@@ -9,6 +9,7 @@ import '../../auth/presentation/session_notifier.dart';
 import '../domain/turno.dart';
 import 'turno_detail_notifier.dart';
 import 'widgets/arqueo_summary_view.dart';
+import 'widgets/turno_kpis_view.dart';
 
 class TurnoDetailScreen extends ConsumerWidget {
   const TurnoDetailScreen({super.key, required this.turnoId});
@@ -48,6 +49,8 @@ class TurnoDetailScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              TurnoKpisView(arqueo: arqueo, ahora: DateTime.now()),
+              const SizedBox(height: AppSpacing.lg),
               ArqueoSummaryView(arqueo: arqueo),
               if (puedeCerrar) ...[
                 const SizedBox(height: AppSpacing.lg),

@@ -17,6 +17,8 @@ TurnoDto _$TurnoDtoFromJson(Map<String, dynamic> json) => TurnoDto(
   efectivoEsperado: (json['efectivoEsperado'] as num?)?.toInt(),
   diferencia: (json['diferencia'] as num?)?.toInt(),
   estado: json['estado'] as String,
+  validadoPorId: json['validadoPorId'] as String?,
+  validadoEn: json['validadoEn'] as String?,
   createdAt: json['createdAt'] as String,
   updatedAt: json['updatedAt'] as String,
 );
