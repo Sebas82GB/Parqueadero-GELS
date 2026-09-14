@@ -372,10 +372,10 @@
     "semantic_hash": "3b4c1e4ae1a4d79a364a6c091f6613fb"
   },
   "src/routes/ticket.routes.js": {
-    "mtime": 1787588954.1640165,
-    "seen": 1789225400.3323677,
-    "ast_hash": "2725de77f8f775664715e88b751e0683",
-    "semantic_hash": "2725de77f8f775664715e88b751e0683"
+    "mtime": 1789338588.1373014,
+    "seen": 1789344580.8213217,
+    "ast_hash": "e9458b49b0142aa6d9491118858e0521",
+    "semantic_hash": ""
   },
   "src/routes/turno.routes.js": {
     "mtime": 1787878414.0449245,
@@ -438,10 +438,10 @@
     "semantic_hash": "bcb1f4a50f3c0aced69e550c7e126d32"
   },
   "src/services/tarifa-calculo.service.js": {
-    "mtime": 1787867472.179112,
-    "seen": 1789225400.3323781,
-    "ast_hash": "501ab3505f07343cc2a248877e3b0cc9",
-    "semantic_hash": "501ab3505f07343cc2a248877e3b0cc9"
+    "mtime": 1789335086.5793097,
+    "seen": 1789338564.4752223,
+    "ast_hash": "0d9575a480cfaf119c7f2a63ac08d51d",
+    "semantic_hash": ""
   },
   "src/services/tarifa.service.js": {
     "mtime": 1787588918.9629514,
@@ -450,10 +450,10 @@
     "semantic_hash": "c1221a9e90ae413135902b7710942f7f"
   },
   "src/services/ticket.service.js": {
-    "mtime": 1787588876.0995064,
-    "seen": 1789225400.33238,
-    "ast_hash": "5213d76523798a7048e6e4740189d694",
-    "semantic_hash": "5213d76523798a7048e6e4740189d694"
+    "mtime": 1789335111.4132228,
+    "seen": 1789338564.4780638,
+    "ast_hash": "9b51fd4b919cdfc5ebd84cb59f4e9de3",
+    "semantic_hash": ""
   },
   "src/services/turno.service.js": {
     "mtime": 1787878374.161896,
@@ -648,10 +648,10 @@
     "semantic_hash": "1b79e8d4e1bb1adf7daa81fa6e761e97"
   },
   "tests/integration/ticket.routes.test.js": {
-    "mtime": 1787590801.1104617,
-    "seen": 1789225400.3324184,
-    "ast_hash": "45bce8e244e4e400099365c43923e29c",
-    "semantic_hash": "45bce8e244e4e400099365c43923e29c"
+    "mtime": 1789335449.5316706,
+    "seen": 1789338564.517323,
+    "ast_hash": "f22052a2ed78487c694b49fda79d9bf2",
+    "semantic_hash": ""
   },
   "tests/integration/turno.routes.test.js": {
     "mtime": 1787878544.1307225,
@@ -708,10 +708,10 @@
     "semantic_hash": "de8a6fe4cd00d74c16f0f6ab057b7032"
   },
   "tests/unit/tarifa-calculo.service.test.js": {
-    "mtime": 1787590153.3073618,
-    "seen": 1789225400.3324342,
-    "ast_hash": "0aef50226ac71ec96d55e4fdfad1e22c",
-    "semantic_hash": "0aef50226ac71ec96d55e4fdfad1e22c"
+    "mtime": 1789335029.0376792,
+    "seen": 1789338564.525933,
+    "ast_hash": "00f48381f885c38f92cf3fad37292bf2",
+    "semantic_hash": ""
   },
   "tests/unit/tarifa.service.test.js": {
     "mtime": 1787589038.168092,
@@ -762,9 +762,9 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1789225277.5235674,
-    "seen": 1789240050.6496353,
-    "ast_hash": "ad345a9d9655c1c21d8f0d5a1fd71a64",
+    "mtime": 1789258852.7548113,
+    "seen": 1789302644.4208694,
+    "ast_hash": "4c6aae2e0b65194e5efa2db9384b5774",
     "semantic_hash": ""
   },
   "docker-compose.yml": {

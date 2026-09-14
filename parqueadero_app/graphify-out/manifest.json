@@ -162,10 +162,10 @@
     "semantic_hash": "6ffbc300f95a31922cb0daa6452f7cc4"
   },
   "lib/core/utils/validators.dart": {
-    "mtime": 1787874814.7460806,
-    "seen": 1789226117.9122837,
-    "ast_hash": "5b2bba180568d095f5e83457452ca0fe",
-    "semantic_hash": "5b2bba180568d095f5e83457452ca0fe"
+    "mtime": 1789403377.0428774,
+    "seen": 1789415394.0611196,
+    "ast_hash": "520d36b055cde376620e52bc2edfa8ad",
+    "semantic_hash": ""
   },
   "lib/core/widgets/acceso_restringido.dart": {
     "mtime": 1787283378.4717445,
@@ -198,10 +198,10 @@
     "semantic_hash": "8f478d145ab27070bda186ba52b3bda5"
   },
   "lib/core/widgets/error_banner.dart": {
-    "mtime": 1787321563.267672,
-    "seen": 1789226117.9122915,
-    "ast_hash": "414eba1394f5723c9770e964d7a32d02",
-    "semantic_hash": "414eba1394f5723c9770e964d7a32d02"
+    "mtime": 1789400805.1789615,
+    "seen": 1789401687.3952525,
+    "ast_hash": "7f6823aae6bd5c62311c6a67ff0d4dd4",
+    "semantic_hash": ""
   },
   "lib/core/widgets/error_state.dart": {
     "mtime": 1787322133.7912447,
@@ -222,10 +222,10 @@
     "semantic_hash": "64fd344fe7227c7541a1a8b033da7a6d"
   },
   "lib/core/widgets/loading_skeleton.dart": {
-    "mtime": 1787322149.0400856,
-    "seen": 1789226117.9122965,
-    "ast_hash": "509bbb3561a504a23d95e0daef546a9a",
-    "semantic_hash": "509bbb3561a504a23d95e0daef546a9a"
+    "mtime": 1789341718.9284327,
+    "seen": 1789348009.3534746,
+    "ast_hash": "31251cb46ae3a427b7b69248619b24c7",
+    "semantic_hash": ""
   },
   "lib/core/widgets/material_hero.dart": {
     "mtime": 1787452590.268686,
@@ -384,9 +384,9 @@
     "semantic_hash": ""
   },
   "lib/features/celdas/presentation/celdas_screen.dart": {
-    "mtime": 1789235045.9333234,
-    "seen": 1789241710.8260913,
-    "ast_hash": "8d8a43d91564f384adcb6d14e7893b99",
+    "mtime": 1789339746.678416,
+    "seen": 1789340109.23109,
+    "ast_hash": "624e47eab655c61afa5cd804c6c0c4eb",
     "semantic_hash": ""
   },
   "lib/features/celdas/presentation/reloj_notifier.dart": {
@@ -396,9 +396,9 @@
     "semantic_hash": "4001a9d638fad19f018b5739e858c4bb"
   },
   "lib/features/celdas/presentation/widgets/celda_accion_rapida_sheet.dart": {
-    "mtime": 1789235045.936316,
-    "seen": 1789241710.8271763,
-    "ast_hash": "4ff04e3ad9184b65cdf8ec84fba218a2",
+    "mtime": 1789341835.0890925,
+    "seen": 1789348009.3734453,
+    "ast_hash": "af546c138ec59b064d3a87a09c41fcaf",
     "semantic_hash": ""
   },
   "lib/features/celdas/presentation/widgets/celda_card.dart": {
@@ -462,10 +462,10 @@
     "semantic_hash": "631cb2beff8f4ad181a1177c0b74105c"
   },
   "lib/features/horarios/data/horario_repository_impl.dart": {
-    "mtime": 1787591341.3020725,
-    "seen": 1789226117.9123485,
-    "ast_hash": "0021add197785ef5a9ac7aca715bfce6",
-    "semantic_hash": "0021add197785ef5a9ac7aca715bfce6"
+    "mtime": 1789348352.0941615,
+    "seen": 1789351967.9412603,
+    "ast_hash": "0b726f3dc4267c073f413f64b48a52e8",
+    "semantic_hash": ""
   },
   "lib/features/horarios/domain/horario.dart": {
     "mtime": 1787591317.1935852,
@@ -474,10 +474,10 @@
     "semantic_hash": "c1ef10f12f31bf7a547bc8726bfbb152"
   },
   "lib/features/horarios/domain/horario_repository.dart": {
-    "mtime": 1787591322.3367908,
-    "seen": 1789226117.912351,
-    "ast_hash": "f3f8f8d049b204e9afbf31a192227e63",
-    "semantic_hash": "f3f8f8d049b204e9afbf31a192227e63"
+    "mtime": 1789348330.5595543,
+    "seen": 1789351967.941822,
+    "ast_hash": "de3566870aa92862ecf3367b41992a34",
+    "semantic_hash": ""
   },
   "lib/features/horarios/presentation/horario_list_notifier.dart": {
     "mtime": 1787591354.8081515,
@@ -492,10 +492,10 @@
     "semantic_hash": "1fdc9723c3ef71e975fbdb84addb8138"
   },
   "lib/features/horarios/presentation/horarios_screen.dart": {
-    "mtime": 1787591385.1133168,
-    "seen": 1789226117.9123547,
-    "ast_hash": "91ab1d3e8455db873376f23d616a0066",
-    "semantic_hash": "91ab1d3e8455db873376f23d616a0066"
+    "mtime": 1789348822.0875316,
+    "seen": 1789351967.9438236,
+    "ast_hash": "86c4c82d5a9916cc17f09aef651d739b",
+    "semantic_hash": ""
   },
   "lib/features/horarios/presentation/nuevo_horario_notifier.dart": {
     "mtime": 1787591364.5658886,
@@ -504,10 +504,10 @@
     "semantic_hash": "ad0c1ee5931ac2f0a0a492e86cb51208"
   },
   "lib/features/horarios/presentation/nuevo_horario_screen.dart": {
-    "mtime": 1787591660.7838132,
-    "seen": 1789226117.9123573,
-    "ast_hash": "ce2020759151820e11805db9ae751c82",
-    "semantic_hash": "ce2020759151820e11805db9ae751c82"
+    "mtime": 1789348745.0026076,
+    "seen": 1789351967.9443667,
+    "ast_hash": "5bc142d384ee96eaef5d2cf8c766efba",
+    "semantic_hash": ""
   },
   "lib/features/horarios/presentation/nuevo_horario_state.dart": {
     "mtime": 1787591358.2713165,
@@ -648,10 +648,10 @@
     "semantic_hash": "e28663f6e3b0fd7c7f5ed88925410539"
   },
   "lib/features/tarifas/data/tarifa_repository_impl.dart": {
-    "mtime": 1787495943.633916,
-    "seen": 1789226117.9123888,
-    "ast_hash": "961dfde6cb170120d93cbd5047eb33ff",
-    "semantic_hash": "961dfde6cb170120d93cbd5047eb33ff"
+    "mtime": 1789348208.5936713,
+    "seen": 1789351967.9523547,
+    "ast_hash": "f9938a3519613f61062b438d59780b2e",
+    "semantic_hash": ""
   },
   "lib/features/tarifas/domain/tarifa.dart": {
     "mtime": 1787283232.2394097,
@@ -660,10 +660,10 @@
     "semantic_hash": "647fb295754da11b16de7c57e7f2ecf4"
   },
   "lib/features/tarifas/domain/tarifa_repository.dart": {
-    "mtime": 1787495934.4957092,
-    "seen": 1789226117.9123914,
-    "ast_hash": "db2e8d04d0131004fac4e9473087c767",
-    "semantic_hash": "db2e8d04d0131004fac4e9473087c767"
+    "mtime": 1789348185.9630263,
+    "seen": 1789351967.9526238,
+    "ast_hash": "a68b5b9287242406bdc408794a897494",
+    "semantic_hash": ""
   },
   "lib/features/tarifas/presentation/nueva_tarifa_notifier.dart": {
     "mtime": 1787283394.8087976,
@@ -684,10 +684,10 @@
     "semantic_hash": "1c98588d0767f7d12822f8b20a48273a"
   },
   "lib/features/tarifas/presentation/tarifa_accion_notifier.dart": {
-    "mtime": 1787283352.8120382,
-    "seen": 1789226117.9123962,
-    "ast_hash": "97cc0fa51c520ea0a87cae6152da4f4b",
-    "semantic_hash": "97cc0fa51c520ea0a87cae6152da4f4b"
+    "mtime": 1789348367.4200847,
+    "seen": 1789351967.9534712,
+    "ast_hash": "d876cb6fccaadfbb0f782affc0ad7692",
+    "semantic_hash": ""
   },
   "lib/features/tarifas/presentation/tarifa_accion_state.dart": {
     "mtime": 1787283347.8773537,
@@ -732,10 +732,10 @@
     "semantic_hash": "d26bc5babca7f3cc969658032356e1ab"
   },
   "lib/features/tarifas/presentation/widgets/tarifa_grupo_card.dart": {
-    "mtime": 1787322085.061915,
-    "seen": 1789226117.9124064,
-    "ast_hash": "d8eb3506ed343df1052f21daa508bf0c",
-    "semantic_hash": "d8eb3506ed343df1052f21daa508bf0c"
+    "mtime": 1789348582.6700776,
+    "seen": 1789351967.9585018,
+    "ast_hash": "b9752b5244243659abe323a6a0b0338a",
+    "semantic_hash": ""
   },
   "lib/features/tickets/data/dtos/cobro_preview_dto.dart": {
     "mtime": 1787495373.9956079,
@@ -864,28 +864,28 @@
     "semantic_hash": "57781e045e7b92ec1fa51eb8f783e4ed"
   },
   "lib/features/tickets/presentation/registrar_entrada_notifier.dart": {
-    "mtime": 1789235045.9413228,
-    "seen": 1789241710.9097967,
-    "ast_hash": "1792a0d2b437d0c9957fbe97184877d7",
+    "mtime": 1789401733.5616555,
+    "seen": 1789403041.747959,
+    "ast_hash": "c1d86d618fa55d88c37cd3ad2ca2acc6",
     "semantic_hash": ""
   },
   "lib/features/tickets/presentation/registrar_entrada_screen.dart": {
-    "mtime": 1789235045.943725,
-    "seen": 1789241710.9098046,
-    "ast_hash": "52471c1b5e56f92722659f70bfd6419f",
+    "mtime": 1789404322.7585642,
+    "seen": 1789415394.0868733,
+    "ast_hash": "0565869d6486bc9600c7243b83623ac2",
     "semantic_hash": ""
   },
   "lib/features/tickets/presentation/registrar_entrada_state.dart": {
-    "mtime": 1789235045.945241,
-    "seen": 1789241710.90981,
-    "ast_hash": "9a5d3e9cc0394cb1fbbb65091e097cac",
+    "mtime": 1789401720.1320975,
+    "seen": 1789403041.7479773,
+    "ast_hash": "7913de23a64e2cd45e5b9fe7b26897cd",
     "semantic_hash": ""
   },
   "lib/features/tickets/presentation/registrar_salida_screen.dart": {
-    "mtime": 1787793718.9838521,
-    "seen": 1789226117.9124377,
-    "ast_hash": "7cbe6845c8dc1dec78afabaed0a58622",
-    "semantic_hash": "7cbe6845c8dc1dec78afabaed0a58622"
+    "mtime": 1789341766.8342752,
+    "seen": 1789348009.428539,
+    "ast_hash": "23da0002bf66c90042a5753b116cec5d",
+    "semantic_hash": ""
   },
   "lib/features/tickets/presentation/salida_notifier.dart": {
     "mtime": 1787495661.665929,
@@ -948,10 +948,10 @@
     "semantic_hash": "acc502dface359be9cca4880635c3800"
   },
   "lib/features/tickets/presentation/widgets/desglose_view.dart": {
-    "mtime": 1787495362.0142033,
-    "seen": 1789226117.912451,
-    "ast_hash": "4e9e1abec1ca1e9226ce3eb16b4f2b9b",
-    "semantic_hash": "4e9e1abec1ca1e9226ce3eb16b4f2b9b"
+    "mtime": 1789339162.1651988,
+    "seen": 1789340109.252345,
+    "ast_hash": "a113297bfee2312dd4de529aca2d5172",
+    "semantic_hash": ""
   },
   "lib/features/tickets/presentation/widgets/metodo_pago_label.dart": {
     "mtime": 1787148997.1228018,
@@ -996,10 +996,10 @@
     "semantic_hash": "c328a4cfb480fd7eee88ecf143d19aa9"
   },
   "lib/features/turnos/data/dtos/turno_dto.dart": {
-    "mtime": 1787412547.4799476,
-    "seen": 1789226117.912461,
-    "ast_hash": "bbc61ecc2e9eef1357149984428cc36e",
-    "semantic_hash": "bbc61ecc2e9eef1357149984428cc36e"
+    "mtime": 1789353190.5251822,
+    "seen": 1789395167.656677,
+    "ast_hash": "11368a2428eb8dfba95abb8f11255f25",
+    "semantic_hash": ""
   },
   "lib/features/turnos/data/dtos/turno_page_dto.dart": {
     "mtime": 1787412562.4951656,
@@ -1020,10 +1020,10 @@
     "semantic_hash": "486c6e96f00a805c343557eb601d9a40"
   },
   "lib/features/turnos/domain/turno.dart": {
-    "mtime": 1787871084.0556712,
-    "seen": 1789226117.9124668,
-    "ast_hash": "f50887011c2def2bc1fc7513be9f7ee3",
-    "semantic_hash": "f50887011c2def2bc1fc7513be9f7ee3"
+    "mtime": 1789353179.0645366,
+    "seen": 1789395167.6572053,
+    "ast_hash": "d6b364a1f056be758f0b041e7941dee3",
+    "semantic_hash": ""
   },
   "lib/features/turnos/domain/turno_repository.dart": {
     "mtime": 1787879162.1534636,
@@ -1068,10 +1068,10 @@
     "semantic_hash": "be72506032a9d25729afebfe5eb17ff3"
   },
   "lib/features/turnos/presentation/turno_cierre_screen.dart": {
-    "mtime": 1787871340.168985,
-    "seen": 1789226117.9124792,
-    "ast_hash": "6d4cd43ebf0c2805b96a5cf89abd421e",
-    "semantic_hash": "6d4cd43ebf0c2805b96a5cf89abd421e"
+    "mtime": 1789353305.6583562,
+    "seen": 1789395167.6584206,
+    "ast_hash": "a736ae02cfc8a91ee1f5f2ca84b3b5de",
+    "semantic_hash": ""
   },
   "lib/features/turnos/presentation/turno_cierre_state.dart": {
     "mtime": 1787412880.3646097,
@@ -1086,10 +1086,10 @@
     "semantic_hash": "9d0eaffb9f2886ea8db570b90014ed2b"
   },
   "lib/features/turnos/presentation/turno_detail_screen.dart": {
-    "mtime": 1787871191.9952884,
-    "seen": 1789226117.9124832,
-    "ast_hash": "f3032cf7e9cafb9e1120b6ecfc8d45e7",
-    "semantic_hash": "f3032cf7e9cafb9e1120b6ecfc8d45e7"
+    "mtime": 1789353995.671917,
+    "seen": 1789395167.6587596,
+    "ast_hash": "4b8ab57dd4af2d5a1e14dfc319060f11",
+    "semantic_hash": ""
   },
   "lib/features/turnos/presentation/turno_detail_state.dart": {
     "mtime": 1787412825.771014,
@@ -1116,10 +1116,10 @@
     "semantic_hash": "6b4fbe59f9fb29cb14077f60939f6239"
   },
   "lib/features/turnos/presentation/widgets/arqueo_summary_view.dart": {
-    "mtime": 1787871175.952966,
-    "seen": 1789226117.9124897,
-    "ast_hash": "ce3ed4a51b9aaa869852765d8f0f1a02",
-    "semantic_hash": "ce3ed4a51b9aaa869852765d8f0f1a02"
+    "mtime": 1789353289.8800764,
+    "seen": 1789395167.6594498,
+    "ast_hash": "45e836e3ed2e1cfb9f16e1e73680b8a3",
+    "semantic_hash": ""
   },
   "lib/features/turnos/presentation/widgets/turno_activo_indicator.dart": {
     "mtime": 1787882725.0764253,
@@ -1140,16 +1140,16 @@
     "semantic_hash": "0f03faea3742513f1924b2d4d35d7d05"
   },
   "lib/features/turnos/presentation/widgets/turno_filtros_bar.dart": {
-    "mtime": 1787871158.3668256,
-    "seen": 1789226117.912495,
-    "ast_hash": "f39a3b582b9a9d40a4157572ead7790e",
-    "semantic_hash": "f39a3b582b9a9d40a4157572ead7790e"
+    "mtime": 1789354898.019514,
+    "seen": 1789395167.6599803,
+    "ast_hash": "bdc07ef7b76e025e6df78d2acbca01d1",
+    "semantic_hash": ""
   },
   "lib/features/turnos/presentation/widgets/turno_list_item.dart": {
-    "mtime": 1787412977.1658897,
-    "seen": 1789226117.912496,
-    "ast_hash": "571291841cfe8017cf381495af27abac",
-    "semantic_hash": "571291841cfe8017cf381495af27abac"
+    "mtime": 1789355157.0733788,
+    "seen": 1789395167.6599853,
+    "ast_hash": "6d8b0f828facb766e6dc1962c28636ad",
+    "semantic_hash": ""
   },
   "lib/features/usuarios/data/dtos/usuario_page_dto.dart": {
     "mtime": 1787874780.2583883,
@@ -1302,10 +1302,10 @@
     "semantic_hash": "a43f9a90108ef224eb343eff879752c9"
   },
   "test/unit/horario_repository_test.dart": {
-    "mtime": 1787591563.793764,
-    "seen": 1789226117.9125295,
-    "ast_hash": "6df35919c35739be5c6f18be7fa454eb",
-    "semantic_hash": "6df35919c35739be5c6f18be7fa454eb"
+    "mtime": 1789348977.0170934,
+    "seen": 1789351967.9905677,
+    "ast_hash": "98a953dfdba43f49c024066f5aa42b65",
+    "semantic_hash": ""
   },
   "test/unit/mensualidad_accion_notifier_test.dart": {
     "mtime": 1787284078.700955,
@@ -1374,10 +1374,10 @@
     "semantic_hash": "f85c9d479d5c446b4966d977c959147f"
   },
   "test/unit/registrar_entrada_notifier_test.dart": {
-    "mtime": 1787248964.767432,
-    "seen": 1789226117.912545,
-    "ast_hash": "b0a84275e339b83970145c2426f522c9",
-    "semantic_hash": "b0a84275e339b83970145c2426f522c9"
+    "mtime": 1789401778.9018762,
+    "seen": 1789403041.792078,
+    "ast_hash": "550ff928f03b985d8b84cbd1964c6e58",
+    "semantic_hash": ""
   },
   "test/unit/reloj_notifier_test.dart": {
     "mtime": 1787451859.8472984,
@@ -1404,10 +1404,10 @@
     "semantic_hash": "b1a17932703686bb4b54598a8b46ae50"
   },
   "test/unit/tarifa_accion_notifier_test.dart": {
-    "mtime": 1787283924.1855729,
-    "seen": 1789226117.9125514,
-    "ast_hash": "a6a3e53a4c6f03d543d4ce9873eb1cea",
-    "semantic_hash": "a6a3e53a4c6f03d543d4ce9873eb1cea"
+    "mtime": 1789349013.346371,
+    "seen": 1789351967.9961674,
+    "ast_hash": "2c871108f6a821d1285e5a251ebc3fc2",
+    "semantic_hash": ""
   },
   "test/unit/tarifa_list_notifier_test.dart": {
     "mtime": 1787283895.2538285,
@@ -1416,10 +1416,10 @@
     "semantic_hash": "63876e6049f956b29d9212a7e0dae5dd"
   },
   "test/unit/tarifa_repository_test.dart": {
-    "mtime": 1787496055.7548535,
-    "seen": 1789226117.912554,
-    "ast_hash": "17a67751ed25f2db5328b3f8ad6d1e9a",
-    "semantic_hash": "17a67751ed25f2db5328b3f8ad6d1e9a"
+    "mtime": 1789348955.0045035,
+    "seen": 1789351967.9965165,
+    "ast_hash": "bc4f2a18233762975c95d65c3a52bc22",
+    "semantic_hash": ""
   },
   "test/unit/tarifa_simulacion_notifier_test.dart": {
     "mtime": 1787496076.7909884,
@@ -1476,10 +1476,10 @@
     "semantic_hash": "7d768fcfdebe15b3018ceeb28c371415"
   },
   "test/unit/turno_repository_test.dart": {
-    "mtime": 1787879395.8443477,
-    "seen": 1789226117.9125671,
-    "ast_hash": "9441f3660105e266e2dd89a902ca77fb",
-    "semantic_hash": "9441f3660105e266e2dd89a902ca77fb"
+    "mtime": 1789396825.0947468,
+    "seen": 1789399940.075383,
+    "ast_hash": "e7790d10cb491c728497a9446417d845",
+    "semantic_hash": ""
   },
   "test/unit/usuario_detail_notifier_test.dart": {
     "mtime": 1787876445.6300163,
@@ -1506,10 +1506,10 @@
     "semantic_hash": "65d1f0654bcd79d16c384c20e196917b"
   },
   "test/widget/app_motion_test.dart": {
-    "mtime": 1787286789.792923,
-    "seen": 1789226117.9125733,
-    "ast_hash": "5cb6499c9696cc21dffa3ac03662b1b5",
-    "semantic_hash": "5cb6499c9696cc21dffa3ac03662b1b5"
+    "mtime": 1789341937.8533952,
+    "seen": 1789348009.4856577,
+    "ast_hash": "edcbf010610afe530184a0cfd74eb3ae",
+    "semantic_hash": ""
   },
   "test/widget/app_theme_test.dart": {
     "mtime": 1787454853.693576,
@@ -1524,9 +1524,9 @@
     "semantic_hash": "c05754cc2e317c9e26d7e6a26f9665f2"
   },
   "test/widget/celda_accion_rapida_sheet_test.dart": {
-    "mtime": 1789235045.9467094,
-    "seen": 1789241711.018274,
-    "ast_hash": "b34331bddc56833fd399959d64c6d755",
+    "mtime": 1789341973.5085437,
+    "seen": 1789348009.4863727,
+    "ast_hash": "e35db1729b1ba2fb20b30bc54b858c3b",
     "semantic_hash": ""
   },
   "test/widget/celda_card_test.dart": {
@@ -1542,9 +1542,9 @@
     "semantic_hash": "ab46e0f8b8883dd3020592d5a4c77ae0"
   },
   "test/widget/celdas_screen_test.dart": {
-    "mtime": 1789235045.9501872,
-    "seen": 1789241711.018702,
-    "ast_hash": "c1c7dd24d2962554c622b8f7e86b0032",
+    "mtime": 1789339769.0879955,
+    "seen": 1789340109.2713099,
+    "ast_hash": "112069a6b4dbf7d419698dc8117e840f",
     "semantic_hash": ""
   },
   "test/widget/home_screen_test.dart": {
@@ -1554,10 +1554,10 @@
     "semantic_hash": ""
   },
   "test/widget/horarios_screen_test.dart": {
-    "mtime": 1787591631.9436262,
-    "seen": 1789226117.9125836,
-    "ast_hash": "733a1833305d8ec5bd377cb57ce07bf9",
-    "semantic_hash": "733a1833305d8ec5bd377cb57ce07bf9"
+    "mtime": 1789349076.3628595,
+    "seen": 1789351968.0037239,
+    "ast_hash": "46e7f853d46ff78eb4c40fcf232fec3b",
+    "semantic_hash": ""
   },
   "test/widget/login_screen_test.dart": {
     "mtime": 1789235045.9547577,
@@ -1614,22 +1614,22 @@
     "semantic_hash": "9cafed06df3d5f52c992395ea7d8c3df"
   },
   "test/widget/registrar_entrada_screen_test.dart": {
-    "mtime": 1787883688.1641304,
-    "seen": 1789226117.9125965,
-    "ast_hash": "c9eea01b08875151fd3fb69440f42694",
-    "semantic_hash": "c9eea01b08875151fd3fb69440f42694"
+    "mtime": 1789404608.4227114,
+    "seen": 1789415394.1094322,
+    "ast_hash": "5a73be1e6d29976e8e5cbb7960340e18",
+    "semantic_hash": ""
   },
   "test/widget/registrar_salida_screen_test.dart": {
-    "mtime": 1787883770.0456278,
-    "seen": 1789226117.9125977,
-    "ast_hash": "4bea80ba9cdc9fb045f98a6e3691b0b8",
-    "semantic_hash": "4bea80ba9cdc9fb045f98a6e3691b0b8"
+    "mtime": 1789341880.605452,
+    "seen": 1789348009.4920526,
+    "ast_hash": "40db5f5d3a77cc0339cec66061e861e4",
+    "semantic_hash": ""
   },
   "test/widget/tarifas_screen_test.dart": {
-    "mtime": 1787284449.482934,
-    "seen": 1789226117.9125993,
-    "ast_hash": "f45161f2eb342c3c2aa105d82bc03674",
-    "semantic_hash": "f45161f2eb342c3c2aa105d82bc03674"
+    "mtime": 1789349030.0225394,
+    "seen": 1789351968.007327,
+    "ast_hash": "5adccc821ca70c21c085dc3ced2a1406",
+    "semantic_hash": ""
   },
   "test/widget/ticket_detail_screen_test.dart": {
     "mtime": 1787451908.1619952,
@@ -1650,22 +1650,22 @@
     "semantic_hash": "97c8f88d500f7dde191fcdb5f6a85d98"
   },
   "test/widget/turno_cierre_screen_test.dart": {
-    "mtime": 1787871787.4767828,
-    "seen": 1789226117.9126043,
-    "ast_hash": "0d1da69b2a7ae6fa129a334ada540585",
-    "semantic_hash": "0d1da69b2a7ae6fa129a334ada540585"
+    "mtime": 1789341903.036078,
+    "seen": 1789348009.4930234,
+    "ast_hash": "c0a1908c9251e0fcec5f3588041075fa",
+    "semantic_hash": ""
   },
   "test/widget/turno_detail_screen_test.dart": {
-    "mtime": 1787871736.9906607,
-    "seen": 1789226117.9126058,
-    "ast_hash": "e8af7d4b0d21efa6041ba5e6b50a5a2a",
-    "semantic_hash": "e8af7d4b0d21efa6041ba5e6b50a5a2a"
+    "mtime": 1789397054.271353,
+    "seen": 1789399940.083951,
+    "ast_hash": "495885c668463d2f86443c91d2f3d83c",
+    "semantic_hash": ""
   },
   "test/widget/turnos_historial_screen_test.dart": {
-    "mtime": 1787449860.7761803,
-    "seen": 1789226117.9126067,
-    "ast_hash": "7e8f9d2393afbdd70b002e6732fbe223",
-    "semantic_hash": "7e8f9d2393afbdd70b002e6732fbe223"
+    "mtime": 1789396462.2317479,
+    "seen": 1789399940.083961,
+    "ast_hash": "90106dc6983623af8eaf75e21599add4",
+    "semantic_hash": ""
   },
   "test/widget/usuario_detail_screen_test.dart": {
     "mtime": 1787876460.5810623,
@@ -1722,9 +1722,9 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1789225277.5258877,
-    "seen": 1789241711.0291572,
-    "ast_hash": "9015287b90ea8c74ccdd006862f39577",
+    "mtime": 1789258854.9573374,
+    "seen": 1789336609.3601775,
+    "ast_hash": "4bdb507bccb49db0a950e77611bbc553",
     "semantic_hash": ""
   },
   "README.md": {
@@ -1779,6 +1779,84 @@
     "mtime": 1761415503.1115313,
     "seen": 1789241711.0291822,
     "ast_hash": "301a7604d45b3e739efc881eb04896ea",
+    "semantic_hash": ""
+  },
+  "lib/core/theme/app_typography.dart": {
+    "mtime": 1789338908.8068259,
+    "seen": 1789340109.2180889,
+    "ast_hash": "b18294156803f5368e84e6a7c8078784",
+    "semantic_hash": ""
+  },
+  "lib/features/celdas/presentation/widgets/celda_leyenda.dart": {
+    "mtime": 1789339718.9736233,
+    "seen": 1789340109.2331915,
+    "ast_hash": "721fdfaee79c2456878edf5f908c241e",
+    "semantic_hash": ""
+  },
+  "lib/features/horarios/presentation/horario_accion_notifier.dart": {
+    "mtime": 1789348386.3958006,
+    "seen": 1789351967.9418302,
+    "ast_hash": "3e91bcad3435873cdbfb41ffdf158e25",
+    "semantic_hash": ""
+  },
+  "lib/features/horarios/presentation/horario_accion_state.dart": {
+    "mtime": 1789348374.7139602,
+    "seen": 1789351967.9418385,
+    "ast_hash": "5f437dcdcbddaa65bba6f34c9d7450de",
+    "semantic_hash": ""
+  },
+  "lib/features/horarios/presentation/seleccionar_hora.dart": {
+    "mtime": 1789348651.1357734,
+    "seen": 1789351967.9447558,
+    "ast_hash": "96c859105f8a0e5216cd94cd385c4860",
+    "semantic_hash": ""
+  },
+  "test/unit/horario_accion_notifier_test.dart": {
+    "mtime": 1789348998.8550484,
+    "seen": 1789351967.9902542,
+    "ast_hash": "d07655480028069e91b4b5d2a110e647",
+    "semantic_hash": ""
+  },
+  "lib/features/turnos/presentation/widgets/diferencia_texto.dart": {
+    "mtime": 1789353280.7127156,
+    "seen": 1789395167.659453,
+    "ast_hash": "b184bcdc5fc6a5cf4c48ad8926bed390",
+    "semantic_hash": ""
+  },
+  "lib/features/turnos/presentation/widgets/turno_kpis_view.dart": {
+    "mtime": 1789353962.5891283,
+    "seen": 1789395167.6599827,
+    "ast_hash": "60037e67e1a6cc155309fdd9ce39d998",
+    "semantic_hash": ""
+  },
+  "test/unit/turno_kpis_test.dart": {
+    "mtime": 1789397000.8204784,
+    "seen": 1789399940.0750601,
+    "ast_hash": "fd9b5ce97f2bbf20e8ef05fee2d0b6f1",
+    "semantic_hash": ""
+  },
+  "test/widget/turno_list_item_test.dart": {
+    "mtime": 1789397174.7004063,
+    "seen": 1789399940.083957,
+    "ast_hash": "30f61a0a17c035703dce3934bcfc6978",
+    "semantic_hash": ""
+  },
+  "test/unit/validators_test.dart": {
+    "mtime": 1789404360.922876,
+    "seen": 1789415394.1058419,
+    "ast_hash": "1f9404b117384ff207a697be51d13d85",
+    "semantic_hash": ""
+  },
+  "lib/core/utils/placa_tipo.dart": {
+    "mtime": 1789403354.9603455,
+    "seen": 1789415394.059809,
+    "ast_hash": "7638ca5fa8f86ea344e418d197aeb4f9",
+    "semantic_hash": ""
+  },
+  "test/unit/placa_tipo_test.dart": {
+    "mtime": 1789404351.5680661,
+    "seen": 1789415394.1018467,
+    "ast_hash": "28a6449cce86f3bb605a85e4d46d59d2",
     "semantic_hash": ""
   }
 }

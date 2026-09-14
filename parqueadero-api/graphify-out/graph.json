@@ -30,6 +30,19 @@
       "source_location": "L1"
     },
     {
+      "id": "src_models_tarifa_tarifa",
+      "label": "Tarifa",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "tarifa",
+      "source_file": "src/models/tarifa.js",
+      "source_location": "L1"
+    },
+    {
       "id": "src_models_ticket_ticket",
       "label": "Ticket",
       "_callable": true,
@@ -43,32 +56,6 @@
       "source_location": "L8"
     },
     {
-      "id": "src_models_usuario_usuario",
-      "label": "Usuario",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "usuario",
-      "source_file": "src/models/usuario.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_models_mensualidad_mensualidad",
-      "label": "Mensualidad",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "mensualidad",
-      "source_file": "src/models/mensualidad.js",
-      "source_location": "L1"
-    },
-    {
       "id": "src_models_turno_turno",
       "label": "Turno",
       "_callable": true,
@@ -80,19 +67,6 @@
       "norm_label": "turno",
       "source_file": "src/models/turno.js",
       "source_location": "L1"
-    },
-    {
-      "id": "src_errors_validation_error_validationerror",
-      "label": "ValidationError",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "validate.js",
-      "file_type": "code",
-      "norm_label": "validationerror",
-      "source_file": "src/errors/validation-error.js",
-      "source_location": "L3"
     },
     {
       "id": "src_models_horario_operacion_horariooperacion",
@@ -160,6 +134,19 @@
       "source_location": "L3"
     },
     {
+      "id": "src_errors_not_found_error_notfounderror",
+      "label": "NotFoundError",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "notfounderror",
+      "source_file": "src/errors/not-found-error.js",
+      "source_location": "L3"
+    },
+    {
       "id": "src_errors_unprocessable_entity_error_unprocessableentityerror",
       "label": "UnprocessableEntityError",
       "_callable": true,
@@ -171,6 +158,32 @@
       "norm_label": "unprocessableentityerror",
       "source_file": "src/errors/unprocessable-entity-error.js",
       "source_location": "L3"
+    },
+    {
+      "id": "src_errors_validation_error_validationerror",
+      "label": "ValidationError",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "validationerror",
+      "source_file": "src/errors/validation-error.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_models_usuario_usuario",
+      "label": "Usuario",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "usuario",
+      "source_file": "src/models/usuario.js",
+      "source_location": "L1"
     },
     {
       "id": "src_errors_conflict_error_conflicterror",
@@ -186,29 +199,16 @@
       "source_location": "L3"
     },
     {
-      "id": "src_errors_not_found_error_notfounderror",
-      "label": "NotFoundError",
+      "id": "src_models_mensualidad_mensualidad",
+      "label": "Mensualidad",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 9,
       "community_name": "ConflictError",
       "file_type": "code",
-      "norm_label": "notfounderror",
-      "source_file": "src/errors/not-found-error.js",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_models_tarifa_tarifa",
-      "label": "Tarifa",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "tarifa",
-      "source_file": "src/models/tarifa.js",
+      "norm_label": "mensualidad",
+      "source_file": "src/models/mensualidad.js",
       "source_location": "L1"
     },
     {
@@ -690,7 +690,7 @@
       "file_type": "code",
       "norm_label": "crearticketabierto()",
       "source_file": "tests/integration/ticket.routes.test.js",
-      "source_location": "L555"
+      "source_location": "L612"
     },
     {
       "id": "tests_integration_turno_routes_test_crearpendiente",
@@ -777,6 +777,42 @@
       "source_location": "L26"
     },
     {
+      "id": "src_models_tarifa_tarifa_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/models/tarifa.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "src_models_tarifa_tarifa_todomain",
+      "label": ".toDomain()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": ".todomain()",
+      "source_file": "src/models/tarifa.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_models_tarifa_tarifa_topersistence",
+      "label": ".toPersistence()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": ".topersistence()",
+      "source_file": "src/models/tarifa.js",
+      "source_location": "L41"
+    },
+    {
       "id": "src_models_ticket_ticket_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -811,42 +847,6 @@
       "norm_label": ".topersistence()",
       "source_file": "src/models/ticket.js",
       "source_location": "L101"
-    },
-    {
-      "id": "src_models_usuario_usuario_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/models/usuario.js",
-      "source_location": "L2"
-    },
-    {
-      "id": "src_models_usuario_usuario_todomain",
-      "label": ".toDomain()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": ".todomain()",
-      "source_file": "src/models/usuario.js",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_models_usuario_usuario_topersistence",
-      "label": ".toPersistence()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": ".topersistence()",
-      "source_file": "src/models/usuario.js",
-      "source_location": "L30"
     },
     {
       "id": "src_repositories_celda_repository_buildwhere",
@@ -931,6 +931,78 @@
       "norm_label": "update()",
       "source_file": "src/repositories/celda.repository.js",
       "source_location": "L59"
+    },
+    {
+      "id": "src_repositories_tarifa_repository_buildwhere",
+      "label": "buildWhere()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "buildwhere()",
+      "source_file": "src/repositories/tarifa.repository.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "src_repositories_tarifa_repository_cerrar",
+      "label": "cerrar()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "cerrar()",
+      "source_file": "src/repositories/tarifa.repository.js",
+      "source_location": "L85"
+    },
+    {
+      "id": "src_repositories_tarifa_repository_crearconautocierre",
+      "label": "crearConAutoCierre()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "crearconautocierre()",
+      "source_file": "src/repositories/tarifa.repository.js",
+      "source_location": "L55"
+    },
+    {
+      "id": "src_repositories_tarifa_repository_findbyid",
+      "label": "findById()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "findbyid()",
+      "source_file": "src/repositories/tarifa.repository.js",
+      "source_location": "L34"
+    },
+    {
+      "id": "src_repositories_tarifa_repository_findmany",
+      "label": "findMany()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "findmany()",
+      "source_file": "src/repositories/tarifa.repository.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_repositories_tarifa_repository_findvigentebytipo",
+      "label": "findVigenteByTipo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "findvigentebytipo()",
+      "source_file": "src/repositories/tarifa.repository.js",
+      "source_location": "L39"
     },
     {
       "id": "src_repositories_ticket_repository_anulartransaccional",
@@ -1065,114 +1137,6 @@
       "source_location": "L21"
     },
     {
-      "id": "src_repositories_usuario_repository_buildwhere",
-      "label": "buildWhere()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "buildwhere()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L7"
-    },
-    {
-      "id": "src_repositories_usuario_repository_create",
-      "label": "create()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "create()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L57"
-    },
-    {
-      "id": "src_repositories_usuario_repository_findadminconbaseinicial",
-      "label": "findAdminConBaseInicial()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "findadminconbaseinicial()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L83"
-    },
-    {
-      "id": "src_repositories_usuario_repository_findauthbyemail",
-      "label": "findAuthByEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "findauthbyemail()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L49"
-    },
-    {
-      "id": "src_repositories_usuario_repository_findbyemail",
-      "label": "findByEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "findbyemail()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L41"
-    },
-    {
-      "id": "src_repositories_usuario_repository_findbyid",
-      "label": "findById()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "findbyid()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_repositories_usuario_repository_findmany",
-      "label": "findMany()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "findmany()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_repositories_usuario_repository_traducirerroremailduplicado",
-      "label": "traducirErrorEmailDuplicado()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "traducirerroremailduplicado()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_repositories_usuario_repository_update",
-      "label": "update()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "update()",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L66"
-    },
-    {
       "id": "src_utils_paginacion_util_toskiptake",
       "label": "toSkipTake()",
       "_callable": true,
@@ -1185,16 +1149,76 @@
       "source_location": "L1"
     },
     {
-      "id": "src_middlewares_auth_auth",
-      "label": "auth()",
+      "id": "src_controllers_auth_controller_login",
+      "label": "login()",
       "_callable": true,
       "_origin": "ast",
       "community": 10,
-      "community_name": "routes/index.js",
+      "community_name": "auth.routes.js",
       "file_type": "code",
-      "norm_label": "auth()",
-      "source_file": "src/middlewares/auth.js",
-      "source_location": "L7"
+      "norm_label": "login()",
+      "source_file": "src/controllers/auth.controller.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_controllers_auth_controller_logout",
+      "label": "logout()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "auth.routes.js",
+      "file_type": "code",
+      "norm_label": "logout()",
+      "source_file": "src/controllers/auth.controller.js",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_controllers_auth_controller_me",
+      "label": "me()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "auth.routes.js",
+      "file_type": "code",
+      "norm_label": "me()",
+      "source_file": "src/controllers/auth.controller.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_controllers_auth_controller_refresh",
+      "label": "refresh()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "auth.routes.js",
+      "file_type": "code",
+      "norm_label": "refresh()",
+      "source_file": "src/controllers/auth.controller.js",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_middlewares_validate_parsepart",
+      "label": "parsePart()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "auth.routes.js",
+      "file_type": "code",
+      "norm_label": "parsepart()",
+      "source_file": "src/middlewares/validate.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_middlewares_validate_validate",
+      "label": "validate()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "auth.routes.js",
+      "file_type": "code",
+      "norm_label": "validate()",
+      "source_file": "src/middlewares/validate.js",
+      "source_location": "L28"
     },
     {
       "id": "src_controllers_ticket_controller_anularticket",
@@ -1281,239 +1305,155 @@
       "source_location": "L24"
     },
     {
-      "id": "src_models_mensualidad_mensualidad_constructor",
-      "label": ".constructor()",
+      "id": "src_controllers_turno_controller_abrirturno",
+      "label": "abrirTurno()",
       "_callable": true,
       "_origin": "ast",
       "community": 12,
-      "community_name": "mensualidad.repository.js",
+      "community_name": "turno.routes.js",
       "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/models/mensualidad.js",
-      "source_location": "L2"
-    },
-    {
-      "id": "src_models_mensualidad_mensualidad_todomain",
-      "label": ".toDomain()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": ".todomain()",
-      "source_file": "src/models/mensualidad.js",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_models_mensualidad_mensualidad_topersistence",
-      "label": ".toPersistence()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": ".topersistence()",
-      "source_file": "src/models/mensualidad.js",
-      "source_location": "L41"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_buildwhere",
-      "label": "buildWhere()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "buildwhere()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_cancelar",
-      "label": "cancelar()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "cancelar()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L147"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_create",
-      "label": "create()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "create()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L110"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_existssolapada",
-      "label": "existsSolapada()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "existssolapada()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L97"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_findbyid",
-      "label": "findById()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "findbyid()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L58"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_findmany",
-      "label": "findMany()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "findmany()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L34"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_findvigentebycelda",
-      "label": "findVigenteByCelda()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "findvigentebycelda()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L81"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_findvigentebyvehiculo",
-      "label": "findVigenteByVehiculo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "findvigentebyvehiculo()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L66"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_pagartransaccional",
-      "label": "pagarTransaccional()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "pagartransaccional()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L127"
-    },
-    {
-      "id": "src_repositories_mensualidad_repository_update",
-      "label": "update()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "mensualidad.repository.js",
-      "file_type": "code",
-      "norm_label": "update()",
-      "source_file": "src/repositories/mensualidad.repository.js",
-      "source_location": "L115"
-    },
-    {
-      "id": "src_controllers_mensualidad_controller_actualizarmensualidad",
-      "label": "actualizarMensualidad()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "actualizarmensualidad()",
-      "source_file": "src/controllers/mensualidad.controller.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_controllers_mensualidad_controller_cancelarmensualidad",
-      "label": "cancelarMensualidad()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "cancelarmensualidad()",
-      "source_file": "src/controllers/mensualidad.controller.js",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_controllers_mensualidad_controller_crearmensualidad",
-      "label": "crearMensualidad()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "crearmensualidad()",
-      "source_file": "src/controllers/mensualidad.controller.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_controllers_mensualidad_controller_listarmensualidades",
-      "label": "listarMensualidades()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "listarmensualidades()",
-      "source_file": "src/controllers/mensualidad.controller.js",
+      "norm_label": "abrirturno()",
+      "source_file": "src/controllers/turno.controller.js",
       "source_location": "L4"
     },
     {
-      "id": "src_controllers_mensualidad_controller_obtenermensualidadporid",
-      "label": "obtenerMensualidadPorId()",
+      "id": "src_controllers_turno_controller_cerrarturno",
+      "label": "cerrarTurno()",
       "_callable": true,
       "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
+      "community": 12,
+      "community_name": "turno.routes.js",
       "file_type": "code",
-      "norm_label": "obtenermensualidadporid()",
-      "source_file": "src/controllers/mensualidad.controller.js",
-      "source_location": "L11"
+      "norm_label": "cerrarturno()",
+      "source_file": "src/controllers/turno.controller.js",
+      "source_location": "L9"
     },
     {
-      "id": "src_controllers_mensualidad_controller_pagarmensualidad",
-      "label": "pagarMensualidad()",
+      "id": "src_controllers_turno_controller_completararqueo",
+      "label": "completarArqueo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "turno.routes.js",
+      "file_type": "code",
+      "norm_label": "completararqueo()",
+      "source_file": "src/controllers/turno.controller.js",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_controllers_turno_controller_listarturnos",
+      "label": "listarTurnos()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "turno.routes.js",
+      "file_type": "code",
+      "norm_label": "listarturnos()",
+      "source_file": "src/controllers/turno.controller.js",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_controllers_turno_controller_obtenerarqueo",
+      "label": "obtenerArqueo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "turno.routes.js",
+      "file_type": "code",
+      "norm_label": "obtenerarqueo()",
+      "source_file": "src/controllers/turno.controller.js",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_middlewares_auth_auth",
+      "label": "auth()",
       "_callable": true,
       "_origin": "ast",
       "community": 13,
-      "community_name": "mensualidad.routes.js",
+      "community_name": "routes/index.js",
       "file_type": "code",
-      "norm_label": "pagarmensualidad()",
-      "source_file": "src/controllers/mensualidad.controller.js",
-      "source_location": "L26"
+      "norm_label": "auth()",
+      "source_file": "src/middlewares/auth.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_controllers_horario_operacion_controller_cerrarhorario",
+      "label": "cerrarHorario()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "cerrarhorario()",
+      "source_file": "src/controllers/horario-operacion.controller.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_controllers_horario_operacion_controller_crearhorario",
+      "label": "crearHorario()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "crearhorario()",
+      "source_file": "src/controllers/horario-operacion.controller.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_controllers_horario_operacion_controller_listarhorarios",
+      "label": "listarHorarios()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "listarhorarios()",
+      "source_file": "src/controllers/horario-operacion.controller.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_controllers_horario_operacion_controller_obtenerhorarioporid",
+      "label": "obtenerHorarioPorId()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "obtenerhorarioporid()",
+      "source_file": "src/controllers/horario-operacion.controller.js",
+      "source_location": "L9"
+    },
+    {
+      "id": "src_middlewares_authorize_authorize",
+      "label": "authorize()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "authorize()",
+      "source_file": "src/middlewares/authorize.js",
+      "source_location": "L3"
+    },
+    {
+      "id": "src_validators_horario_operacion_validator_horalocalschema",
+      "label": "horaLocalSchema()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "horalocalschema()",
+      "source_file": "src/validators/horario-operacion.validator.js",
+      "source_location": "L4"
     },
     {
       "id": "src_controllers_tarifa_controller_cerrartarifa",
       "label": "cerrarTarifa()",
       "_callable": true,
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "cerrartarifa()",
@@ -1525,7 +1465,7 @@
       "label": "crearTarifa()",
       "_callable": true,
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "creartarifa()",
@@ -1537,7 +1477,7 @@
       "label": "listarTarifas()",
       "_callable": true,
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "listartarifas()",
@@ -1549,7 +1489,7 @@
       "label": "obtenerTarifaPorId()",
       "_callable": true,
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "obtenertarifaporid()",
@@ -1561,72 +1501,12 @@
       "label": "simularTarifa()",
       "_callable": true,
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "simulartarifa()",
       "source_file": "src/controllers/tarifa.controller.js",
       "source_location": "L24"
-    },
-    {
-      "id": "src_controllers_usuario_controller_actualizarusuario",
-      "label": "actualizarUsuario()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "actualizarusuario()",
-      "source_file": "src/controllers/usuario.controller.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_controllers_usuario_controller_crearusuario",
-      "label": "crearUsuario()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "crearusuario()",
-      "source_file": "src/controllers/usuario.controller.js",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_controllers_usuario_controller_listarusuarios",
-      "label": "listarUsuarios()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "listarusuarios()",
-      "source_file": "src/controllers/usuario.controller.js",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_controllers_usuario_controller_obtenerusuarioporid",
-      "label": "obtenerUsuarioPorId()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "obtenerusuarioporid()",
-      "source_file": "src/controllers/usuario.controller.js",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_utils_paginacion_util_sendpage",
-      "label": "sendPage()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "sendpage()",
-      "source_file": "src/utils/paginacion.util.js",
-      "source_location": "L5"
     },
     {
       "id": "src_controllers_celda_controller_actualizarcelda",
@@ -1699,6 +1579,66 @@
       "norm_label": "volveralibre()",
       "source_file": "src/controllers/celda.controller.js",
       "source_location": "L29"
+    },
+    {
+      "id": "src_utils_paginacion_util_sendpage",
+      "label": "sendPage()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "celda.routes.js",
+      "file_type": "code",
+      "norm_label": "sendpage()",
+      "source_file": "src/utils/paginacion.util.js",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_controllers_usuario_controller_actualizarusuario",
+      "label": "actualizarUsuario()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "actualizarusuario()",
+      "source_file": "src/controllers/usuario.controller.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_controllers_usuario_controller_crearusuario",
+      "label": "crearUsuario()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "crearusuario()",
+      "source_file": "src/controllers/usuario.controller.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_controllers_usuario_controller_listarusuarios",
+      "label": "listarUsuarios()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "listarusuarios()",
+      "source_file": "src/controllers/usuario.controller.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_controllers_usuario_controller_obtenerusuarioporid",
+      "label": "obtenerUsuarioPorId()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "obtenerusuarioporid()",
+      "source_file": "src/controllers/usuario.controller.js",
+      "source_location": "L9"
     },
     {
       "id": "src_models_turno_turno_constructor",
@@ -1915,150 +1855,6 @@
       "norm_label": "sumarmeses()",
       "source_file": "prisma/seed.js",
       "source_location": "L70"
-    },
-    {
-      "id": "src_controllers_turno_controller_abrirturno",
-      "label": "abrirTurno()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "abrirturno()",
-      "source_file": "src/controllers/turno.controller.js",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_controllers_turno_controller_cerrarturno",
-      "label": "cerrarTurno()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "cerrarturno()",
-      "source_file": "src/controllers/turno.controller.js",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_controllers_turno_controller_completararqueo",
-      "label": "completarArqueo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "completararqueo()",
-      "source_file": "src/controllers/turno.controller.js",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_controllers_turno_controller_listarturnos",
-      "label": "listarTurnos()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "listarturnos()",
-      "source_file": "src/controllers/turno.controller.js",
-      "source_location": "L33"
-    },
-    {
-      "id": "src_controllers_turno_controller_obtenerarqueo",
-      "label": "obtenerArqueo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "obtenerarqueo()",
-      "source_file": "src/controllers/turno.controller.js",
-      "source_location": "L25"
-    },
-    {
-      "id": "src_controllers_auth_controller_login",
-      "label": "login()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "login()",
-      "source_file": "src/controllers/auth.controller.js",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_controllers_auth_controller_logout",
-      "label": "logout()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "logout()",
-      "source_file": "src/controllers/auth.controller.js",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_controllers_auth_controller_me",
-      "label": "me()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "me()",
-      "source_file": "src/controllers/auth.controller.js",
-      "source_location": "L18"
-    },
-    {
-      "id": "src_controllers_auth_controller_refresh",
-      "label": "refresh()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "refresh()",
-      "source_file": "src/controllers/auth.controller.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_errors_validation_error_validationerror_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "validate.js",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/errors/validation-error.js",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_middlewares_validate_parsepart",
-      "label": "parsePart()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "validate.js",
-      "file_type": "code",
-      "norm_label": "parsepart()",
-      "source_file": "src/middlewares/validate.js",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_middlewares_validate_validate",
-      "label": "validate()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "validate.js",
-      "file_type": "code",
-      "norm_label": "validate()",
-      "source_file": "src/middlewares/validate.js",
-      "source_location": "L28"
     },
     {
       "id": "src_models_horario_operacion_horariooperacion_constructor",
@@ -2594,7 +2390,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "getestablecimiento()",
       "source_file": "src/controllers/establecimiento.controller.js",
@@ -2606,7 +2402,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "gethealth()",
       "source_file": "src/controllers/health.controller.js",
@@ -2618,7 +2414,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "pingdatabase()",
       "source_file": "src/repositories/health.repository.js",
@@ -2630,7 +2426,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "obtenerestablecimiento()",
       "source_file": "src/services/establecimiento.service.js",
@@ -2642,11 +2438,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "checkhealth()",
       "source_file": "src/services/health.service.js",
       "source_location": "L3"
+    },
+    {
+      "id": "src_services_recibo_service_construirrecibo",
+      "label": "construirRecibo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "env.js",
+      "file_type": "code",
+      "norm_label": "construirrecibo()",
+      "source_file": "src/services/recibo.service.js",
+      "source_location": "L8"
     },
     {
       "id": "src_utils_duracion_util_formatearduracion",
@@ -2654,7 +2462,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "formatearduracion()",
       "source_file": "src/utils/duracion.util.js",
@@ -2666,7 +2474,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "fecha()",
       "source_file": "tests/unit/duracion.util.test.js",
@@ -2678,7 +2486,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "buildticket()",
       "source_file": "tests/unit/recibo.service.test.js",
@@ -2709,6 +2517,18 @@
       "source_location": "L4"
     },
     {
+      "id": "src_errors_not_found_error_notfounderror_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/errors/not-found-error.js",
+      "source_location": "L4"
+    },
+    {
       "id": "src_errors_unprocessable_entity_error_unprocessableentityerror_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -2718,6 +2538,18 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/errors/unprocessable-entity-error.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_errors_validation_error_validationerror_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/errors/validation-error.js",
       "source_location": "L4"
     },
     {
@@ -2778,7 +2610,7 @@
       "file_type": "code",
       "norm_label": "calculartarifa()",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L121"
+      "source_location": "L125"
     },
     {
       "id": "src_services_tarifa_calculo_service_cierreinstant",
@@ -2814,7 +2646,7 @@
       "file_type": "code",
       "norm_label": "previsualizartarifa()",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L148"
+      "source_location": "L152"
     },
     {
       "id": "src_services_tarifa_calculo_service_siguienteapertura",
@@ -2899,6 +2731,90 @@
       "norm_label": "simulartarifa()",
       "source_file": "src/services/tarifa.service.js",
       "source_location": "L43"
+    },
+    {
+      "id": "src_services_ticket_service_anularticket",
+      "label": "anularTicket()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "anularticket()",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L212"
+    },
+    {
+      "id": "src_services_ticket_service_entregarticket",
+      "label": "entregarTicket()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "entregarticket()",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L230"
+    },
+    {
+      "id": "src_services_ticket_service_listartickets",
+      "label": "listarTickets()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "listartickets()",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_services_ticket_service_obtenerticketporid",
+      "label": "obtenerTicketPorId()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "obtenerticketporid()",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "src_services_ticket_service_previsualizarcobro",
+      "label": "previsualizarCobro()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "previsualizarcobro()",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L185"
+    },
+    {
+      "id": "src_services_ticket_service_registrarentrada",
+      "label": "registrarEntrada()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "registrarentrada()",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "src_services_ticket_service_registrarsalida",
+      "label": "registrarSalida()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "registrarsalida()",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L123"
     },
     {
       "id": "src_services_turno_service_abrirturno",
@@ -3057,6 +2973,18 @@
       "source_location": "L28"
     },
     {
+      "id": "src_utils_codigo_util_generarcodigoticket",
+      "label": "generarCodigoTicket()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "generarcodigoticket()",
+      "source_file": "src/utils/codigo.util.js",
+      "source_location": "L3"
+    },
+    {
       "id": "tests_unit_tarifa_calculo_service_test_bogota",
       "label": "bogota()",
       "_callable": true,
@@ -3091,6 +3019,42 @@
       "norm_label": "buildtarifa()",
       "source_file": "tests/unit/tarifa.service.test.js",
       "source_location": "L37"
+    },
+    {
+      "id": "tests_unit_ticket_service_test_buildcelda",
+      "label": "buildCelda()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "buildcelda()",
+      "source_file": "tests/unit/ticket.service.test.js",
+      "source_location": "L62"
+    },
+    {
+      "id": "tests_unit_ticket_service_test_buildticket",
+      "label": "buildTicket()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "buildticket()",
+      "source_file": "tests/unit/ticket.service.test.js",
+      "source_location": "L77"
+    },
+    {
+      "id": "tests_unit_ticket_service_test_buildvehiculo",
+      "label": "buildVehiculo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "buildvehiculo()",
+      "source_file": "tests/unit/ticket.service.test.js",
+      "source_location": "L73"
     },
     {
       "id": "tests_unit_turno_service_test_buildpendiente",
@@ -3129,76 +3093,220 @@
       "source_location": "L126"
     },
     {
-      "id": "src_controllers_horario_operacion_controller_cerrarhorario",
-      "label": "cerrarHorario()",
+      "id": "src_controllers_mensualidad_controller_actualizarmensualidad",
+      "label": "actualizarMensualidad()",
       "_callable": true,
       "_origin": "ast",
       "community": 7,
-      "community_name": "horario-operacion.routes.js",
+      "community_name": "mensualidad.routes.js",
       "file_type": "code",
-      "norm_label": "cerrarhorario()",
-      "source_file": "src/controllers/horario-operacion.controller.js",
-      "source_location": "L19"
+      "norm_label": "actualizarmensualidad()",
+      "source_file": "src/controllers/mensualidad.controller.js",
+      "source_location": "L21"
     },
     {
-      "id": "src_controllers_horario_operacion_controller_crearhorario",
-      "label": "crearHorario()",
+      "id": "src_controllers_mensualidad_controller_cancelarmensualidad",
+      "label": "cancelarMensualidad()",
       "_callable": true,
       "_origin": "ast",
       "community": 7,
-      "community_name": "horario-operacion.routes.js",
+      "community_name": "mensualidad.routes.js",
       "file_type": "code",
-      "norm_label": "crearhorario()",
-      "source_file": "src/controllers/horario-operacion.controller.js",
+      "norm_label": "cancelarmensualidad()",
+      "source_file": "src/controllers/mensualidad.controller.js",
+      "source_location": "L33"
+    },
+    {
+      "id": "src_controllers_mensualidad_controller_crearmensualidad",
+      "label": "crearMensualidad()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "crearmensualidad()",
+      "source_file": "src/controllers/mensualidad.controller.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_controllers_mensualidad_controller_listarmensualidades",
+      "label": "listarMensualidades()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "listarmensualidades()",
+      "source_file": "src/controllers/mensualidad.controller.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_controllers_mensualidad_controller_obtenermensualidadporid",
+      "label": "obtenerMensualidadPorId()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "obtenermensualidadporid()",
+      "source_file": "src/controllers/mensualidad.controller.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_controllers_mensualidad_controller_pagarmensualidad",
+      "label": "pagarMensualidad()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "pagarmensualidad()",
+      "source_file": "src/controllers/mensualidad.controller.js",
+      "source_location": "L26"
+    },
+    {
+      "id": "src_models_usuario_usuario_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "src/models/usuario.js",
+      "source_location": "L2"
+    },
+    {
+      "id": "src_models_usuario_usuario_todomain",
+      "label": ".toDomain()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": ".todomain()",
+      "source_file": "src/models/usuario.js",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_models_usuario_usuario_topersistence",
+      "label": ".toPersistence()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": ".topersistence()",
+      "source_file": "src/models/usuario.js",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_repositories_usuario_repository_buildwhere",
+      "label": "buildWhere()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "buildwhere()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_repositories_usuario_repository_create",
+      "label": "create()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "create()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L57"
+    },
+    {
+      "id": "src_repositories_usuario_repository_findadminconbaseinicial",
+      "label": "findAdminConBaseInicial()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "findadminconbaseinicial()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L83"
+    },
+    {
+      "id": "src_repositories_usuario_repository_findauthbyemail",
+      "label": "findAuthByEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "findauthbyemail()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L49"
+    },
+    {
+      "id": "src_repositories_usuario_repository_findbyemail",
+      "label": "findByEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "findbyemail()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L41"
+    },
+    {
+      "id": "src_repositories_usuario_repository_findbyid",
+      "label": "findById()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "findbyid()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L36"
+    },
+    {
+      "id": "src_repositories_usuario_repository_findmany",
+      "label": "findMany()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "findmany()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_repositories_usuario_repository_traducirerroremailduplicado",
+      "label": "traducirErrorEmailDuplicado()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "traducirerroremailduplicado()",
+      "source_file": "src/repositories/usuario.repository.js",
       "source_location": "L14"
     },
     {
-      "id": "src_controllers_horario_operacion_controller_listarhorarios",
-      "label": "listarHorarios()",
+      "id": "src_repositories_usuario_repository_update",
+      "label": "update()",
       "_callable": true,
       "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
+      "community": 8,
+      "community_name": "usuario.repository.js",
       "file_type": "code",
-      "norm_label": "listarhorarios()",
-      "source_file": "src/controllers/horario-operacion.controller.js",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_controllers_horario_operacion_controller_obtenerhorarioporid",
-      "label": "obtenerHorarioPorId()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "obtenerhorarioporid()",
-      "source_file": "src/controllers/horario-operacion.controller.js",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_middlewares_authorize_authorize",
-      "label": "authorize()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "authorize()",
-      "source_file": "src/middlewares/authorize.js",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_validators_horario_operacion_validator_horalocalschema",
-      "label": "horaLocalSchema()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "horalocalschema()",
-      "source_file": "src/validators/horario-operacion.validator.js",
-      "source_location": "L4"
+      "norm_label": "update()",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L66"
     },
     {
       "id": "src_errors_conflict_error_conflicterror_constructor",
@@ -3213,7 +3321,7 @@
       "source_location": "L4"
     },
     {
-      "id": "src_errors_not_found_error_notfounderror_constructor",
+      "id": "src_models_mensualidad_mensualidad_constructor",
       "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
@@ -3221,23 +3329,11 @@
       "community_name": "ConflictError",
       "file_type": "code",
       "norm_label": ".constructor()",
-      "source_file": "src/errors/not-found-error.js",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_models_tarifa_tarifa_constructor",
-      "label": ".constructor()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "src/models/tarifa.js",
+      "source_file": "src/models/mensualidad.js",
       "source_location": "L2"
     },
     {
-      "id": "src_models_tarifa_tarifa_todomain",
+      "id": "src_models_mensualidad_mensualidad_todomain",
       "label": ".toDomain()",
       "_callable": true,
       "_origin": "ast",
@@ -3245,11 +3341,11 @@
       "community_name": "ConflictError",
       "file_type": "code",
       "norm_label": ".todomain()",
-      "source_file": "src/models/tarifa.js",
+      "source_file": "src/models/mensualidad.js",
       "source_location": "L26"
     },
     {
-      "id": "src_models_tarifa_tarifa_topersistence",
+      "id": "src_models_mensualidad_mensualidad_topersistence",
       "label": ".toPersistence()",
       "_callable": true,
       "_origin": "ast",
@@ -3257,7 +3353,7 @@
       "community_name": "ConflictError",
       "file_type": "code",
       "norm_label": ".topersistence()",
-      "source_file": "src/models/tarifa.js",
+      "source_file": "src/models/mensualidad.js",
       "source_location": "L41"
     },
     {
@@ -3297,7 +3393,7 @@
       "source_location": "L24"
     },
     {
-      "id": "src_repositories_tarifa_repository_buildwhere",
+      "id": "src_repositories_mensualidad_repository_buildwhere",
       "label": "buildWhere()",
       "_callable": true,
       "_origin": "ast",
@@ -3305,35 +3401,47 @@
       "community_name": "ConflictError",
       "file_type": "code",
       "norm_label": "buildwhere()",
-      "source_file": "src/repositories/tarifa.repository.js",
-      "source_location": "L6"
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L8"
     },
     {
-      "id": "src_repositories_tarifa_repository_cerrar",
-      "label": "cerrar()",
+      "id": "src_repositories_mensualidad_repository_cancelar",
+      "label": "cancelar()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
       "community_name": "ConflictError",
       "file_type": "code",
-      "norm_label": "cerrar()",
-      "source_file": "src/repositories/tarifa.repository.js",
-      "source_location": "L85"
+      "norm_label": "cancelar()",
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L147"
     },
     {
-      "id": "src_repositories_tarifa_repository_crearconautocierre",
-      "label": "crearConAutoCierre()",
+      "id": "src_repositories_mensualidad_repository_create",
+      "label": "create()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
       "community_name": "ConflictError",
       "file_type": "code",
-      "norm_label": "crearconautocierre()",
-      "source_file": "src/repositories/tarifa.repository.js",
-      "source_location": "L55"
+      "norm_label": "create()",
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L110"
     },
     {
-      "id": "src_repositories_tarifa_repository_findbyid",
+      "id": "src_repositories_mensualidad_repository_existssolapada",
+      "label": "existsSolapada()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ConflictError",
+      "file_type": "code",
+      "norm_label": "existssolapada()",
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L97"
+    },
+    {
+      "id": "src_repositories_mensualidad_repository_findbyid",
       "label": "findById()",
       "_callable": true,
       "_origin": "ast",
@@ -3341,11 +3449,11 @@
       "community_name": "ConflictError",
       "file_type": "code",
       "norm_label": "findbyid()",
-      "source_file": "src/repositories/tarifa.repository.js",
-      "source_location": "L34"
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L58"
     },
     {
-      "id": "src_repositories_tarifa_repository_findmany",
+      "id": "src_repositories_mensualidad_repository_findmany",
       "label": "findMany()",
       "_callable": true,
       "_origin": "ast",
@@ -3353,20 +3461,56 @@
       "community_name": "ConflictError",
       "file_type": "code",
       "norm_label": "findmany()",
-      "source_file": "src/repositories/tarifa.repository.js",
-      "source_location": "L19"
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L34"
     },
     {
-      "id": "src_repositories_tarifa_repository_findvigentebytipo",
-      "label": "findVigenteByTipo()",
+      "id": "src_repositories_mensualidad_repository_findvigentebycelda",
+      "label": "findVigenteByCelda()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
       "community_name": "ConflictError",
       "file_type": "code",
-      "norm_label": "findvigentebytipo()",
-      "source_file": "src/repositories/tarifa.repository.js",
-      "source_location": "L39"
+      "norm_label": "findvigentebycelda()",
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L81"
+    },
+    {
+      "id": "src_repositories_mensualidad_repository_findvigentebyvehiculo",
+      "label": "findVigenteByVehiculo()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ConflictError",
+      "file_type": "code",
+      "norm_label": "findvigentebyvehiculo()",
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L66"
+    },
+    {
+      "id": "src_repositories_mensualidad_repository_pagartransaccional",
+      "label": "pagarTransaccional()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ConflictError",
+      "file_type": "code",
+      "norm_label": "pagartransaccional()",
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L127"
+    },
+    {
+      "id": "src_repositories_mensualidad_repository_update",
+      "label": "update()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "ConflictError",
+      "file_type": "code",
+      "norm_label": "update()",
+      "source_file": "src/repositories/mensualidad.repository.js",
+      "source_location": "L115"
     },
     {
       "id": "src_repositories_vehiculo_repository_findbyid",
@@ -3549,114 +3693,6 @@
       "source_location": "L116"
     },
     {
-      "id": "src_services_recibo_service_construirrecibo",
-      "label": "construirRecibo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "construirrecibo()",
-      "source_file": "src/services/recibo.service.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_services_ticket_service_anularticket",
-      "label": "anularTicket()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "anularticket()",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L202"
-    },
-    {
-      "id": "src_services_ticket_service_entregarticket",
-      "label": "entregarTicket()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "entregarticket()",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L220"
-    },
-    {
-      "id": "src_services_ticket_service_listartickets",
-      "label": "listarTickets()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "listartickets()",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_services_ticket_service_obtenerticketporid",
-      "label": "obtenerTicketPorId()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "obtenerticketporid()",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L28"
-    },
-    {
-      "id": "src_services_ticket_service_previsualizarcobro",
-      "label": "previsualizarCobro()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "previsualizarcobro()",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L175"
-    },
-    {
-      "id": "src_services_ticket_service_registrarentrada",
-      "label": "registrarEntrada()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "registrarentrada()",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L36"
-    },
-    {
-      "id": "src_services_ticket_service_registrarsalida",
-      "label": "registrarSalida()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "registrarsalida()",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L113"
-    },
-    {
-      "id": "src_utils_codigo_util_generarcodigoticket",
-      "label": "generarCodigoTicket()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "generarcodigoticket()",
-      "source_file": "src/utils/codigo.util.js",
-      "source_location": "L3"
-    },
-    {
       "id": "tests_unit_celda_service_test_buildcelda",
       "label": "buildCelda()",
       "_callable": true,
@@ -3691,42 +3727,6 @@
       "norm_label": "buildvehiculo()",
       "source_file": "tests/unit/mensualidad.service.test.js",
       "source_location": "L54"
-    },
-    {
-      "id": "tests_unit_ticket_service_test_buildcelda",
-      "label": "buildCelda()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "buildcelda()",
-      "source_file": "tests/unit/ticket.service.test.js",
-      "source_location": "L62"
-    },
-    {
-      "id": "tests_unit_ticket_service_test_buildticket",
-      "label": "buildTicket()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "buildticket()",
-      "source_file": "tests/unit/ticket.service.test.js",
-      "source_location": "L77"
-    },
-    {
-      "id": "tests_unit_ticket_service_test_buildvehiculo",
-      "label": "buildVehiculo()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "buildvehiculo()",
-      "source_file": "tests/unit/ticket.service.test.js",
-      "source_location": "L73"
     },
     {
       "id": "src_app",
@@ -4180,6 +4180,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_models_tarifa",
+      "label": "tarifa.js",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "tarifa.js",
+      "source_file": "src/models/tarifa.js",
+      "source_location": "L1"
+    },
+    {
       "id": "src_models_ticket",
       "label": "ticket.js",
       "_origin": "ast",
@@ -4191,17 +4202,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_models_usuario",
-      "label": "usuario.js",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "usuario.js",
-      "source_file": "src/models/usuario.js",
-      "source_location": "L1"
-    },
-    {
       "id": "src_repositories_celda_repository",
       "label": "celda.repository.js",
       "_origin": "ast",
@@ -4210,6 +4210,17 @@
       "file_type": "code",
       "norm_label": "celda.repository.js",
       "source_file": "src/repositories/celda.repository.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_repositories_tarifa_repository",
+      "label": "tarifa.repository.js",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "ticket.repository.js",
+      "file_type": "code",
+      "norm_label": "tarifa.repository.js",
+      "source_file": "src/repositories/tarifa.repository.js",
       "source_location": "L1"
     },
     {
@@ -4235,169 +4246,92 @@
       "source_location": "L7"
     },
     {
-      "id": "src_repositories_usuario_repository",
-      "label": "usuario.repository.js",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "usuario.repository.js",
-      "source_file": "src/repositories/usuario.repository.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_utils_paginacion_util",
-      "label": "paginacion.util.js",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "ticket.repository.js",
-      "file_type": "code",
-      "norm_label": "paginacion.util.js",
-      "source_file": "src/utils/paginacion.util.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_routes_auth_routes_authrouter",
-      "label": "authRouter",
+      "id": "src_controllers_auth_controller",
+      "label": "auth.controller.js",
       "_origin": "ast",
       "community": 10,
-      "community_name": "routes/index.js",
+      "community_name": "auth.routes.js",
       "file_type": "code",
-      "norm_label": "authrouter",
+      "norm_label": "auth.controller.js",
+      "source_file": "src/controllers/auth.controller.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_middlewares_validate",
+      "label": "validate.js",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "auth.routes.js",
+      "file_type": "code",
+      "norm_label": "validate.js",
+      "source_file": "src/middlewares/validate.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_auth_routes",
+      "label": "auth.routes.js",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "auth.routes.js",
+      "file_type": "code",
+      "norm_label": "auth.routes.js",
       "source_file": "src/routes/auth.routes.js",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_routes_celda_routes_celdarouter",
-      "label": "celdaRouter",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "routes/index.js",
-      "file_type": "code",
-      "norm_label": "celdarouter",
-      "source_file": "src/routes/celda.routes.js",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_routes_establecimiento_routes",
-      "label": "establecimiento.routes.js",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "routes/index.js",
-      "file_type": "code",
-      "norm_label": "establecimiento.routes.js",
-      "source_file": "src/routes/establecimiento.routes.js",
       "source_location": "L1"
     },
     {
-      "id": "src_routes_establecimiento_routes_establecimientorouter",
-      "label": "establecimientoRouter",
+      "id": "src_validators_auth_validator",
+      "label": "auth.validator.js",
       "_origin": "ast",
       "community": 10,
-      "community_name": "routes/index.js",
+      "community_name": "auth.routes.js",
       "file_type": "code",
-      "norm_label": "establecimientorouter",
-      "source_file": "src/routes/establecimiento.routes.js",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_routes_horario_operacion_routes_horariooperacionrouter",
-      "label": "horarioOperacionRouter",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "routes/index.js",
-      "file_type": "code",
-      "norm_label": "horariooperacionrouter",
-      "source_file": "src/routes/horario-operacion.routes.js",
-      "source_location": "L17"
-    },
-    {
-      "id": "src_routes_index",
-      "label": "routes/index.js",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "routes/index.js",
-      "file_type": "code",
-      "norm_label": "routes/index.js",
-      "source_file": "src/routes/index.js",
+      "norm_label": "auth.validator.js",
+      "source_file": "src/validators/auth.validator.js",
       "source_location": "L1"
     },
     {
-      "id": "src_routes_index_apirouter",
-      "label": "apiRouter",
+      "id": "src_validators_auth_validator_loginbodyschema",
+      "label": "loginBodySchema",
       "_origin": "ast",
       "community": 10,
-      "community_name": "routes/index.js",
+      "community_name": "auth.routes.js",
       "file_type": "code",
-      "norm_label": "apirouter",
-      "source_file": "src/routes/index.js",
-      "source_location": "L13"
+      "norm_label": "loginbodyschema",
+      "source_file": "src/validators/auth.validator.js",
+      "source_location": "L3"
     },
     {
-      "id": "src_routes_mensualidad_routes_mensualidadrouter",
-      "label": "mensualidadRouter",
+      "id": "src_validators_auth_validator_logoutbodyschema",
+      "label": "logoutBodySchema",
       "_origin": "ast",
       "community": 10,
-      "community_name": "routes/index.js",
+      "community_name": "auth.routes.js",
       "file_type": "code",
-      "norm_label": "mensualidadrouter",
-      "source_file": "src/routes/mensualidad.routes.js",
-      "source_location": "L21"
+      "norm_label": "logoutbodyschema",
+      "source_file": "src/validators/auth.validator.js",
+      "source_location": "L16"
     },
     {
-      "id": "src_routes_tarifa_routes_tarifarouter",
-      "label": "tarifaRouter",
+      "id": "src_validators_auth_validator_refreshbodyschema",
+      "label": "refreshBodySchema",
       "_origin": "ast",
       "community": 10,
-      "community_name": "routes/index.js",
+      "community_name": "auth.routes.js",
       "file_type": "code",
-      "norm_label": "tarifarouter",
-      "source_file": "src/routes/tarifa.routes.js",
-      "source_location": "L19"
+      "norm_label": "refreshbodyschema",
+      "source_file": "src/validators/auth.validator.js",
+      "source_location": "L10"
     },
     {
-      "id": "src_routes_ticket_routes_ticketrouter",
-      "label": "ticketRouter",
+      "id": "ref_zod",
+      "label": "zod",
       "_origin": "ast",
       "community": 10,
-      "community_name": "routes/index.js",
-      "file_type": "code",
-      "norm_label": "ticketrouter",
-      "source_file": "src/routes/ticket.routes.js",
-      "source_location": "L22"
-    },
-    {
-      "id": "src_routes_turno_routes_turnorouter",
-      "label": "turnoRouter",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "routes/index.js",
-      "file_type": "code",
-      "norm_label": "turnorouter",
-      "source_file": "src/routes/turno.routes.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_routes_usuario_routes_usuariorouter",
-      "label": "usuarioRouter",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "routes/index.js",
-      "file_type": "code",
-      "norm_label": "usuariorouter",
-      "source_file": "src/routes/usuario.routes.js",
-      "source_location": "L18"
-    },
-    {
-      "id": "ref_express",
-      "label": "express",
-      "_origin": "ast",
-      "community": 10,
-      "community_name": "routes/index.js",
+      "community_name": "auth.routes.js",
       "file_type": "concept",
-      "norm_label": "express",
+      "norm_label": "zod",
       "source_file": "package.json",
-      "source_location": "L22"
+      "source_location": "L27"
     },
     {
       "id": "src_controllers_ticket_controller",
@@ -4499,131 +4433,362 @@
       "source_location": "L4"
     },
     {
-      "id": "src_models_mensualidad",
-      "label": "mensualidad.js",
+      "id": "src_controllers_turno_controller",
+      "label": "turno.controller.js",
       "_origin": "ast",
       "community": 12,
-      "community_name": "mensualidad.repository.js",
+      "community_name": "turno.routes.js",
       "file_type": "code",
-      "norm_label": "mensualidad.js",
-      "source_file": "src/models/mensualidad.js",
+      "norm_label": "turno.controller.js",
+      "source_file": "src/controllers/turno.controller.js",
       "source_location": "L1"
     },
     {
-      "id": "src_repositories_mensualidad_repository",
-      "label": "mensualidad.repository.js",
+      "id": "src_routes_turno_routes",
+      "label": "turno.routes.js",
       "_origin": "ast",
       "community": 12,
-      "community_name": "mensualidad.repository.js",
+      "community_name": "turno.routes.js",
       "file_type": "code",
-      "norm_label": "mensualidad.repository.js",
-      "source_file": "src/repositories/mensualidad.repository.js",
+      "norm_label": "turno.routes.js",
+      "source_file": "src/routes/turno.routes.js",
       "source_location": "L1"
     },
     {
-      "id": "src_controllers_mensualidad_controller",
-      "label": "mensualidad.controller.js",
+      "id": "src_validators_turno_validator",
+      "label": "turno.validator.js",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
+      "community": 12,
+      "community_name": "turno.routes.js",
       "file_type": "code",
-      "norm_label": "mensualidad.controller.js",
-      "source_file": "src/controllers/mensualidad.controller.js",
+      "norm_label": "turno.validator.js",
+      "source_file": "src/validators/turno.validator.js",
       "source_location": "L1"
     },
     {
-      "id": "src_routes_mensualidad_routes",
-      "label": "mensualidad.routes.js",
+      "id": "src_validators_turno_validator_abrirturnobodyschema",
+      "label": "abrirTurnoBodySchema",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
+      "community": 12,
+      "community_name": "turno.routes.js",
       "file_type": "code",
-      "norm_label": "mensualidad.routes.js",
-      "source_file": "src/routes/mensualidad.routes.js",
-      "source_location": "L1"
+      "norm_label": "abrirturnobodyschema",
+      "source_file": "src/validators/turno.validator.js",
+      "source_location": "L8"
     },
     {
-      "id": "src_validators_mensualidad_validator",
-      "label": "mensualidad.validator.js",
+      "id": "src_validators_turno_validator_cerrarturnobodyschema",
+      "label": "cerrarTurnoBodySchema",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
+      "community": 12,
+      "community_name": "turno.routes.js",
       "file_type": "code",
-      "norm_label": "mensualidad.validator.js",
-      "source_file": "src/validators/mensualidad.validator.js",
-      "source_location": "L1"
+      "norm_label": "cerrarturnobodyschema",
+      "source_file": "src/validators/turno.validator.js",
+      "source_location": "L20"
     },
     {
-      "id": "src_validators_mensualidad_validator_actualizarmensualidadbodyschema",
-      "label": "actualizarMensualidadBodySchema",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "actualizarmensualidadbodyschema",
-      "source_file": "src/validators/mensualidad.validator.js",
-      "source_location": "L37"
-    },
-    {
-      "id": "src_validators_mensualidad_validator_crearmensualidadbodyschema",
-      "label": "crearMensualidadBodySchema",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "crearmensualidadbodyschema",
-      "source_file": "src/validators/mensualidad.validator.js",
-      "source_location": "L14"
-    },
-    {
-      "id": "src_validators_mensualidad_validator_idparamschema",
+      "id": "src_validators_turno_validator_idparamschema",
       "label": "idParamSchema",
       "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
+      "community": 12,
+      "community_name": "turno.routes.js",
       "file_type": "code",
       "norm_label": "idparamschema",
-      "source_file": "src/validators/mensualidad.validator.js",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_validators_mensualidad_validator_listarmensualidadesqueryschema",
-      "label": "listarMensualidadesQuerySchema",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "listarmensualidadesqueryschema",
-      "source_file": "src/validators/mensualidad.validator.js",
-      "source_location": "L62"
-    },
-    {
-      "id": "src_validators_mensualidad_validator_pagarmensualidadbodyschema",
-      "label": "pagarMensualidadBodySchema",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "pagarmensualidadbodyschema",
-      "source_file": "src/validators/mensualidad.validator.js",
-      "source_location": "L54"
-    },
-    {
-      "id": "src_validators_mensualidad_validator_tipovehiculoschema",
-      "label": "tipoVehiculoSchema",
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "mensualidad.routes.js",
-      "file_type": "code",
-      "norm_label": "tipovehiculoschema",
-      "source_file": "src/validators/mensualidad.validator.js",
+      "source_file": "src/validators/turno.validator.js",
       "source_location": "L4"
+    },
+    {
+      "id": "src_validators_turno_validator_listarturnosqueryschema",
+      "label": "listarTurnosQuerySchema",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "turno.routes.js",
+      "file_type": "code",
+      "norm_label": "listarturnosqueryschema",
+      "source_file": "src/validators/turno.validator.js",
+      "source_location": "L29"
+    },
+    {
+      "id": "ref_prisma_client",
+      "label": "@prisma/client",
+      "_origin": "ast",
+      "community": 12,
+      "community_name": "turno.routes.js",
+      "file_type": "concept",
+      "norm_label": "@prisma/client",
+      "source_file": "package.json",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_middlewares_auth",
+      "label": "auth.js",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "auth.js",
+      "source_file": "src/middlewares/auth.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_auth_routes_authrouter",
+      "label": "authRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "authrouter",
+      "source_file": "src/routes/auth.routes.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_routes_celda_routes_celdarouter",
+      "label": "celdaRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "celdarouter",
+      "source_file": "src/routes/celda.routes.js",
+      "source_location": "L20"
+    },
+    {
+      "id": "src_routes_establecimiento_routes",
+      "label": "establecimiento.routes.js",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "establecimiento.routes.js",
+      "source_file": "src/routes/establecimiento.routes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_establecimiento_routes_establecimientorouter",
+      "label": "establecimientoRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "establecimientorouter",
+      "source_file": "src/routes/establecimiento.routes.js",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_routes_health_routes",
+      "label": "health.routes.js",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "health.routes.js",
+      "source_file": "src/routes/health.routes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_health_routes_healthrouter",
+      "label": "healthRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "healthrouter",
+      "source_file": "src/routes/health.routes.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_routes_horario_operacion_routes_horariooperacionrouter",
+      "label": "horarioOperacionRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "horariooperacionrouter",
+      "source_file": "src/routes/horario-operacion.routes.js",
+      "source_location": "L17"
+    },
+    {
+      "id": "src_routes_index",
+      "label": "routes/index.js",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "routes/index.js",
+      "source_file": "src/routes/index.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_index_apirouter",
+      "label": "apiRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "apirouter",
+      "source_file": "src/routes/index.js",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_routes_mensualidad_routes_mensualidadrouter",
+      "label": "mensualidadRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "mensualidadrouter",
+      "source_file": "src/routes/mensualidad.routes.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_routes_tarifa_routes_tarifarouter",
+      "label": "tarifaRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "tarifarouter",
+      "source_file": "src/routes/tarifa.routes.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_routes_ticket_routes_ticketrouter",
+      "label": "ticketRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "ticketrouter",
+      "source_file": "src/routes/ticket.routes.js",
+      "source_location": "L22"
+    },
+    {
+      "id": "src_routes_turno_routes_turnorouter",
+      "label": "turnoRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "turnorouter",
+      "source_file": "src/routes/turno.routes.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_routes_usuario_routes_usuariorouter",
+      "label": "usuarioRouter",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "code",
+      "norm_label": "usuariorouter",
+      "source_file": "src/routes/usuario.routes.js",
+      "source_location": "L18"
+    },
+    {
+      "id": "ref_express",
+      "label": "express",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "concept",
+      "norm_label": "express",
+      "source_file": "package.json",
+      "source_location": "L22"
+    },
+    {
+      "id": "ref_jsonwebtoken",
+      "label": "jsonwebtoken",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "routes/index.js",
+      "file_type": "concept",
+      "norm_label": "jsonwebtoken",
+      "source_file": "package.json",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_controllers_horario_operacion_controller",
+      "label": "horario-operacion.controller.js",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "horario-operacion.controller.js",
+      "source_file": "src/controllers/horario-operacion.controller.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_middlewares_authorize",
+      "label": "authorize.js",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "authorize.js",
+      "source_file": "src/middlewares/authorize.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_horario_operacion_routes",
+      "label": "horario-operacion.routes.js",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "horario-operacion.routes.js",
+      "source_file": "src/routes/horario-operacion.routes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_validators_horario_operacion_validator",
+      "label": "horario-operacion.validator.js",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "horario-operacion.validator.js",
+      "source_file": "src/validators/horario-operacion.validator.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_validators_horario_operacion_validator_crearhorariobodyschema",
+      "label": "crearHorarioBodySchema",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "crearhorariobodyschema",
+      "source_file": "src/validators/horario-operacion.validator.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_validators_horario_operacion_validator_idparamschema",
+      "label": "idParamSchema",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "idparamschema",
+      "source_file": "src/validators/horario-operacion.validator.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "src_validators_horario_operacion_validator_listarhorariosqueryschema",
+      "label": "listarHorariosQuerySchema",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "horario-operacion.routes.js",
+      "file_type": "code",
+      "norm_label": "listarhorariosqueryschema",
+      "source_file": "src/validators/horario-operacion.validator.js",
+      "source_location": "L22"
     },
     {
       "id": "src_controllers_tarifa_controller",
       "label": "tarifa.controller.js",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "tarifa.controller.js",
@@ -4634,7 +4799,7 @@
       "id": "src_routes_tarifa_routes",
       "label": "tarifa.routes.js",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "tarifa.routes.js",
@@ -4645,7 +4810,7 @@
       "id": "src_validators_tarifa_validator",
       "label": "tarifa.validator.js",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "tarifa.validator.js",
@@ -4656,7 +4821,7 @@
       "id": "src_validators_tarifa_validator_creartarifabodyschema",
       "label": "crearTarifaBodySchema",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "creartarifabodyschema",
@@ -4667,7 +4832,7 @@
       "id": "src_validators_tarifa_validator_idparamschema",
       "label": "idParamSchema",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "idparamschema",
@@ -4678,7 +4843,7 @@
       "id": "src_validators_tarifa_validator_listartarifasqueryschema",
       "label": "listarTarifasQuerySchema",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "listartarifasqueryschema",
@@ -4689,7 +4854,7 @@
       "id": "src_validators_tarifa_validator_simulartarifabodyschema",
       "label": "simularTarifaBodySchema",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "simulartarifabodyschema",
@@ -4700,99 +4865,11 @@
       "id": "src_validators_tarifa_validator_tipovehiculoschema",
       "label": "tipoVehiculoSchema",
       "_origin": "ast",
-      "community": 14,
+      "community": 15,
       "community_name": "tarifa.routes.js",
       "file_type": "code",
       "norm_label": "tipovehiculoschema",
       "source_file": "src/validators/tarifa.validator.js",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_controllers_usuario_controller",
-      "label": "usuario.controller.js",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "usuario.controller.js",
-      "source_file": "src/controllers/usuario.controller.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_routes_usuario_routes",
-      "label": "usuario.routes.js",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "usuario.routes.js",
-      "source_file": "src/routes/usuario.routes.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_usuario_validator",
-      "label": "usuario.validator.js",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "usuario.validator.js",
-      "source_file": "src/validators/usuario.validator.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_usuario_validator_actualizarusuariobodyschema",
-      "label": "actualizarUsuarioBodySchema",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "actualizarusuariobodyschema",
-      "source_file": "src/validators/usuario.validator.js",
-      "source_location": "L21"
-    },
-    {
-      "id": "src_validators_usuario_validator_crearusuariobodyschema",
-      "label": "crearUsuarioBodySchema",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "crearusuariobodyschema",
-      "source_file": "src/validators/usuario.validator.js",
-      "source_location": "L12"
-    },
-    {
-      "id": "src_validators_usuario_validator_idparamschema",
-      "label": "idParamSchema",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "idparamschema",
-      "source_file": "src/validators/usuario.validator.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_validators_usuario_validator_listarusuariosqueryschema",
-      "label": "listarUsuariosQuerySchema",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "listarusuariosqueryschema",
-      "source_file": "src/validators/usuario.validator.js",
-      "source_location": "L40"
-    },
-    {
-      "id": "src_validators_usuario_validator_rolschema",
-      "label": "rolSchema",
-      "_origin": "ast",
-      "community": 15,
-      "community_name": "usuario.routes.js",
-      "file_type": "code",
-      "norm_label": "rolschema",
-      "source_file": "src/validators/usuario.validator.js",
       "source_location": "L4"
     },
     {
@@ -4815,6 +4892,17 @@
       "file_type": "code",
       "norm_label": "celda.routes.js",
       "source_file": "src/routes/celda.routes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_utils_paginacion_util",
+      "label": "paginacion.util.js",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "celda.routes.js",
+      "file_type": "code",
+      "norm_label": "paginacion.util.js",
+      "source_file": "src/utils/paginacion.util.js",
       "source_location": "L1"
     },
     {
@@ -4881,6 +4969,94 @@
       "file_type": "code",
       "norm_label": "tipopermitidoschema",
       "source_file": "src/validators/celda.validator.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_controllers_usuario_controller",
+      "label": "usuario.controller.js",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "usuario.controller.js",
+      "source_file": "src/controllers/usuario.controller.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_usuario_routes",
+      "label": "usuario.routes.js",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "usuario.routes.js",
+      "source_file": "src/routes/usuario.routes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_validators_usuario_validator",
+      "label": "usuario.validator.js",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "usuario.validator.js",
+      "source_file": "src/validators/usuario.validator.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_validators_usuario_validator_actualizarusuariobodyschema",
+      "label": "actualizarUsuarioBodySchema",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "actualizarusuariobodyschema",
+      "source_file": "src/validators/usuario.validator.js",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_validators_usuario_validator_crearusuariobodyschema",
+      "label": "crearUsuarioBodySchema",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "crearusuariobodyschema",
+      "source_file": "src/validators/usuario.validator.js",
+      "source_location": "L12"
+    },
+    {
+      "id": "src_validators_usuario_validator_idparamschema",
+      "label": "idParamSchema",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "idparamschema",
+      "source_file": "src/validators/usuario.validator.js",
+      "source_location": "L8"
+    },
+    {
+      "id": "src_validators_usuario_validator_listarusuariosqueryschema",
+      "label": "listarUsuariosQuerySchema",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "listarusuariosqueryschema",
+      "source_file": "src/validators/usuario.validator.js",
+      "source_location": "L40"
+    },
+    {
+      "id": "src_validators_usuario_validator_rolschema",
+      "label": "rolSchema",
+      "_origin": "ast",
+      "community": 17,
+      "community_name": "usuario.routes.js",
+      "file_type": "code",
+      "norm_label": "rolschema",
+      "source_file": "src/validators/usuario.validator.js",
       "source_location": "L4"
     },
     {
@@ -5456,15 +5632,15 @@
       "source_location": "L34"
     },
     {
-      "id": "ref_jsonwebtoken",
-      "label": "jsonwebtoken",
+      "id": "ref_pino",
+      "label": "pino",
       "_origin": "ast",
       "community": 2,
       "community_name": "package.json",
       "file_type": "concept",
-      "norm_label": "jsonwebtoken",
+      "norm_label": "pino",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L24"
     },
     {
       "id": "ref_prettier",
@@ -5509,171 +5685,6 @@
       "norm_label": "swagger-ui-express",
       "source_file": "package.json",
       "source_location": "L26"
-    },
-    {
-      "id": "src_controllers_turno_controller",
-      "label": "turno.controller.js",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "turno.controller.js",
-      "source_file": "src/controllers/turno.controller.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_routes_turno_routes",
-      "label": "turno.routes.js",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "turno.routes.js",
-      "source_file": "src/routes/turno.routes.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_turno_validator",
-      "label": "turno.validator.js",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "turno.validator.js",
-      "source_file": "src/validators/turno.validator.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_turno_validator_abrirturnobodyschema",
-      "label": "abrirTurnoBodySchema",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "abrirturnobodyschema",
-      "source_file": "src/validators/turno.validator.js",
-      "source_location": "L8"
-    },
-    {
-      "id": "src_validators_turno_validator_cerrarturnobodyschema",
-      "label": "cerrarTurnoBodySchema",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "cerrarturnobodyschema",
-      "source_file": "src/validators/turno.validator.js",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_validators_turno_validator_idparamschema",
-      "label": "idParamSchema",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "idparamschema",
-      "source_file": "src/validators/turno.validator.js",
-      "source_location": "L4"
-    },
-    {
-      "id": "src_validators_turno_validator_listarturnosqueryschema",
-      "label": "listarTurnosQuerySchema",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "code",
-      "norm_label": "listarturnosqueryschema",
-      "source_file": "src/validators/turno.validator.js",
-      "source_location": "L29"
-    },
-    {
-      "id": "ref_prisma_client",
-      "label": "@prisma/client",
-      "_origin": "ast",
-      "community": 20,
-      "community_name": "turno.routes.js",
-      "file_type": "concept",
-      "norm_label": "@prisma/client",
-      "source_file": "package.json",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_controllers_auth_controller",
-      "label": "auth.controller.js",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "auth.controller.js",
-      "source_file": "src/controllers/auth.controller.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_routes_auth_routes",
-      "label": "auth.routes.js",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "auth.routes.js",
-      "source_file": "src/routes/auth.routes.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_auth_validator",
-      "label": "auth.validator.js",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "auth.validator.js",
-      "source_file": "src/validators/auth.validator.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_auth_validator_loginbodyschema",
-      "label": "loginBodySchema",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "loginbodyschema",
-      "source_file": "src/validators/auth.validator.js",
-      "source_location": "L3"
-    },
-    {
-      "id": "src_validators_auth_validator_logoutbodyschema",
-      "label": "logoutBodySchema",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "logoutbodyschema",
-      "source_file": "src/validators/auth.validator.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "src_validators_auth_validator_refreshbodyschema",
-      "label": "refreshBodySchema",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "code",
-      "norm_label": "refreshbodyschema",
-      "source_file": "src/validators/auth.validator.js",
-      "source_location": "L10"
-    },
-    {
-      "id": "ref_zod",
-      "label": "zod",
-      "_origin": "ast",
-      "community": 22,
-      "community_name": "auth.routes.js",
-      "file_type": "concept",
-      "norm_label": "zod",
-      "source_file": "package.json",
-      "source_location": "L27"
     },
     {
       "id": "prettierrc",
@@ -5740,17 +5751,6 @@
       "norm_label": "trailingcomma",
       "source_file": ".prettierrc.json",
       "source_location": "L4"
-    },
-    {
-      "id": "src_middlewares_validate",
-      "label": "validate.js",
-      "_origin": "ast",
-      "community": 26,
-      "community_name": "validate.js",
-      "file_type": "code",
-      "norm_label": "validate.js",
-      "source_file": "src/middlewares/validate.js",
-      "source_location": "L1"
     },
     {
       "id": "src_models_horario_operacion",
@@ -5966,7 +5966,7 @@
       "label": "env.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "env.js",
       "source_file": "src/config/env.js",
@@ -5977,7 +5977,7 @@
       "label": "env",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "env",
       "source_file": "src/config/env.js",
@@ -5988,7 +5988,7 @@
       "label": "envSchema",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "envschema",
       "source_file": "src/config/env.js",
@@ -5999,7 +5999,7 @@
       "label": "parsed",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "parsed",
       "source_file": "src/config/env.js",
@@ -6010,7 +6010,7 @@
       "label": "logger.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "logger.js",
       "source_file": "src/config/logger.js",
@@ -6021,7 +6021,7 @@
       "label": "logger",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "logger",
       "source_file": "src/config/logger.js",
@@ -6032,7 +6032,7 @@
       "label": "establecimiento.controller.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "establecimiento.controller.js",
       "source_file": "src/controllers/establecimiento.controller.js",
@@ -6043,21 +6043,10 @@
       "label": "health.controller.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "health.controller.js",
       "source_file": "src/controllers/health.controller.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_middlewares_auth",
-      "label": "auth.js",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.js",
-      "file_type": "code",
-      "norm_label": "auth.js",
-      "source_file": "src/middlewares/auth.js",
       "source_location": "L1"
     },
     {
@@ -6065,7 +6054,7 @@
       "label": "cors.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "cors.js",
       "source_file": "src/middlewares/cors.js",
@@ -6076,7 +6065,7 @@
       "label": "error-handler.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "error-handler.js",
       "source_file": "src/middlewares/error-handler.js",
@@ -6087,7 +6076,7 @@
       "label": "request-timing.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "request-timing.js",
       "source_file": "src/middlewares/request-timing.js",
@@ -6098,40 +6087,18 @@
       "label": "health.repository.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "health.repository.js",
       "source_file": "src/repositories/health.repository.js",
       "source_location": "L1"
     },
     {
-      "id": "src_routes_health_routes",
-      "label": "health.routes.js",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.js",
-      "file_type": "code",
-      "norm_label": "health.routes.js",
-      "source_file": "src/routes/health.routes.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_routes_health_routes_healthrouter",
-      "label": "healthRouter",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.js",
-      "file_type": "code",
-      "norm_label": "healthrouter",
-      "source_file": "src/routes/health.routes.js",
-      "source_location": "L4"
-    },
-    {
       "id": "src_server",
       "label": "server.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "server.js",
       "source_file": "src/server.js",
@@ -6142,7 +6109,7 @@
       "label": "app",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "app",
       "source_file": "src/server.js",
@@ -6153,7 +6120,7 @@
       "label": "establecimiento.service.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "establecimiento.service.js",
       "source_file": "src/services/establecimiento.service.js",
@@ -6164,7 +6131,7 @@
       "label": "health.service.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "health.service.js",
       "source_file": "src/services/health.service.js",
@@ -6175,7 +6142,7 @@
       "label": "recibo.service.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "recibo.service.js",
       "source_file": "src/services/recibo.service.js",
@@ -6186,7 +6153,7 @@
       "label": "duracion.util.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "duracion.util.js",
       "source_file": "src/utils/duracion.util.js",
@@ -6197,7 +6164,7 @@
       "label": "duracion.util.test.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "duracion.util.test.js",
       "source_file": "tests/unit/duracion.util.test.js",
@@ -6208,7 +6175,7 @@
       "label": "establecimiento.service.test.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "establecimiento.service.test.js",
       "source_file": "tests/unit/establecimiento.service.test.js",
@@ -6219,22 +6186,11 @@
       "label": "recibo.service.test.js",
       "_origin": "ast",
       "community": 4,
-      "community_name": "auth.js",
+      "community_name": "env.js",
       "file_type": "code",
       "norm_label": "recibo.service.test.js",
       "source_file": "tests/unit/recibo.service.test.js",
       "source_location": "L1"
-    },
-    {
-      "id": "ref_pino",
-      "label": "pino",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "auth.js",
-      "file_type": "concept",
-      "norm_label": "pino",
-      "source_file": "package.json",
-      "source_location": "L24"
     },
     {
       "id": "src_errors_app_error",
@@ -6358,6 +6314,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_services_ticket_service",
+      "label": "ticket.service.js",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "ticket.service.js",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L1"
+    },
+    {
       "id": "src_services_turno_service",
       "label": "turno.service.js",
       "_origin": "ast",
@@ -6400,6 +6367,17 @@
       "norm_label": "minuto_ms",
       "source_file": "src/utils/bogota-time.js",
       "source_location": "L7"
+    },
+    {
+      "id": "src_utils_codigo_util",
+      "label": "codigo.util.js",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "codigo.util.js",
+      "source_file": "src/utils/codigo.util.js",
+      "source_location": "L1"
     },
     {
       "id": "tests_unit_tarifa_calculo_service_test",
@@ -6479,6 +6457,50 @@
       "source_location": "L1"
     },
     {
+      "id": "tests_unit_ticket_service_test",
+      "label": "ticket.service.test.js",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "ticket.service.test.js",
+      "source_file": "tests/unit/ticket.service.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_unit_ticket_service_test_horario",
+      "label": "HORARIO",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "horario",
+      "source_file": "tests/unit/ticket.service.test.js",
+      "source_location": "L60"
+    },
+    {
+      "id": "tests_unit_ticket_service_test_tarifa_carro",
+      "label": "TARIFA_CARRO",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "tarifa_carro",
+      "source_file": "tests/unit/ticket.service.test.js",
+      "source_location": "L50"
+    },
+    {
+      "id": "tests_unit_ticket_service_test_tarifa_otro",
+      "label": "TARIFA_OTRO",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "errors/index.js",
+      "file_type": "code",
+      "norm_label": "tarifa_otro",
+      "source_file": "tests/unit/ticket.service.test.js",
+      "source_location": "L58"
+    },
+    {
       "id": "tests_unit_turno_service_test",
       "label": "turno.service.test.js",
       "_origin": "ast",
@@ -6505,22 +6527,10 @@
       "label": "AGENTS.md",
       "_origin": "ast",
       "community": 6,
-      "community_name": "AGENTS.md \u2014 parqueadero-api",
+      "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "page",
       "norm_label": "agents.md",
-      "source_file": "AGENTS.md",
-      "source_location": "L1"
-    },
-    {
-      "id": "agents_agents_md_parqueadero_api",
-      "label": "AGENTS.md \u2014 parqueadero-api",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "AGENTS.md \u2014 parqueadero-api",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "agents.md \u2014 parqueadero-api",
       "source_file": "AGENTS.md",
       "source_location": "L1"
     },
@@ -6529,123 +6539,167 @@
       "label": "No negociable",
       "_origin": "ast",
       "community": 6,
-      "community_name": "AGENTS.md \u2014 parqueadero-api",
+      "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "no negociable",
       "source_file": "AGENTS.md",
-      "source_location": "L7"
+      "source_location": "L9"
     },
     {
       "id": "agents_relaci\u00f3n_con_el_otro_proyecto",
       "label": "Relaci\u00f3n con el otro proyecto",
       "_origin": "ast",
       "community": 6,
-      "community_name": "AGENTS.md \u2014 parqueadero-api",
+      "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "relacion con el otro proyecto",
       "source_file": "AGENTS.md",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "agents_verificaci\u00f3n_antes_de_entregar",
       "label": "Verificaci\u00f3n antes de entregar",
       "_origin": "ast",
       "community": 6,
-      "community_name": "AGENTS.md \u2014 parqueadero-api",
+      "community_name": "AGENTS.md",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "verificacion antes de entregar",
       "source_file": "AGENTS.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "src_controllers_mensualidad_controller",
+      "label": "mensualidad.controller.js",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "mensualidad.controller.js",
+      "source_file": "src/controllers/mensualidad.controller.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_routes_mensualidad_routes",
+      "label": "mensualidad.routes.js",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "mensualidad.routes.js",
+      "source_file": "src/routes/mensualidad.routes.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_validators_mensualidad_validator",
+      "label": "mensualidad.validator.js",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "mensualidad.validator.js",
+      "source_file": "src/validators/mensualidad.validator.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_validators_mensualidad_validator_actualizarmensualidadbodyschema",
+      "label": "actualizarMensualidadBodySchema",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "actualizarmensualidadbodyschema",
+      "source_file": "src/validators/mensualidad.validator.js",
+      "source_location": "L37"
+    },
+    {
+      "id": "src_validators_mensualidad_validator_crearmensualidadbodyschema",
+      "label": "crearMensualidadBodySchema",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "crearmensualidadbodyschema",
+      "source_file": "src/validators/mensualidad.validator.js",
       "source_location": "L14"
     },
     {
-      "id": "src_controllers_horario_operacion_controller",
-      "label": "horario-operacion.controller.js",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "horario-operacion.controller.js",
-      "source_file": "src/controllers/horario-operacion.controller.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_middlewares_authorize",
-      "label": "authorize.js",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "authorize.js",
-      "source_file": "src/middlewares/authorize.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_routes_horario_operacion_routes",
-      "label": "horario-operacion.routes.js",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "horario-operacion.routes.js",
-      "source_file": "src/routes/horario-operacion.routes.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_horario_operacion_validator",
-      "label": "horario-operacion.validator.js",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "horario-operacion.validator.js",
-      "source_file": "src/validators/horario-operacion.validator.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_validators_horario_operacion_validator_crearhorariobodyschema",
-      "label": "crearHorarioBodySchema",
-      "_origin": "ast",
-      "community": 7,
-      "community_name": "horario-operacion.routes.js",
-      "file_type": "code",
-      "norm_label": "crearhorariobodyschema",
-      "source_file": "src/validators/horario-operacion.validator.js",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_validators_horario_operacion_validator_idparamschema",
+      "id": "src_validators_mensualidad_validator_idparamschema",
       "label": "idParamSchema",
       "_origin": "ast",
       "community": 7,
-      "community_name": "horario-operacion.routes.js",
+      "community_name": "mensualidad.routes.js",
       "file_type": "code",
       "norm_label": "idparamschema",
-      "source_file": "src/validators/horario-operacion.validator.js",
-      "source_location": "L7"
+      "source_file": "src/validators/mensualidad.validator.js",
+      "source_location": "L10"
     },
     {
-      "id": "src_validators_horario_operacion_validator_listarhorariosqueryschema",
-      "label": "listarHorariosQuerySchema",
+      "id": "src_validators_mensualidad_validator_listarmensualidadesqueryschema",
+      "label": "listarMensualidadesQuerySchema",
       "_origin": "ast",
       "community": 7,
-      "community_name": "horario-operacion.routes.js",
+      "community_name": "mensualidad.routes.js",
       "file_type": "code",
-      "norm_label": "listarhorariosqueryschema",
-      "source_file": "src/validators/horario-operacion.validator.js",
-      "source_location": "L22"
+      "norm_label": "listarmensualidadesqueryschema",
+      "source_file": "src/validators/mensualidad.validator.js",
+      "source_location": "L62"
     },
     {
-      "id": "src_models_tarifa",
-      "label": "tarifa.js",
+      "id": "src_validators_mensualidad_validator_pagarmensualidadbodyschema",
+      "label": "pagarMensualidadBodySchema",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "pagarmensualidadbodyschema",
+      "source_file": "src/validators/mensualidad.validator.js",
+      "source_location": "L54"
+    },
+    {
+      "id": "src_validators_mensualidad_validator_tipovehiculoschema",
+      "label": "tipoVehiculoSchema",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "mensualidad.routes.js",
+      "file_type": "code",
+      "norm_label": "tipovehiculoschema",
+      "source_file": "src/validators/mensualidad.validator.js",
+      "source_location": "L4"
+    },
+    {
+      "id": "src_models_usuario",
+      "label": "usuario.js",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "usuario.js",
+      "source_file": "src/models/usuario.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_repositories_usuario_repository",
+      "label": "usuario.repository.js",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "usuario.repository.js",
+      "file_type": "code",
+      "norm_label": "usuario.repository.js",
+      "source_file": "src/repositories/usuario.repository.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_models_mensualidad",
+      "label": "mensualidad.js",
       "_origin": "ast",
       "community": 9,
       "community_name": "ConflictError",
       "file_type": "code",
-      "norm_label": "tarifa.js",
-      "source_file": "src/models/tarifa.js",
+      "norm_label": "mensualidad.js",
+      "source_file": "src/models/mensualidad.js",
       "source_location": "L1"
     },
     {
@@ -6660,14 +6714,14 @@
       "source_location": "L1"
     },
     {
-      "id": "src_repositories_tarifa_repository",
-      "label": "tarifa.repository.js",
+      "id": "src_repositories_mensualidad_repository",
+      "label": "mensualidad.repository.js",
       "_origin": "ast",
       "community": 9,
       "community_name": "ConflictError",
       "file_type": "code",
-      "norm_label": "tarifa.repository.js",
-      "source_file": "src/repositories/tarifa.repository.js",
+      "norm_label": "mensualidad.repository.js",
+      "source_file": "src/repositories/mensualidad.repository.js",
       "source_location": "L1"
     },
     {
@@ -6704,28 +6758,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_services_ticket_service",
-      "label": "ticket.service.js",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "ticket.service.js",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_utils_codigo_util",
-      "label": "codigo.util.js",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "codigo.util.js",
-      "source_file": "src/utils/codigo.util.js",
-      "source_location": "L1"
-    },
-    {
       "id": "tests_unit_celda_service_test",
       "label": "celda.service.test.js",
       "_origin": "ast",
@@ -6746,50 +6778,6 @@
       "norm_label": "mensualidad.service.test.js",
       "source_file": "tests/unit/mensualidad.service.test.js",
       "source_location": "L1"
-    },
-    {
-      "id": "tests_unit_ticket_service_test",
-      "label": "ticket.service.test.js",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "ticket.service.test.js",
-      "source_file": "tests/unit/ticket.service.test.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "tests_unit_ticket_service_test_horario",
-      "label": "HORARIO",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "horario",
-      "source_file": "tests/unit/ticket.service.test.js",
-      "source_location": "L60"
-    },
-    {
-      "id": "tests_unit_ticket_service_test_tarifa_carro",
-      "label": "TARIFA_CARRO",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "tarifa_carro",
-      "source_file": "tests/unit/ticket.service.test.js",
-      "source_location": "L50"
-    },
-    {
-      "id": "tests_unit_ticket_service_test_tarifa_otro",
-      "label": "TARIFA_OTRO",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "ConflictError",
-      "file_type": "code",
-      "norm_label": "tarifa_otro",
-      "source_file": "tests/unit/ticket.service.test.js",
-      "source_location": "L58"
     }
   ],
   "links": [
@@ -9543,7 +9531,19 @@
     },
     {
       "source": "src_services_tarifa_calculo_service_calcularbloques",
-      "target": "src_services_tarifa_calculo_service_cierreinstant",
+      "target": "src_utils_bogota_time_bogotaparts",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/tarifa-calculo.service.js",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_tarifa_calculo_service_calcularbloques",
+      "target": "src_services_tarifa_calculo_service_aperturainstant",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9555,7 +9555,7 @@
     },
     {
       "source": "src_services_tarifa_calculo_service_calcularbloques",
-      "target": "src_utils_bogota_time_bogotaparts",
+      "target": "src_services_tarifa_calculo_service_cierreinstant",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9574,19 +9574,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L57",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_tarifa_calculo_service_calcularbloques",
-      "target": "src_services_tarifa_calculo_service_aperturainstant",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L59",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -9598,7 +9586,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L130",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -9610,7 +9598,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L132",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
@@ -9622,7 +9610,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L140",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -9646,7 +9634,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L156",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -9658,7 +9646,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L158",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -9670,7 +9658,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L175",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -9766,7 +9754,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L205",
+      "source_location": "L215",
       "weight": 1.0
     },
     {
@@ -9778,7 +9766,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L208",
+      "source_location": "L218",
       "weight": 1.0
     },
     {
@@ -9790,7 +9778,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L223",
+      "source_location": "L233",
       "weight": 1.0
     },
     {
@@ -9802,7 +9790,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L226",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -9814,7 +9802,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -9826,7 +9814,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -9838,7 +9826,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L178",
+      "source_location": "L188",
       "weight": 1.0
     },
     {
@@ -9850,7 +9838,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L181",
+      "source_location": "L191",
       "weight": 1.0
     },
     {
@@ -9862,12 +9850,12 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L190",
+      "source_location": "L200",
       "weight": 1.0
     },
     {
       "source": "src_services_ticket_service_registrarentrada",
-      "target": "src_utils_codigo_util_generarcodigoticket",
+      "target": "src_utils_bogota_time_bogotaparts",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9879,6 +9867,30 @@
     },
     {
       "source": "src_services_ticket_service_registrarentrada",
+      "target": "src_utils_bogota_time_horainstant",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_ticket_service_registrarentrada",
+      "target": "src_utils_codigo_util_generarcodigoticket",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_ticket_service_registrarentrada",
       "target": "src_errors_not_found_error_notfounderror",
       "relation": "calls",
       "_origin": "ast",
@@ -9886,7 +9898,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -9898,7 +9910,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -9910,7 +9922,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -9922,24 +9934,12 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L116",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
       "source": "src_services_ticket_service_registrarsalida",
       "target": "src_errors_conflict_error_conflicterror",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/services/ticket.service.js",
-      "source_location": "L119",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_ticket_service_registrarsalida",
-      "target": "src_errors_unprocessable_entity_error_unprocessableentityerror",
       "relation": "calls",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -9951,6 +9951,18 @@
     },
     {
       "source": "src_services_ticket_service_registrarsalida",
+      "target": "src_errors_unprocessable_entity_error_unprocessableentityerror",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_ticket_service_registrarsalida",
       "target": "src_services_tarifa_calculo_service_calculartarifa",
       "relation": "calls",
       "_origin": "ast",
@@ -9958,7 +9970,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L135",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -9970,7 +9982,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L172",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -10558,7 +10570,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/integration/ticket.routes.test.js",
-      "source_location": "L556",
+      "source_location": "L613",
       "weight": 1.0
     },
     {
@@ -10570,7 +10582,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/integration/ticket.routes.test.js",
-      "source_location": "L557",
+      "source_location": "L614",
       "weight": 1.0
     },
     {
@@ -10582,7 +10594,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "tests/integration/ticket.routes.test.js",
-      "source_location": "L558",
+      "source_location": "L615",
       "weight": 1.0
     },
     {
@@ -12831,7 +12843,7 @@
     },
     {
       "source": "src_services_ticket_service",
-      "target": "src_errors_conflict_error_conflicterror",
+      "target": "src_utils_bogota_time_bogotaparts",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12839,6 +12851,30 @@
       "context": "import",
       "source_file": "src/services/ticket.service.js",
       "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_ticket_service",
+      "target": "src_utils_bogota_time_horainstant",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_ticket_service",
+      "target": "src_errors_conflict_error_conflicterror",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -12850,7 +12886,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -12862,7 +12898,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -17511,7 +17547,7 @@
     },
     {
       "source": "src_services_ticket_service",
-      "target": "src_errors_index",
+      "target": "src_utils_bogota_time",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -17519,6 +17555,18 @@
       "context": "import",
       "source_file": "src/services/ticket.service.js",
       "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_ticket_service",
+      "target": "src_errors_index",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/ticket.service.js",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -19959,46 +20007,35 @@
     },
     {
       "source": "agents",
-      "target": "agents_agents_md_parqueadero_api",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "AGENTS.md",
-      "source_location": "L1",
-      "weight": 1.0
-    },
-    {
-      "source": "agents_agents_md_parqueadero_api",
       "target": "agents_verificaci\u00f3n_antes_de_entregar",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L14",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
-      "source": "agents_agents_md_parqueadero_api",
+      "source": "agents",
       "target": "agents_relaci\u00f3n_con_el_otro_proyecto",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
-      "source": "agents_agents_md_parqueadero_api",
+      "source": "agents",
       "target": "agents_no_negociable",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L7",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -22605,7 +22642,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L121",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -22616,7 +22653,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/tarifa-calculo.service.js",
-      "source_location": "L148",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
@@ -22737,7 +22774,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L113",
+      "source_location": "L123",
       "weight": 1.0
     },
     {
@@ -22748,7 +22785,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L13",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -22759,7 +22796,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L175",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -22770,7 +22807,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L202",
+      "source_location": "L212",
       "weight": 1.0
     },
     {
@@ -22781,7 +22818,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L220",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
@@ -22792,7 +22829,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -22803,7 +22840,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/ticket.service.js",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -24057,7 +24094,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tests/integration/ticket.routes.test.js",
-      "source_location": "L555",
+      "source_location": "L612",
       "weight": 1.0
     },
     {
@@ -25382,5 +25419,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "639b859d89f5d862c849c0d90c8d5fd8f8461d0e"
+  "built_at_commit": "a926f9cf406412d0792aa8fd1239dbf6949f2130"
 }
