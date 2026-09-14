@@ -14,6 +14,24 @@ import 'app_motion.dart';
 class AppPageTransitionsBuilder extends PageTransitionsBuilder {
   const AppPageTransitionsBuilder();
 
+  /// Sin este override, la clase base `PageTransitionsBuilder` del SDK
+  /// declara 300 ms, y ese valor es el que termina usando cada ruta a
+  /// través de `MaterialPage.transitionDuration` — incluso las de
+  /// `app_router.dart`, que se declaran con `builder:` y no con
+  /// `pageBuilder:`. Por eso alcanza con sobreescribirlo acá y NO hace
+  /// falta convertir ninguna ruta a `CustomTransitionPage`.
+  ///
+  /// `AppMotion.medium` ya se documentaba a sí mismo como "Transición de
+  /// página (`AppPageTransitionsBuilder`)", pero sin este override el token
+  /// era decorativo: de él solo se consumía la curva, nunca la duración, y
+  /// el movimiento quedaba fuera del rango de 150-250 ms del sistema de
+  /// diseño.
+  @override
+  Duration get transitionDuration => AppMotion.medium;
+
+  @override
+  Duration get reverseTransitionDuration => AppMotion.medium;
+
   @override
   Widget buildTransitions<T>(
     PageRoute<T> route,
