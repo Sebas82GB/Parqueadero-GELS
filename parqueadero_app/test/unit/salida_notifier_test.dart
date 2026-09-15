@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -165,5 +167,81 @@ void main() {
     final state = container.read(salidaNotifierProvider('t1'));
     expect(state.step, SalidaStep.formulario);
     expect(state.error, isA<ApiException>().having((e) => e.code, 'code', 'OPERADOR_SIN_TURNO_ABIERTO'));
+  });
+
+  // `POST /tickets/:id/salida` es transaccional: cuando responde, el cobro ya
+  // ocurrió. El provider es autoDispose y el bottom sheet de acción rápida
+  // puede cerrarse con la petición en vuelo, así que estos casos cubren esa
+  // ventana — sin el `ref.keepAlive()` de `confirmarSalida` el notifier se
+  // desecha al cerrar el sheet y el recibo de un cobro real se pierde.
+  test('el sheet se cierra con la peticion en vuelo: el estado llega igual a exito con el recibo', () async {
+    final completer = Completer<Ticket>();
+    when(
+      () => ticketRepository.registrarSalida('t1', metodo: any(named: 'metodo'), valorManual: any(named: 'valorManual')),
+    ).thenAnswer((_) => completer.future);
+
+    // El sheet abierto: escucha el provider y dispara la confirmación.
+    final sub = container.listen(salidaNotifierProvider('t1'), (_, _) {});
+    final future = container
+        .read(salidaNotifierProvider('t1').notifier)
+        .confirmarSalida(metodo: MetodoPago.efectivo);
+    await Future<void>.delayed(Duration.zero);
+
+    // El operador cierra (o arrastra) el sheet: se va el único listener.
+    sub.close();
+    await Future<void>.delayed(Duration.zero);
+
+    // Recién ahora responde el backend, con el ticket ya cerrado y cobrado.
+    completer.complete(ticketCerrado(valorTotal: 9000, desglose: const [DesgloseManual(valor: 9000)]));
+    final ok = await future;
+
+    expect(ok, isTrue);
+    final state = container.read(salidaNotifierProvider('t1'));
+    expect(state.step, SalidaStep.exito);
+    expect(state.ticketCerrado, isNotNull);
+    expect(state.ticketCerrado?.valorTotal, 9000);
+  });
+
+  test('error con el sheet cerrado: el estado registra el error y no se pierde', () async {
+    final completer = Completer<Ticket>();
+    when(
+      () => ticketRepository.registrarSalida('t1', metodo: any(named: 'metodo'), valorManual: any(named: 'valorManual')),
+    ).thenAnswer((_) => completer.future);
+
+    final sub = container.listen(salidaNotifierProvider('t1'), (_, _) {});
+    final future = container.read(salidaNotifierProvider('t1').notifier).confirmarSalida();
+    await Future<void>.delayed(Duration.zero);
+
+    sub.close();
+    await Future<void>.delayed(Duration.zero);
+
+    completer.completeError(
+      const ApiException(code: 'TICKET_NO_ABIERTO', message: 'El ticket no está abierto', statusCode: 409),
+    );
+    final ok = await future;
+
+    expect(ok, isFalse);
+    final state = container.read(salidaNotifierProvider('t1'));
+    expect(state.error, isA<ApiException>().having((e) => e.code, 'code', 'TICKET_NO_ABIERTO'));
+  });
+
+  test('tras completar, el provider vuelve a poder desecharse', () async {
+    when(
+      () => ticketRepository.registrarSalida('t1', metodo: any(named: 'metodo'), valorManual: any(named: 'valorManual')),
+    ).thenAnswer((_) async => ticketCerrado(valorTotal: 9000, desglose: const [DesgloseManual(valor: 9000)]));
+
+    final sub = container.listen(salidaNotifierProvider('t1'), (_, _) {});
+    final ok = await container.read(salidaNotifierProvider('t1').notifier).confirmarSalida();
+    expect(ok, isTrue);
+    expect(container.read(salidaNotifierProvider('t1')).step, SalidaStep.exito);
+
+    // Sin listeners y con el KeepAliveLink ya cerrado por el `finally`, el
+    // autoDispose debe volver a aplicar: la siguiente lectura reconstruye el
+    // notifier desde cero en vez de devolver el `exito` retenido.
+    sub.close();
+    await Future<void>.delayed(Duration.zero);
+
+    expect(container.read(salidaNotifierProvider('t1')).step, SalidaStep.formulario);
+    expect(container.read(salidaNotifierProvider('t1')).ticketCerrado, isNull);
   });
 }
