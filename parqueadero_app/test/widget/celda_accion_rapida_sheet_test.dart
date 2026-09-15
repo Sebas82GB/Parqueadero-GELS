@@ -620,4 +620,53 @@ void main() {
     expect(find.byType(ErrorBanner), findsOneWidget);
   });
 
+  testWidgets(
+    'el sheet se cierra durante el cobro: igual se muestra el snackbar con el recibo',
+    (tester) async {
+      stubTicketAbierto(ticket());
+      when(() => ticketRepository.previsualizarCobro('t1')).thenAnswer(
+        (_) async => CobroPreview(
+          valorTotal: 5000,
+          desglose: const [],
+          horaEntrada: DateTime.utc(2026, 1, 1),
+          horaSalida: DateTime.utc(2026, 1, 1, 1),
+        ),
+      );
+      // La salida queda EN VUELO a propósito: es la ventana en la que el
+      // operador puede cerrar (o arrastrar sin querer) el panel.
+      final salidaEnVuelo = Completer<Ticket>();
+      when(
+        () => ticketRepository.registrarSalida(
+          't1',
+          metodo: any(named: 'metodo'),
+          valorManual: any(named: 'valorManual'),
+        ),
+      ).thenAnswer((_) => salidaEnVuelo.future);
+
+      await pumpSheet(tester);
+      await tester.tap(find.text('Cobrar ${formatMoney(5000)}'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Confirmar'));
+      await tester.pump();
+
+      // Con el POST todavía sin responder, el operador cierra el panel.
+      final contextoDelSheet = tester.element(
+        find.byType(CeldaAccionRapidaSheet),
+      );
+      Navigator.of(contextoDelSheet).pop();
+      await tester.pumpAndSettle();
+      expect(find.byType(CeldaAccionRapidaSheet), findsNothing);
+
+      // Ahora responde el backend: el cobro ocurrió, el operador tiene que
+      // verlo confirmado aunque el panel que lo lanzó ya no exista.
+      salidaEnVuelo.complete(ticket(recibo: recibo()));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Salida registrada · ABC123 · ${formatMoney(5000)} cobrados'),
+        findsOneWidget,
+      );
+      expect(find.text('Ver recibo'), findsOneWidget);
+    },
+  );
 }

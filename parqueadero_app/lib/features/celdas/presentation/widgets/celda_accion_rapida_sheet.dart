@@ -255,30 +255,44 @@ class _CeldaAccionRapidaSheetState
         ),
       );
       if (confirmado != true || !context.mounted) return;
+      // Los tres se capturan ANTES del await porque el operador puede cerrar
+      // (o arrastrar sin querer) el sheet mientras el POST está en vuelo, y
+      // los tres viven ARRIBA de este widget en el árbol: sobreviven a su
+      // muerte. El `container` es el caso menos obvio: `ref.read` de un
+      // `ConsumerStatefulWidget` lanza `StateError` si el widget ya se
+      // desmontó (`ConsumerStatefulElement._assertNotDisposed`), así que el
+      // recibo NO se puede leer con `ref` después del await. El container
+      // vive en la raíz de la app y lee el mismo estado sin depender de este
+      // `BuildContext` — y el estado está garantizado porque
+      // `SalidaNotifier.confirmarSalida` mantiene su provider vivo con
+      // `ref.keepAlive()` mientras la petición corre.
       final messenger = ScaffoldMessenger.of(context);
       final router = GoRouter.of(context);
+      final container = ProviderScope.containerOf(context, listen: false);
       final ok = await ref
           .read(salidaNotifierProvider(ticketId).notifier)
           .confirmarSalida(metodo: _metodo);
-      if (ok && context.mounted) {
-        final recibo = ref
-            .read(salidaNotifierProvider(ticketId))
-            .ticketCerrado
-            ?.recibo;
-        Navigator.of(context).pop();
-        if (recibo != null) {
-          messenger.showSnackBar(
-            SnackBar(
-              content: Text(
-                'Salida registrada · ${recibo.placa} · ${formatMoney(recibo.total)} cobrados',
-              ),
-              action: SnackBarAction(
-                label: 'Ver recibo',
-                onPressed: () => router.push('/tickets/$ticketId/recibo'),
-              ),
+      if (!ok) return;
+      final recibo = container
+          .read(salidaNotifierProvider(ticketId))
+          .ticketCerrado
+          ?.recibo;
+      // Solo el pop depende del sheet: cerrar algo que ya no existe no tiene
+      // sentido, pero el cobro SÍ ocurrió y el operador necesita verlo
+      // confirmado aunque haya cerrado el panel.
+      if (context.mounted) Navigator.of(context).pop();
+      if (recibo != null) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(
+              'Salida registrada · ${recibo.placa} · ${formatMoney(recibo.total)} cobrados',
             ),
-          );
-        }
+            action: SnackBarAction(
+              label: 'Ver recibo',
+              onPressed: () => router.push('/tickets/$ticketId/recibo'),
+            ),
+          ),
+        );
       }
     }
 
