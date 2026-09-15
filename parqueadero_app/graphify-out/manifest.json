@@ -396,9 +396,9 @@
     "semantic_hash": "4001a9d638fad19f018b5739e858c4bb"
   },
   "lib/features/celdas/presentation/widgets/celda_accion_rapida_sheet.dart": {
-    "mtime": 1789424712.8453438,
-    "seen": 1789426273.7446308,
-    "ast_hash": "14e0d930d252777c2bbeee9f0d05829f",
+    "mtime": 1789485429.0281703,
+    "seen": 1789486952.1094518,
+    "ast_hash": "93eab3f210e3026738827ccb21c2b381",
     "semantic_hash": ""
   },
   "lib/features/celdas/presentation/widgets/celda_card.dart": {
@@ -1524,9 +1524,9 @@
     "semantic_hash": "c05754cc2e317c9e26d7e6a26f9665f2"
   },
   "test/widget/celda_accion_rapida_sheet_test.dart": {
-    "mtime": 1789341973.5085437,
-    "seen": 1789348009.4863727,
-    "ast_hash": "e35db1729b1ba2fb20b30bc54b858c3b",
+    "mtime": 1789485466.8435884,
+    "seen": 1789486952.203972,
+    "ast_hash": "2a4dac27e9e5b4f53f22e9135979d6c9",
     "semantic_hash": ""
   },
   "test/widget/celda_card_test.dart": {
