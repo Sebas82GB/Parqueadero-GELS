@@ -242,10 +242,7 @@ class _RegistrarEntradaScreenState extends ConsumerState<RegistrarEntradaScreen>
                               children: [
                                 Row(
                                   children: [
-                                    Hero(
-                                      tag: 'celda-estado-${celdaSeleccionada.id}',
-                                      child: const CeldaEstadoBadge(estado: EstadoCelda.libre, size: 32),
-                                    ),
+                                    const CeldaEstadoBadge(estado: EstadoCelda.libre, size: 32),
                                     const SizedBox(width: AppSpacing.sm),
                                     Text(
                                       'Celda ${celdaSeleccionada.codigo}',

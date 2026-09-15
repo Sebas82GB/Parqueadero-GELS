@@ -66,10 +66,7 @@ class CeldaDetailScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [
-          Hero(
-            tag: 'celda-estado-${celda.id}',
-            child: CeldaEstadoBadge(estado: celda.estado, size: 48),
-          ),
+          CeldaEstadoBadge(estado: celda.estado, size: 48),
           const SizedBox(height: AppSpacing.sm),
           CeldaEstadoChip(estado: celda.estado),
           const SizedBox(height: AppSpacing.lg),
