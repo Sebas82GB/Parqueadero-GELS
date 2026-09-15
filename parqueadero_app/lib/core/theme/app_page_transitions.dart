@@ -40,7 +40,10 @@ class AppPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    if (MediaQuery.of(context).disableAnimations) {
+    // Accessor por aspecto (ver `AppMotion.effective`): `MediaQuery.of` acá
+    // suscribiría la transición a TODO el `MediaQueryData`, así que
+    // redimensionar la ventana la reconstruiría de más.
+    if (MediaQuery.disableAnimationsOf(context)) {
       return child;
     }
 

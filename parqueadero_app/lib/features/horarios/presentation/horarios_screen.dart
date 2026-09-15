@@ -54,17 +54,34 @@ class HorariosScreen extends ConsumerWidget {
       final historico = state.historico;
       body = RefreshIndicator(
         onRefresh: notifier.refrescar,
-        child: ListView(
+        // `.builder` y no `ListView(children: [...])`: el histórico no tiene
+        // cota — `HorarioRepositoryImpl.listarTodas()` recorre todas las
+        // páginas — y como lista eager se construía entero aunque solo se
+        // vieran las primeras filas.
+        child: ListView.builder(
+          // Imprescindible: si el contenido cabe sin scroll, el
+          // pull-to-refresh no dispara sin esta física.
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(AppSpacing.md),
-          children: [
-            if (vigente != null) _VigenteCard(horario: vigente) else const _SinVigenteAviso(),
-            if (historico.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.lg),
-              Text('Histórico', style: Theme.of(context).textTheme.titleMedium),
-              for (final h in historico) _HistoricoRow(horario: h),
-            ],
-          ],
+          // Índice 0 = cabecera (vigente + título); el resto, una fila de
+          // histórico cada uno, desplazadas en 1.
+          itemCount: 1 + historico.length,
+          itemBuilder: (context, index) {
+            if (index > 0) return _HistoricoRow(horario: historico[index - 1]);
+            return Column(
+              // `ListView` estira a sus hijos al ancho completo; una `Column`
+              // los centraría. Sin esto la tarjeta del vigente encogería a su
+              // contenido.
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (vigente != null) _VigenteCard(horario: vigente) else const _SinVigenteAviso(),
+                if (historico.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  Text('Histórico', style: Theme.of(context).textTheme.titleMedium),
+                ],
+              ],
+            );
+          },
         ),
       );
     }
