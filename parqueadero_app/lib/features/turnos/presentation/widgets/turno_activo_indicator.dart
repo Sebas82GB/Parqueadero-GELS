@@ -139,10 +139,9 @@ class _TurnoActivoIndicatorState extends ConsumerState<TurnoActivoIndicator> {
 /// `StatusStyle`), este aviso es siempre el mismo hecho — hay un turno
 /// abierto — así que no necesita distinguirse de otro tono por matiz: lleva
 /// la identidad de marca (asfalto/demarcación) en vez de la paleta de
-/// estados. `demarcacion` pasa 10.6:1 de contraste sobre `asfalto`, muy por
-/// encima de AA; también se usa en el link de acción porque `verdeSenal`
-/// (el color de acción en el resto de la app) da solo ~2.7:1 ahí y no
-/// pasaría el mismo estándar.
+/// estados. `amarilloPastel` pasa 11.11:1 de contraste sobre `asfaltoMedio`,
+/// muy por encima de AA; también se usa en el link de acción para que la
+/// acción quede en el mismo acento que el resto del banner.
 class _TurnoAbiertoBanner extends StatelessWidget {
   const _TurnoAbiertoBanner({required this.text, required this.onVerArqueo});
 
@@ -151,26 +150,30 @@ class _TurnoAbiertoBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(AppSpacing.sm),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter, vertical: AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: AppColors.asfalto,
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.schedule, color: AppColors.demarcacion, size: 20),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Text(text, style: const TextStyle(color: AppColors.demarcacion)),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.demarcacion),
-            onPressed: onVerArqueo,
-            child: const Text('Ver arqueo'),
-          ),
-        ],
+    return Semantics(
+      container: true,
+      label: text,
+      child: Container(
+        margin: const EdgeInsets.all(AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter, vertical: AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: AppColors.asfaltoMedio,
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.schedule, color: AppColors.amarilloPastel, size: 20),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(text, style: const TextStyle(color: AppColors.amarilloPastel)),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: AppColors.amarilloPastel),
+              onPressed: onVerArqueo,
+              child: const Text('Ver arqueo'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -186,22 +189,26 @@ class _Banner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(AppSpacing.sm),
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter, vertical: AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: style.color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-      ),
-      child: Row(
-        children: [
-          Icon(style.icon, color: style.color, size: 20),
-          const SizedBox(width: AppSpacing.sm),
-          // Sin teñir con style.color (ver celda_card.dart): el ícono ya
-          // comunica el estado, el texto se queda en el color por defecto.
-          Expanded(child: Text(text)),
-          TextButton(onPressed: onAction, child: Text(actionLabel)),
-        ],
+    return Semantics(
+      container: true,
+      label: text,
+      child: Container(
+        margin: const EdgeInsets.all(AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.gutter, vertical: AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: style.color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+        child: Row(
+          children: [
+            Icon(style.icon, color: style.color, size: 20),
+            const SizedBox(width: AppSpacing.sm),
+            // Sin teñir con style.color (ver celda_card.dart): el ícono ya
+            // comunica el estado, el texto se queda en el color por defecto.
+            Expanded(child: Text(text)),
+            TextButton(onPressed: onAction, child: Text(actionLabel)),
+          ],
+        ),
       ),
     );
   }

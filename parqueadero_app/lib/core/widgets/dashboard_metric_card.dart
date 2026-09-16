@@ -8,9 +8,16 @@ import 'animated_count_text.dart';
 /// Tarjeta de métrica del dashboard de inicio (skill `diseno-parqueadero`):
 /// generalizada de la "Celdas libres" original del Operador para que
 /// Operador y Admin compartan el mismo molde en vez de cada uno con su
-/// propia tarjeta. [dark] elige la variante (fondo `asfalto`/texto
-/// `demarcacion` para un conteo en vivo como "Celdas libres/ocupadas", o
-/// fondo `concreto`/texto `asfalto` para algo más neutro).
+/// propia tarjeta. [dark] elige la variante: `true` es la tarjeta de ACENTO
+/// (texto e ícono en `amarilloPastel`, sin borde) para un conteo en vivo como
+/// "Celdas libres/ocupadas", y `false` la NEUTRA (texto en `blancoHueso`, con
+/// borde `asfaltoClaro`) para algo más tranquilo.
+///
+/// Reforma "Asfalto y Demarcación" (2026-09-15): el nombre [dark] quedó del
+/// tema claro, donde distinguía tarjeta sobre fondo oscuro de tarjeta sobre
+/// fondo claro. Ahora **todo el tema es oscuro** y ambas variantes van sobre
+/// `asfaltoMedio`: [dark] solo elige acento vs neutra. No se lee como un
+/// resto del tema claro ni habilita texto oscuro, que sería invisible.
 ///
 /// El valor es opcional a propósito: sin [value] y sin [isLoading]/
 /// [errorMessage] muestra un placeholder "—", para una métrica que todavía
@@ -45,34 +52,50 @@ class DashboardMetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorLabel = dark ? AppColors.demarcacion : Theme.of(context).colorScheme.onSurfaceVariant;
-    final colorValor = dark ? AppColors.demarcacion : AppColors.asfalto;
-    final colorSufijo = dark ? AppColors.concreto : Theme.of(context).colorScheme.onSurfaceVariant;
-    final colorIcono = dark ? AppColors.demarcacion.withValues(alpha: 0.7) : AppColors.verdeSenal;
+    final colorLabel = dark ? AppColors.amarilloPastel : Theme.of(context).colorScheme.onSurfaceVariant;
+    final colorValor = dark ? AppColors.amarilloPastel : AppColors.blancoHueso;
+    final colorSufijo = dark ? AppColors.blancoHueso : Theme.of(context).colorScheme.onSurfaceVariant;
+    final colorIcono = dark ? AppColors.amarilloPastel.withValues(alpha: 0.7) : AppColors.verdePastel;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: dark ? AppColors.asfalto : AppColors.concreto,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: dark ? null : Border.all(color: AppColors.linea, width: 0.5),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: TextStyle(color: colorLabel, fontSize: 11)),
-                const SizedBox(height: AppSpacing.xs),
-                _valor(colorValor, colorSufijo),
-              ],
+    final String semanticsLabel;
+    if (isLoading) {
+      semanticsLabel = '$label: cargando';
+    } else if (errorMessage != null) {
+      semanticsLabel = '$label: error, $errorMessage';
+    } else if (value == null) {
+      semanticsLabel = '$label: sin dato';
+    } else {
+      semanticsLabel = suffix != null ? '$label: $value $suffix' : '$label: $value';
+    }
+
+    return Semantics(
+      container: true,
+      label: semanticsLabel,
+      excludeSemantics: onRetry == null,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: AppColors.asfaltoMedio,
+          borderRadius: BorderRadius.circular(AppRadius.md),
+          border: dark ? null : Border.all(color: AppColors.asfaltoClaro, width: 0.5),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: TextStyle(color: colorLabel, fontSize: 11)),
+                  const SizedBox(height: AppSpacing.xs),
+                  _valor(colorValor, colorSufijo),
+                ],
+              ),
             ),
-          ),
-          Icon(icon, color: colorIcono, size: 28),
-        ],
+            Icon(icon, color: colorIcono, size: 28),
+          ],
+        ),
       ),
     );
   }

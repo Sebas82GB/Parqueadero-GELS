@@ -59,7 +59,7 @@ class AdminHomeDashboard extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Panel general',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.asfalto),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.blancoHueso),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Row(
@@ -163,7 +163,7 @@ class _CerrarSesionRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.sm),
-            border: Border.all(color: AppColors.linea, width: 1),
+            border: Border.all(color: AppColors.asfaltoClaro, width: 1),
           ),
           child: Row(
             children: [

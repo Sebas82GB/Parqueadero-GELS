@@ -54,11 +54,17 @@ class ZonaHeader extends StatelessWidget {
 
 /// Barra de proporción de tres segmentos, animada al cambiar las
 /// proporciones. Mismo lenguaje visual que la bahía pintada de `CeldaCard`
-/// (relleno/borde, nunca matiz): libre se lee vacía (`concreto` con borde
-/// `demarcacion`), ocupada se lee llena (`asfalto`). Mantenimiento no tiene
-/// un tercer hueco de estado en la bahía individual (ahí es rayado, no un
-/// relleno plano) — acá usa `demarcacion` sólido, el mismo acento que ya
-/// delinea la bahía libre, para no reintroducir un tercer matiz de estado.
+/// (relleno/borde, nunca matiz): libre se lee vacía (`blancoHueso` con borde
+/// `amarilloPastel`), ocupada se lee llena (`asfaltoClaro`). Mantenimiento no
+/// tiene un tercer hueco de estado en la bahía individual (ahí es rayado, no
+/// un relleno plano) — acá usa `amarilloPastel` sólido, el mismo acento que
+/// ya delinea la bahía libre, para no reintroducir un tercer matiz de estado.
+///
+/// Libre lleva un relleno CLARO, al revés que la bahía (que ahí es
+/// `asfaltoOscuro`): a 4px de alto y sobre el fondo oscuro de la pantalla,
+/// `asfaltoOscuro` sería invisible (1:1) y `asfaltoMedio` contra
+/// `asfaltoClaro` solo se separan 1.3:1, indistinguible a esa altura. Un
+/// relleno claro es el único modo de que el tramo vacío se lea como vacío.
 class _BarraOcupacion extends StatelessWidget {
   const _BarraOcupacion({required this.libres, required this.ocupadas, required this.mantenimiento});
 
@@ -83,11 +89,11 @@ class _BarraOcupacion extends StatelessWidget {
                   children: [
                     _Segmento(
                       ancho: anchoDe(libres),
-                      color: AppColors.concreto,
-                      borde: AppColors.demarcacion,
+                      color: AppColors.blancoHueso,
+                      borde: AppColors.amarilloPastel,
                     ),
-                    _Segmento(ancho: anchoDe(ocupadas), color: AppColors.asfalto),
-                    _Segmento(ancho: anchoDe(mantenimiento), color: AppColors.demarcacion),
+                    _Segmento(ancho: anchoDe(ocupadas), color: AppColors.asfaltoClaro),
+                    _Segmento(ancho: anchoDe(mantenimiento), color: AppColors.amarilloPastel),
                   ],
                 ),
               ],

@@ -54,36 +54,40 @@ class _MiniBahiaItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget miniBahia = switch (tipo) {
-      _TipoMiniBahia.libre => Container(
-          width: _lado,
-          height: _lado,
-          decoration: BoxDecoration(
-            color: AppColors.concreto,
-            borderRadius: BorderRadius.circular(AppRadius.sm),
-            border: Border.all(color: AppColors.linea),
-          ),
-        ),
-      _TipoMiniBahia.ocupada => Container(
-          width: _lado,
-          height: _lado,
-          decoration: BoxDecoration(
-            color: AppColors.asfalto,
-            borderRadius: BorderRadius.circular(AppRadius.sm),
-            border: Border.all(color: AppColors.demarcacion),
-          ),
-        ),
-      _TipoMiniBahia.mantenimiento => Container(
-          width: _lado,
-          height: _lado,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.sm),
-            border: Border.all(
-              color: AppColors.demarcacion.withValues(alpha: 0.5),
+      _TipoMiniBahia.libre => ExcludeSemantics(
+          child: Container(
+            width: _lado,
+            height: _lado,
+            decoration: BoxDecoration(
+              color: AppColors.asfaltoOscuro,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              border: Border.all(color: AppColors.amarilloPastel, width: 2),
             ),
           ),
-          child: const CustomPaint(
-            painter: _LeyendaHatchPainter(),
+        ),
+      _TipoMiniBahia.ocupada => ExcludeSemantics(
+          child: Container(
+            width: _lado,
+            height: _lado,
+            decoration: BoxDecoration(
+              color: AppColors.asfaltoMedio,
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              border: Border.all(color: AppColors.amarilloPastel),
+            ),
+          ),
+        ),
+      _TipoMiniBahia.mantenimiento => ExcludeSemantics(
+          child: Container(
+            width: _lado,
+            height: _lado,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+              border: Border.all(color: AppColors.asfaltoClaro),
+            ),
+            child: const CustomPaint(
+              painter: _LeyendaHatchPainter(),
+            ),
           ),
         ),
     };
@@ -111,10 +115,13 @@ class _LeyendaHatchPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.asfalto);
+    canvas.drawRect(
+      Offset.zero & size,
+      Paint()..color = AppColors.asfaltoOscuro,
+    );
 
     final raya = Paint()
-      ..color = AppColors.demarcacion
+      ..color = AppColors.asfaltoClaro
       ..style = PaintingStyle.stroke
       ..strokeWidth = _grosor;
 

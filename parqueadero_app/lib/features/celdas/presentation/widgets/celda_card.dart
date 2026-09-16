@@ -124,27 +124,27 @@ class CeldaCard extends ConsumerWidget {
     // pintadas"): el estado se lee por relleno y contenido, nunca por
     // matiz. MANTENIMIENTO no tiene relleno plano — lo pinta _HatchPainter.
     final Color? fondo = switch (celda.estado) {
-      EstadoCelda.libre => AppColors.concreto,
-      EstadoCelda.ocupada => AppColors.asfalto,
+      EstadoCelda.libre => AppColors.asfaltoOscuro,
+      EstadoCelda.ocupada => AppColors.asfaltoMedio,
       EstadoCelda.mantenimiento => null,
     };
     final colorTexto = celda.estado == EstadoCelda.ocupada
-        ? AppColors.demarcacion
-        : AppColors.tinta;
+        ? AppColors.amarilloPastel
+        : AppColors.blancoHueso;
 
     // Borde de urgencia (solo OCUPADA): intensidad (alpha + grosor) del
-    // mismo demarcación, nunca un cambio de matiz — antes interpolaba hacia
-    // el naranja de StatusTone.warning, lo que contradecía la skill
-    // directamente. LIBRE pasó a un borde neutro (`linea`, 1px): la bahía se
-    // lee vacía por el relleno, no necesita el acento amarillo — eso se
-    // reserva para lo que sí exige atención (una celda ocupada).
+    // mismo `amarilloPastel`, nunca un cambio de matiz — antes interpolaba
+    // hacia el naranja de StatusTone.warning, lo que contradecía la skill
+    // directamente. LIBRE pasó a un borde neutro (`asfaltoClaro`, 1px): la
+    // bahía se lee vacía por el relleno, no necesita el acento amarillo —
+    // eso se reserva para lo que sí exige atención (una celda ocupada).
     final urgencia = transcurrido == null
         ? 0.0
         : (transcurrido.inMinutes / 180).clamp(0.0, 1.0);
     final borderColor = switch (celda.estado) {
-      EstadoCelda.libre => AppColors.linea,
-      EstadoCelda.ocupada => AppColors.demarcacion.withValues(alpha: 0.5 + urgencia * 0.5),
-      EstadoCelda.mantenimiento => AppColors.demarcacion.withValues(alpha: 0.5),
+      EstadoCelda.libre => AppColors.asfaltoClaro,
+      EstadoCelda.ocupada => AppColors.amarilloPastel.withValues(alpha: 0.5 + urgencia * 0.5),
+      EstadoCelda.mantenimiento => AppColors.asfaltoClaro,
     };
     final borderWidth = switch (celda.estado) {
       EstadoCelda.libre => 1.0,
@@ -152,17 +152,37 @@ class CeldaCard extends ConsumerWidget {
       EstadoCelda.mantenimiento => 1.5,
     };
 
-    final tarjeta = RepaintBoundary(
-      child: Card(
-        margin: EdgeInsets.zero,
-        color: Colors.transparent,
-        elevation: AppElevation.flat,
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(AppRadius.md),
+    final semanticsLabel = switch (celda.estado) {
+      EstadoCelda.libre => 'Celda ${celda.codigo}, libre, para ${tipoVehiculoLabel(celda.tipoPermitido).toLowerCase()}',
+      EstadoCelda.ocupada => () {
+        final buffer = StringBuffer('Celda ${celda.codigo}, ocupada');
+        if (ticketInfo?.placa case final placa?) {
+          buffer.write(', placa $placa');
+        }
+        if (transcurrido != null) {
+          buffer.write(', hace ${formatElapsed(transcurrido)}');
+        }
+        return buffer.toString();
+      }(),
+      EstadoCelda.mantenimiento => 'Celda ${celda.codigo}, en mantenimiento',
+    };
+
+    final tarjeta = Semantics(
+      container: true,
+      button: true,
+      label: semanticsLabel,
+      excludeSemantics: false,
+      child: RepaintBoundary(
+        child: Card(
+          margin: EdgeInsets.zero,
+          color: Colors.transparent,
+          elevation: AppElevation.flat,
+          clipBehavior: Clip.antiAlias,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.md),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(AppRadius.md),
           // Un OPERADOR sobre una celda LIBRE salta directo a "Registrar
           // entrada" con la celda ya preseleccionada; sobre una OCUPADA abre
           // el panel de acción rápida (bottom sheet, sin navegar a pantalla
@@ -199,96 +219,98 @@ class CeldaCard extends ConsumerWidget {
               // relativo a todo el Stack) caía fuera de ella, sobre el fondo
               // de la pantalla en vez del relleno del estado.
               Positioned.fill(
-                child: AnimatedContainer(
-                  duration: duration,
-                  curve: AppMotion.curve,
-                  decoration: BoxDecoration(
-                    color: fondo,
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                    border: Border.all(color: borderColor, width: borderWidth),
-                  ),
-                  padding: const EdgeInsets.all(AppSpacing.gutter),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (celda.estado == EstadoCelda.mantenimiento)
-                        // Placa sólida para que el código se lea encima del
-                        // rayado — el estado ya lo dice el fondo, esto es
-                        // solo legibilidad, no un refuerzo del estado.
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: AppColors.concreto,
-                            borderRadius: BorderRadius.circular(AppRadius.sm),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpacing.xs,
-                              vertical: 2,
+                child: ExcludeSemantics(
+                  child: AnimatedContainer(
+                    duration: duration,
+                    curve: AppMotion.curve,
+                    decoration: BoxDecoration(
+                      color: fondo,
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: borderColor, width: borderWidth),
+                    ),
+                    padding: const EdgeInsets.all(AppSpacing.gutter),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (celda.estado == EstadoCelda.mantenimiento)
+                          // Placa sólida para que el código se lea encima del
+                          // rayado — el estado ya lo dice el fondo, esto es
+                          // solo legibilidad, no un refuerzo del estado.
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: AppColors.asfaltoMedio,
+                              borderRadius: BorderRadius.circular(AppRadius.sm),
                             ),
-                            child: Text(
-                              celda.codigo,
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(color: AppColors.tinta),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.xs,
+                                vertical: 2,
+                              ),
+                              child: Text(
+                                celda.codigo,
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(color: AppColors.blancoHueso),
+                              ),
                             ),
+                          )
+                        else if (celda.estado == EstadoCelda.libre) ...[
+                          // Ícono de tipo permitido en vez del texto: la
+                          // celda ya se lee vacía por el relleno, esto solo
+                          // aclara qué puede entrar ahí.
+                          Icon(
+                            tipoVehiculoIcon(celda.tipoPermitido),
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            size: 22,
                           ),
-                        )
-                      else if (celda.estado == EstadoCelda.libre) ...[
-                        // Ícono de tipo permitido en vez del texto: la
-                        // celda ya se lee vacía por el relleno, esto solo
-                        // aclara qué puede entrar ahí.
-                        Icon(
-                          tipoVehiculoIcon(celda.tipoPermitido),
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          size: 22,
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          celda.codigo,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleMedium?.copyWith(color: colorTexto),
-                          textAlign: TextAlign.center,
-                        ),
-                      ] else ...[
-                        // OCUPADA: el código ya no se muestra acá (se ve en
-                        // el panel de acción rápida al tocar la celda); el
-                        // tipo viene del ticket real si ya se conoce
-                        // (`ticketInfo`), y si no, cae de vuelta al tipo
-                        // permitido de la celda.
-                        Icon(
-                          tipoVehiculoIcon(ticketInfo?.tipo ?? celda.tipoPermitido),
-                          color: AppColors.demarcacion,
-                          size: 22,
-                        ),
-                        // Placa del ticket abierto: mismo `ticketInfo` que ya
-                        // trae el ícono, sin ningún GET nuevo. Ausente solo
-                        // si la celda quedó fuera de la primera página de
-                        // 100 tickets ABIERTOS (ver doc de `ticketInfo` en
-                        // `celda_list_state.dart`) — ahí no se inventa nada,
-                        // se omite la línea.
-                        if (ticketInfo?.placa case final placa?) ...[
                           const SizedBox(height: AppSpacing.xs),
                           Text(
-                            placa,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colorTexto,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                        if (transcurrido != null) ...[
-                          const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            formatElapsed(transcurrido),
+                            celda.codigo,
                             style: Theme.of(
                               context,
-                            ).textTheme.bodySmall?.copyWith(color: colorTexto),
+                            ).textTheme.titleMedium?.copyWith(color: colorTexto),
+                            textAlign: TextAlign.center,
                           ),
+                        ] else ...[
+                          // OCUPADA: el código ya no se muestra acá (se ve en
+                          // el panel de acción rápida al tocar la celda); el
+                          // tipo viene del ticket real si ya se conoce
+                          // (`ticketInfo`), y si no, cae de vuelta al tipo
+                          // permitido de la celda.
+                          Icon(
+                            tipoVehiculoIcon(ticketInfo?.tipo ?? celda.tipoPermitido),
+                            color: AppColors.amarilloPastel,
+                            size: 22,
+                          ),
+                          // Placa del ticket abierto: mismo `ticketInfo` que ya
+                          // trae el ícono, sin ningún GET nuevo. Ausente solo
+                          // si la celda quedó fuera de la primera página de
+                          // 100 tickets ABIERTOS (ver doc de `ticketInfo` en
+                          // `celda_list_state.dart`) — ahí no se inventa nada,
+                          // se omite la línea.
+                          if (ticketInfo?.placa case final placa?) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            Text(
+                              placa,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: colorTexto,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                          if (transcurrido != null) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            Text(
+                              formatElapsed(transcurrido),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodySmall?.copyWith(color: colorTexto),
+                            ),
+                          ],
                         ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -314,45 +336,49 @@ class CeldaCard extends ConsumerWidget {
                 Positioned(
                   top: 2,
                   right: 2,
-                  child: InkResponse(
-                    radius: 18,
-                    onTap: () {
-                      tapFeedback();
-                      _abrirAccionRapida(context, celda.estado, esOperador);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppSpacing.xs),
-                      child: celda.estado == EstadoCelda.mantenimiento
-                          // Sobre el rayado un tono fijo no alcanza: la
-                          // mitad de las franjas son asfalto oscuro (~2:1 de
-                          // contraste con onSurfaceVariant, casi invisible
-                          // ahí). Misma placa sólida que ya usa el código.
-                          ? DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: AppColors.concreto,
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.sm,
+                  child: Semantics(
+                    button: true,
+                    label: 'Más opciones de la celda ${celda.codigo}',
+                    child: InkResponse(
+                      radius: 18,
+                      onTap: () {
+                        tapFeedback();
+                        _abrirAccionRapida(context, celda.estado, esOperador);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.xs),
+                        child: celda.estado == EstadoCelda.mantenimiento
+                            // Sobre el rayado un tono fijo no alcanza: la
+                            // mitad de las franjas son asfalto oscuro (~2:1 de
+                            // contraste con onSurfaceVariant, casi invisible
+                            // ahí). Misma placa sólida que ya usa el código.
+                            ? DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: AppColors.asfaltoMedio,
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.sm,
+                                  ),
                                 ),
-                              ),
-                              child: const Icon(
+                                child: const Icon(
+                                  Icons.more_vert,
+                                  size: 18,
+                                  color: AppColors.blancoHueso,
+                                ),
+                              )
+                            : Icon(
                                 Icons.more_vert,
                                 size: 18,
-                                color: AppColors.tinta,
+                                // Sobre OCUPADA (fondo `asfaltoMedio`) un tono
+                                // apagado se pierde; `amarilloPastel` pasa
+                                // 11.11:1 de contraste ahí. Sobre LIBRE, sin
+                                // cambios.
+                                color: celda.estado == EstadoCelda.ocupada
+                                    ? AppColors.amarilloPastel
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                               ),
-                            )
-                          : Icon(
-                              Icons.more_vert,
-                              size: 18,
-                              // Sobre OCUPADA (fondo asfalto) el tono oscuro
-                              // por defecto quedaría invisible; demarcación
-                              // pasa 10.6:1 de contraste ahí. Sobre LIBRE,
-                              // sin cambios.
-                              color: celda.estado == EstadoCelda.ocupada
-                                  ? AppColors.demarcacion
-                                  : Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                            ),
+                      ),
                     ),
                   ),
                 ),
@@ -360,6 +386,7 @@ class CeldaCard extends ConsumerWidget {
           ),
         ),
       ),
+    ),
     );
 
     if (MediaQuery.disableAnimationsOf(context)) return tarjeta;
@@ -393,9 +420,10 @@ class CeldaCard extends ConsumerWidget {
   }
 }
 
-/// Rayado diagonal de MANTENIMIENTO: alterna asfalto/demarcación, como el
-/// achurado real de una vía cerrada. Patrón constante (no depende de props
-/// que cambien), así que nunca necesita repintarse a sí mismo.
+/// Rayado diagonal de MANTENIMIENTO: alterna `asfaltoOscuro`/`asfaltoClaro`,
+/// como el achurado real de una vía cerrada — nunca amarillo, que está
+/// reservado para lo que exige atención. Patrón constante (no depende de
+/// props que cambien), así que nunca necesita repintarse a sí mismo.
 class _HatchPainter extends CustomPainter {
   const _HatchPainter();
 
@@ -404,10 +432,10 @@ class _HatchPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.asfalto);
+    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.asfaltoOscuro);
 
     final raya = Paint()
-      ..color = AppColors.demarcacion
+      ..color = AppColors.asfaltoClaro
       ..style = PaintingStyle.stroke
       ..strokeWidth = _grosor;
 

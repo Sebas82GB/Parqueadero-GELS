@@ -166,16 +166,16 @@ void main() {
 
   // Hallazgo de la auditoría UX original: la pantalla no llevaba ningún
   // token de marca. Sigue valiendo con el panel de marca del rediseño: el
-  // foco de ambos campos se tiñe de demarcación, no del verdeSenal genérico
+  // foco de ambos campos se tiñe de amarilloPastel, no del verde genérico
   // del tema.
-  testWidgets('acento de marca: el borde de foco de ambos campos es demarcación', (tester) async {
+  testWidgets('acento de marca: el borde de foco de ambos campos es amarilloPastel', (tester) async {
     await pumpLoginScreen(tester);
 
     // TextFormField no expone `decoration` directamente (igual que
     // obscureText/autofocus arriba): se verifica en el TextField interno.
     for (final campo in tester.widgetList<TextField>(find.byType(TextField))) {
       final focusedBorder = campo.decoration?.focusedBorder as OutlineInputBorder?;
-      expect(focusedBorder?.borderSide.color, AppColors.demarcacion);
+      expect(focusedBorder?.borderSide.color, AppColors.amarilloPastel);
     }
   });
 
@@ -207,24 +207,28 @@ void main() {
     });
   });
 
-  // Regresión de contraste: `demarcacion` solo puede vivir como texto sobre
-  // `asfalto` (nunca sobre una superficie clara). El panel de marca la usa
-  // como texto en dos combinaciones — opacidad plena y la bajada al 80% — y
-  // ambas deben pasar WCAG AA (4.5:1) sobre el fondo real donde se pintan.
+  // Regresión de contraste: `amarilloPastel` solo puede vivir como texto
+  // sobre asfalto (nunca sobre una superficie clara). El panel de marca lo
+  // usa como texto en dos combinaciones — opacidad plena y la bajada al 80%
+  // — y ambas deben pasar WCAG AA (4.5:1) sobre el fondo real donde se
+  // pintan, que es `asfaltoOscuro` (el lienzo de `_MarcaPainter`).
   group('contraste AA del panel de marca', () {
-    test('demarcación a opacidad plena sobre asfalto', () {
-      final contraste = _contraste(AppColors.demarcacion, AppColors.asfalto);
+    test('amarilloPastel a opacidad plena sobre asfaltoOscuro', () {
+      final contraste = _contraste(AppColors.amarilloPastel, AppColors.asfaltoOscuro);
       expect(contraste, greaterThanOrEqualTo(4.5), reason: 'contraste real: $contraste');
     });
 
-    test('demarcación al 80% de opacidad sobre asfalto', () {
-      final colorEfectivo = Color.alphaBlend(AppColors.demarcacion.withValues(alpha: 0.8), AppColors.asfalto);
-      final contraste = _contraste(colorEfectivo, AppColors.asfalto);
+    test('amarilloPastel al 80% de opacidad sobre asfaltoOscuro', () {
+      final colorEfectivo = Color.alphaBlend(
+        AppColors.amarilloPastel.withValues(alpha: 0.8),
+        AppColors.asfaltoOscuro,
+      );
+      final contraste = _contraste(colorEfectivo, AppColors.asfaltoOscuro);
       expect(contraste, greaterThanOrEqualTo(4.5), reason: 'contraste real: $contraste');
     });
 
-    test('concreto sobre asfalto', () {
-      final contraste = _contraste(AppColors.concreto, AppColors.asfalto);
+    test('blancoHueso sobre asfaltoOscuro', () {
+      final contraste = _contraste(AppColors.blancoHueso, AppColors.asfaltoOscuro);
       expect(contraste, greaterThanOrEqualTo(4.5), reason: 'contraste real: $contraste');
     });
   });

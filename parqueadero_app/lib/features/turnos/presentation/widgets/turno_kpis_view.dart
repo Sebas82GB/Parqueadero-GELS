@@ -191,9 +191,9 @@ class _KpiTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.concreto,
+          color: AppColors.asfaltoMedio,
           borderRadius: BorderRadius.circular(AppRadius.sm),
-          border: Border.all(color: AppColors.linea, width: 0.5),
+          border: Border.all(color: AppColors.asfaltoClaro, width: 0.5),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

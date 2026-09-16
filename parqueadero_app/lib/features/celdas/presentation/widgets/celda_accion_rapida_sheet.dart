@@ -43,7 +43,7 @@ Future<void> showCeldaAccionRapida(BuildContext context, String celdaId) {
     return showDialog<void>(
       context: context,
       builder: (context) => Dialog(
-        backgroundColor: AppColors.asfalto,
+        backgroundColor: AppColors.asfaltoMedio,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -61,7 +61,7 @@ Future<void> showCeldaAccionRapida(BuildContext context, String celdaId) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.asfalto,
+    backgroundColor: AppColors.asfaltoMedio,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.lg)),
     ),
@@ -84,7 +84,7 @@ class _HandleBar extends StatelessWidget {
         height: 4,
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
         decoration: BoxDecoration(
-          color: AppColors.demarcacion.withValues(alpha: 0.4),
+          color: AppColors.amarilloPastel.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(2),
         ),
       ),
@@ -175,7 +175,7 @@ class _CeldaAccionRapidaSheetState
         handle: widget.mostrarHandle ? const _HandleBar() : null,
         child: Text(
           errorBusqueda ?? 'No se encontró un ticket abierto para esta celda.',
-          style: const TextStyle(color: AppColors.demarcacion),
+          style: const TextStyle(color: AppColors.amarilloPastel),
           textAlign: TextAlign.center,
         ),
       );
@@ -193,7 +193,7 @@ class _CeldaAccionRapidaSheetState
         handle: widget.mostrarHandle ? const _HandleBar() : null,
         child: Text(
           detalle.errorMessage!,
-          style: const TextStyle(color: AppColors.demarcacion),
+          style: const TextStyle(color: AppColors.amarilloPastel),
           textAlign: TextAlign.center,
         ),
       );
@@ -319,7 +319,7 @@ class _CeldaAccionRapidaSheetState
                       Text(
                         'Celda ${ticket.celda?.codigo ?? '—'} · ${tipoVehiculoLabel(tipo)}',
                         style: const TextStyle(
-                          color: AppColors.demarcacion,
+                          color: AppColors.amarilloPastel,
                           fontSize: 11,
                         ),
                       ),
@@ -327,7 +327,7 @@ class _CeldaAccionRapidaSheetState
                       Text(
                         ticket.vehiculo?.placa ?? '—',
                         style: const TextStyle(
-                          color: AppColors.demarcacion,
+                          color: AppColors.amarilloPastel,
                           fontSize: 20,
                         ),
                       ),
@@ -340,7 +340,7 @@ class _CeldaAccionRapidaSheetState
                     const Text(
                       'Tiempo',
                       style: TextStyle(
-                        color: AppColors.demarcacion,
+                        color: AppColors.amarilloPastel,
                         fontSize: 11,
                       ),
                     ),
@@ -348,7 +348,7 @@ class _CeldaAccionRapidaSheetState
                     TiempoTranscurridoText(
                       horaEntrada: ticket.horaEntrada,
                       style: const TextStyle(
-                        color: AppColors.demarcacion,
+                        color: AppColors.amarilloPastel,
                         fontSize: 16,
                       ),
                     ),
@@ -374,21 +374,21 @@ class _CeldaAccionRapidaSheetState
                       // Relleno opaco, no transparente: un chip transparente
                       // deja ver lo que quede detrás y perdía contraste. Con
                       // relleno propio se lee igual sin depender de eso.
-                      backgroundColor: AppColors.asfalto,
-                      selectedColor: AppColors.demarcacion,
+                      backgroundColor: AppColors.asfaltoMedio,
+                      selectedColor: AppColors.amarilloPastel,
                       side: const BorderSide(
-                        color: AppColors.demarcacion,
+                        color: AppColors.amarilloPastel,
                         width: 1.5,
                       ),
                       elevation: 0,
                       pressElevation: 0,
                       shadowColor: Colors.transparent,
                       surfaceTintColor: Colors.transparent,
-                      checkmarkColor: AppColors.asfalto,
+                      checkmarkColor: AppColors.asfaltoOscuro,
                       labelStyle: TextStyle(
                         color: _metodo == metodo
-                            ? AppColors.asfalto
-                            : AppColors.demarcacion,
+                            ? AppColors.asfaltoOscuro
+                            : AppColors.amarilloPastel,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -401,16 +401,16 @@ class _CeldaAccionRapidaSheetState
                   enabled: !enviando,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: const TextStyle(color: AppColors.concreto),
+                  style: const TextStyle(color: AppColors.blancoHueso),
                   decoration: const InputDecoration(
                     labelText: 'Monto recibido',
-                    labelStyle: TextStyle(color: AppColors.demarcacion),
+                    labelStyle: TextStyle(color: AppColors.amarilloPastel),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColors.demarcacion),
+                      borderSide: BorderSide(color: AppColors.amarilloPastel),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
-                        color: AppColors.demarcacion,
+                        color: AppColors.amarilloPastel,
                         width: 2,
                       ),
                     ),
@@ -425,7 +425,7 @@ class _CeldaAccionRapidaSheetState
                         : cambio != null
                         ? 'Faltan ${formatMoney(-cambio)} para cubrir el total'
                         : 'Calculando el total a cobrar...',
-                    style: const TextStyle(color: AppColors.concreto),
+                    style: const TextStyle(color: AppColors.blancoHueso),
                   ),
                 ],
               ],
@@ -439,8 +439,8 @@ class _CeldaAccionRapidaSheetState
               height: 56,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.verdeSenal,
-                  foregroundColor: AppColors.concreto,
+                  backgroundColor: AppColors.verdePastel,
+                  foregroundColor: AppColors.asfaltoOscuro,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppRadius.md),
                   ),
@@ -466,7 +466,7 @@ class _CeldaAccionRapidaSheetState
                 width: double.infinity,
                 padding: const EdgeInsets.all(AppSpacing.gutter),
                 decoration: BoxDecoration(
-                  color: AppColors.concreto,
+                  color: AppColors.asfaltoClaro,
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
                 child: DesgloseView(
@@ -567,7 +567,9 @@ class _TarjetaMonto extends StatelessWidget {
     if (total != null) {
       valor = Text(
         formatMoney(total),
-        style: AppTypography.montoDestacado.copyWith(color: AppColors.asfalto),
+        style: AppTypography.montoDestacado.copyWith(
+          color: AppColors.blancoHueso,
+        ),
       );
     } else if (preview.preview != null) {
       // `valorTotal` null con preview ya cargado: tipo OTRO, sin valor
@@ -604,7 +606,7 @@ class _TarjetaMonto extends StatelessWidget {
         vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.concreto,
+        color: AppColors.asfaltoClaro,
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
       child: Row(

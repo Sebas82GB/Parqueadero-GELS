@@ -148,9 +148,9 @@ void main() {
   });
 
   // Regresión de tokens (skill diseno-parqueadero): el mockup de referencia
-  // usa #fff para las tarjetas claras, ajeno a AppColors. Acá debe ser
-  // `concreto`, igual que el resto de las superficies claras de la app.
-  testWidgets('la tarjeta de Ingresos de hoy usa concreto, no un blanco fuera de los tokens', (tester) async {
+  // usa #fff para las tarjetas, ajeno a AppColors. Acá debe ser
+  // `asfaltoMedio`, igual que el resto de las superficies elevadas de la app.
+  testWidgets('la tarjeta de Ingresos de hoy usa asfaltoMedio, no un blanco fuera de los tokens', (tester) async {
     when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
     await pumpDashboard(tester);
 
@@ -158,6 +158,6 @@ void main() {
       find.ancestor(of: find.text('Ingresos de hoy'), matching: find.byType(Container)).first,
     );
     final decoration = container.decoration as BoxDecoration;
-    expect(decoration.color, AppColors.concreto);
+    expect(decoration.color, AppColors.asfaltoMedio);
   });
 }

@@ -41,16 +41,16 @@ class DashboardActionGroup extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.concreto,
+            color: AppColors.asfaltoMedio,
             borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(color: AppColors.linea, width: 0.5),
+            border: Border.all(color: AppColors.asfaltoClaro, width: 0.5),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
               for (var i = 0; i < items.length; i++) ...[
                 _DashboardActionRow(item: items[i]),
-                if (i != items.length - 1) const Divider(height: 0.5, thickness: 0.5, color: AppColors.linea),
+                if (i != items.length - 1) const Divider(height: 0.5, thickness: 0.5, color: AppColors.asfaltoClaro),
               ],
             ],
           ),
@@ -76,9 +76,9 @@ class _DashboardActionRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.gutter),
           child: Row(
             children: [
-              Icon(item.icon, color: AppColors.verdeSenal, size: 17),
+              Icon(item.icon, color: AppColors.verdePastel, size: 17),
               const SizedBox(width: AppSpacing.sm),
-              Expanded(child: Text(item.label, style: const TextStyle(color: AppColors.asfalto, fontSize: 13))),
+              Expanded(child: Text(item.label, style: const TextStyle(color: AppColors.blancoHueso, fontSize: 13))),
               Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant, size: 15),
             ],
           ),

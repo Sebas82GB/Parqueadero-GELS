@@ -22,16 +22,20 @@ class StatusStyle {
   final Color color;
   final IconData icon;
 
-  // Los cinco tonos pasan AA (>= 4.5:1) como texto sobre AppColors.surface
-  // (0xFFF6F5F1): success/warning/danger se oscurecieron manteniendo el
-  // matiz (info y neutral ya pasaban y quedaron igual). Ver
-  // status_style_test.dart, que verifica el contraste real en vez de solo
-  // fijar el hex, para que esto no pueda regresar en silencio.
+  // Los cinco tonos pasan AA (>= 4.5:1) como texto sobre las dos superficies
+  // donde se usan, AppColors.asfaltoOscuro y AppColors.asfaltoMedio.
+  // Recalibrados para fondo oscuro en la reforma "Asfalto y Demarcación"
+  // (2026-09-15): los tonos anteriores estaban oscurecidos para superficie
+  // clara y sobre asfalto daban ~3.4:1, por debajo de AA. Contraste sobre
+  // asfaltoMedio, que es el peor de los dos: success 7.77 · warning 7.57 ·
+  // danger 5.68 · info 6.42 · neutral 6.49. Ver status_style_test.dart, que
+  // verifica el contraste real en vez de solo fijar el hex, para que esto no
+  // pueda regresar en silencio.
   static StatusStyle of(StatusTone tone) => switch (tone) {
-    StatusTone.success => const StatusStyle._(Color(0xFF1B7F51), Icons.check_circle),
-    StatusTone.warning => const StatusStyle._(Color(0xFFA85D10), Icons.warning_amber),
-    StatusTone.danger => const StatusStyle._(Color(0xFFD0362D), Icons.cancel),
-    StatusTone.info => const StatusStyle._(Color(0xFF2C6FBB), Icons.schedule),
-    StatusTone.neutral => const StatusStyle._(Color(0xFF6B6F76), Icons.block),
+    StatusTone.success => const StatusStyle._(Color(0xFF7FD1A0), Icons.check_circle),
+    StatusTone.warning => const StatusStyle._(Color(0xFFE8B563), Icons.warning_amber),
+    StatusTone.danger => const StatusStyle._(Color(0xFFE88B7D), Icons.cancel),
+    StatusTone.info => const StatusStyle._(Color(0xFF7FB3E8), Icons.schedule),
+    StatusTone.neutral => const StatusStyle._(Color(0xFFB0B0A8), Icons.block),
   };
 }

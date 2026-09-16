@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Los seis tokens de marca del sistema de diseño (skill
+/// Los ocho tokens de marca del sistema de diseño (skill
 /// `diseno-parqueadero`): la identidad sale del objeto real — asfalto oscuro
 /// con demarcación amarilla pintada. Único lugar del proyecto que declara
 /// estos hex; `app_theme.dart` los vuelca en un `ColorScheme` explícito (no
@@ -8,21 +8,22 @@ import 'package:flutter/material.dart';
 /// diseño), derivando ahí los pocos tonos intermedios que Material exige y
 /// que no tienen un token 1:1.
 ///
+/// Reforma "Asfalto y Demarcación" (2026-09-15): el tema pasó de superficie
+/// clara a oscura y la paleta pasó de seis tokens a estos ocho. Los tres
+/// tonos de asfalto son las superficies (fondo raíz, tarjetas, bordes) y el
+/// resto son los acentos y el texto que viven sobre ellas.
+///
 /// Deliberadamente separada de la paleta de estados (`status_style.dart`),
 /// que es más saturada y nunca debe confundirse con esta.
-///
-/// `demarcacion` está declarada pero, por ahora, ningún rol del
-/// `ColorScheme` general la usa: la skill es explícita en que solo vive
-/// sobre `asfalto` o como línea/borde/relleno, y que la audacia se
-/// concentra en la cuadrícula de celdas — todo lo demás debe quedar
-/// tranquilo. Queda lista para cuando se rediseñe la cuadrícula.
 class AppColors {
   const AppColors._();
 
-  static const asfalto = Color(0xFF101A14);
-  static const verdeSenal = Color(0xFF1B6B45);
-  static const demarcacion = Color(0xFFF2C230);
-  static const concreto = Color(0xFFF8F7F2);
-  static const linea = Color(0xFFE3E0D6);
-  static const tinta = Color(0xFF12150F);
+  static const asfaltoOscuro = Color(0xFF1A1A1A);
+  static const asfaltoMedio = Color(0xFF2B2B2B);
+  static const asfaltoClaro = Color(0xFF3D3D3D);
+  static const amarilloPastel = Color(0xFFF2E85C);
+  static const verdePastel = Color(0xFF9BCD9B);
+  static const blancoHueso = Color(0xFFF5F5F0);
+  static const grisClaro = Color(0xFFB0B0A8);
+  static const terracota = Color(0xFFD97A5A);
 }

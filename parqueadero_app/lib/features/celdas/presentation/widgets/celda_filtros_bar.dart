@@ -70,10 +70,10 @@ class _ChipsFiltro extends ConsumerWidget {
         label: Text(label),
         selected: activo,
         onSelected: (_) => onTap(),
-        backgroundColor: AppColors.concreto,
-        selectedColor: AppColors.asfalto,
-        side: activo ? BorderSide.none : const BorderSide(color: AppColors.linea, width: 0.5),
-        labelStyle: TextStyle(color: activo ? AppColors.demarcacion : AppColors.asfalto),
+        backgroundColor: AppColors.asfaltoMedio,
+        selectedColor: AppColors.asfaltoClaro,
+        side: activo ? BorderSide.none : const BorderSide(color: AppColors.asfaltoClaro, width: 0.5),
+        labelStyle: TextStyle(color: activo ? AppColors.amarilloPastel : AppColors.blancoHueso),
       );
     }
 

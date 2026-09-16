@@ -17,54 +17,57 @@ class AppTheme {
   const AppTheme._();
 
   // Tonos que Material exige y que no tienen un token 1:1 en AppColors, cada
-  // uno derivado a mano de los seis tokens de marca (mismo criterio de
+  // uno derivado a mano de los ocho tokens de marca (mismo criterio de
   // contraste real que status_style_test.dart, no elegidos a ciegas).
-  // Contraste calculado como texto sobre AppColors.concreto (superficie
-  // base), fórmula WCAG 2.x:
-  //   primaryContainer: 18% verdeSenal sobre concreto.
-  //   secondary:        18% asfalto sobre concreto.
-  //   surfaceContainer: 6% asfalto sobre concreto (elevación sutil).
-  //   onSurfaceVariant: 75% tinta sobre concreto — contraste 7.95:1.
-  //   outline:          62% tinta sobre concreto — contraste 5.03:1.
-  static const Color _primaryContainer = Color(0xFFD0DED3);
-  static const Color _secondary = Color(0xFFCECFCA);
-  static const Color _surfaceContainer = Color(0xFFEAEAE5);
-  static const Color _onSurfaceVariant = Color(0xFF4C4D48);
-  static const Color _outline = Color(0xFF696B65);
+  // Recalculados en la reforma "Asfalto y Demarcación" (2026-09-15): los
+  // anteriores estaban derivados sobre concreto (superficie clara) y sobre
+  // asfalto quedaban ilegibles. Contraste calculado como texto sobre
+  // AppColors.asfaltoOscuro (superficie base), fórmula WCAG 2.x:
+  //   primaryContainer: 18% verdePastel sobre asfaltoOscuro.
+  //   secondary:        = asfaltoClaro, acción secundaria.
+  //   onSurfaceVariant: = grisClaro — contraste 7.97:1.
+  //   outline:          borde visible — contraste 4.02:1.
+  // surfaceContainer ya no se deriva: es AppColors.asfaltoMedio directo.
+  static const Color _primaryContainer = Color(0xFF2E4A34);
+  static const Color _secondary = Color(0xFF3D3D3D);
+  static const Color _onSurfaceVariant = Color(0xFFB0B0A8);
+  static const Color _outline = Color(0xFF6E6E68);
 
-  // Rojo de error: sin cambios respecto al esquema anterior. La skill de
-  // diseño no define un rojo de marca, y status_style.dart ya deja explícito
-  // que la paleta de estados va separada de AppColors — este rojo es el rol
-  // funcional de Material (validación de formularios), no un tono de marca,
-  // así que vive acá y no en AppColors.
-  static const Color _error = Color(0xFF8E3B35);
-  static const Color _onError = Color(0xFFFFFFFF);
-  static const Color _errorContainer = Color(0xFFF3DCD9);
-  static const Color _onErrorContainer = Color(0xFF3C120E);
+  // Rojo de error para fondo oscuro. La skill de diseño no define un rojo de
+  // marca, y status_style.dart ya deja explícito que la paleta de estados va
+  // separada de AppColors — este rojo es el rol funcional de Material
+  // (validación de formularios), no un tono de marca, así que vive acá y no
+  // en AppColors.
+  static const Color _error = Color(0xFFE88B7D); // 6.98:1 sobre asfaltoOscuro
+  static const Color _onError = Color(0xFF1A1A1A);
+  static const Color _errorContainer = Color(0xFF4A1A17);
+  static const Color _onErrorContainer = Color(0xFFF5D6D1);
 
   static const ColorScheme _colorScheme = ColorScheme(
-    brightness: Brightness.light,
-    primary: AppColors.verdeSenal,
-    onPrimary: AppColors.concreto,
+    brightness: Brightness.dark,
+    primary: AppColors.verdePastel,
+    onPrimary: AppColors.asfaltoOscuro,
     primaryContainer: _primaryContainer,
-    onPrimaryContainer: AppColors.tinta,
+    onPrimaryContainer: AppColors.blancoHueso,
     secondary: _secondary,
-    onSecondary: AppColors.tinta,
-    secondaryContainer: AppColors.linea,
-    onSecondaryContainer: AppColors.tinta,
+    onSecondary: AppColors.blancoHueso,
+    secondaryContainer: AppColors.asfaltoMedio,
+    onSecondaryContainer: AppColors.blancoHueso,
     error: _error,
     onError: _onError,
     errorContainer: _errorContainer,
     onErrorContainer: _onErrorContainer,
-    surface: AppColors.concreto,
-    onSurface: AppColors.tinta,
+    surface: AppColors.asfaltoOscuro,
+    onSurface: AppColors.blancoHueso,
     onSurfaceVariant: _onSurfaceVariant,
     outline: _outline,
-    outlineVariant: AppColors.linea,
-    surfaceContainer: _surfaceContainer,
-    surfaceContainerHigh: AppColors.linea,
+    outlineVariant: AppColors.asfaltoClaro,
+    surfaceContainer: AppColors.asfaltoMedio,
+    surfaceContainerHigh: AppColors.asfaltoClaro,
   );
 
+  // El nombre `light` es histórico: el tema ya es oscuro, pero renombrarlo
+  // exige tocar main.dart (único consumidor), fuera del alcance de esta tarea.
   static ThemeData get light => ThemeData(
     useMaterial3: true,
     colorScheme: _colorScheme,

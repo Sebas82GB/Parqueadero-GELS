@@ -247,16 +247,36 @@ void main() {
 
   // Regresión de tokens (skill diseno-parqueadero): "Registrar salida" en el
   // mockup usa fondo blanco (#fff), ajeno a AppColors — acá debe ser
-  // `concreto`, y el link de acción secundario no puede colarse con un color
-  // fuera de los 6 tokens.
-  testWidgets('Registrar salida usa concreto, no un blanco fuera de los tokens', (tester) async {
+  // `asfaltoMedio`, y el link de acción secundario no puede colarse con un
+  // color fuera de los tokens.
+  testWidgets('Registrar salida usa asfaltoMedio, no un blanco fuera de los tokens', (tester) async {
     when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
     await pumpDashboard(tester);
 
     final material = tester.widget<Material>(
       find.ancestor(of: find.text('Registrar salida'), matching: find.byType(Material)).first,
     );
-    expect(material.color, AppColors.concreto);
+    expect(material.color, AppColors.asfaltoMedio);
+  });
+
+  // "Registrar entrada" es la única acción con relleno sólido claro de toda
+  // la app: es la tarea que más se repite por turno. Sobre `verdePastel` el
+  // contenido tiene que invertirse a `asfaltoOscuro` — dejarlo en un token
+  // claro lo volvería ilegible.
+  testWidgets('Registrar entrada usa verdePastel con contenido en asfaltoOscuro', (tester) async {
+    when(() => celdaRepository.listarTodas()).thenAnswer((_) async => const []);
+    await pumpDashboard(tester);
+
+    final material = tester.widget<Material>(
+      find.ancestor(of: find.text('Registrar entrada'), matching: find.byType(Material)).first,
+    );
+    expect(material.color, AppColors.verdePastel);
+
+    final texto = tester.widget<Text>(find.text('Registrar entrada'));
+    expect(texto.style?.color, AppColors.asfaltoOscuro);
+
+    final icono = tester.widget<Icon>(find.byIcon(Icons.add_box_outlined));
+    expect(icono.color, AppColors.asfaltoOscuro);
   });
 
   group('diálogo "¿Iniciar turno?" (primera vez del día sin turno abierto)', () {

@@ -12,25 +12,26 @@ import 'login_controller.dart';
 final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 /// Borde de foco de ambos campos (skill `diseno-parqueadero`): el foco es un
-/// evento de interacción del operador, así que se tiñe de `demarcacion` en
-/// vez del `verdeSenal` genérico del tema.
+/// evento de interacción del operador, así que se tiñe de `amarilloPastel` en
+/// vez del `verdePastel` genérico del tema.
 final _focusedBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(AppRadius.sm),
-  borderSide: const BorderSide(color: AppColors.demarcacion, width: 2),
+  borderSide: const BorderSide(color: AppColors.amarilloPastel, width: 2),
 );
 
-/// Borde en reposo del campo de correo: `linea`, el tono neutro de divisores.
+/// Borde en reposo del campo de correo: `asfaltoClaro`, el tono neutro de
+/// bordes y divisores.
 final _lineaBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(AppRadius.sm),
-  borderSide: const BorderSide(color: AppColors.linea, width: 1),
+  borderSide: const BorderSide(color: AppColors.asfaltoClaro, width: 1),
 );
 
-/// Borde en reposo del campo de contraseña: `demarcacion` más fino que el de
-/// foco, para diferenciarlo sutilmente del de correo ya que es el campo con
+/// Borde en reposo del campo de contraseña: `amarilloPastel` más fino que el
+/// de foco, para diferenciarlo sutilmente del de correo ya que es el campo con
 /// el ícono de mostrar/ocultar.
 final _demarcacionBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(AppRadius.sm),
-  borderSide: const BorderSide(color: AppColors.demarcacion, width: 1.5),
+  borderSide: const BorderSide(color: AppColors.amarilloPastel, width: 1.5),
 );
 
 /// Alto fijo del panel de marca cuando se apila arriba del formulario
@@ -136,7 +137,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-/// Panel izquierdo/superior de marca: fondo `asfalto` con las líneas de
+/// Panel izquierdo/superior de marca: fondo `asfaltoOscuro` con las líneas de
 /// demarcación de [_LineasDemarcacionPainter], ícono + nombre arriba, título
 /// y bajada abajo. Un solo widget para ambos layouts — en el apilado queda
 /// recortado por la altura fija de su contenedor, no por una variante propia.
@@ -156,9 +157,9 @@ class _MarcaPanel extends StatelessWidget {
             const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.local_parking, color: AppColors.demarcacion, size: 22),
+                Icon(Icons.local_parking, color: AppColors.amarilloPastel, size: 22),
                 SizedBox(width: AppSpacing.sm),
-                Text('Parqueadero', style: TextStyle(color: AppColors.demarcacion, fontSize: 15)),
+                Text('Parqueadero', style: TextStyle(color: AppColors.amarilloPastel, fontSize: 15)),
               ],
             ),
             Column(
@@ -167,12 +168,12 @@ class _MarcaPanel extends StatelessWidget {
               children: [
                 Text(
                   'Control total de tu operación,\ncelda por celda.',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.concreto, height: 1.3),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.blancoHueso, height: 1.3),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 Text(
                   'Entradas, salidas y cobros en un solo lugar.',
-                  style: TextStyle(color: AppColors.demarcacion.withValues(alpha: 0.8), fontSize: 13),
+                  style: TextStyle(color: AppColors.amarilloPastel.withValues(alpha: 0.8), fontSize: 13),
                 ),
               ],
             ),
@@ -183,8 +184,8 @@ class _MarcaPanel extends StatelessWidget {
   }
 }
 
-/// Fondo del panel de marca: relleno `asfalto` + 3 líneas diagonales en
-/// `demarcacion` con opacidad decreciente, como demarcación pintada cruzando
+/// Fondo del panel de marca: relleno `asfaltoOscuro` + 3 líneas diagonales en
+/// `amarilloPastel` con opacidad decreciente, como demarcación pintada cruzando
 /// el panel de esquina a esquina. Mismo recurso que `_HatchPainter` de
 /// `celda_card.dart` (`Canvas.drawLine`), patrón constante — nunca depende de
 /// props que cambien, así que nunca necesita repintarse a sí mismo.
@@ -196,7 +197,7 @@ class _LineasDemarcacionPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.asfalto);
+    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.asfaltoOscuro);
 
     final raya = Paint()..strokeWidth = _grosor;
     for (var i = 0; i < _opacidades.length; i++) {
@@ -204,7 +205,7 @@ class _LineasDemarcacionPainter extends CustomPainter {
       canvas.drawLine(
         Offset(-size.width * 0.1 + dx, size.height * 1.1),
         Offset(size.width * 0.45 + dx, -size.height * 0.1),
-        raya..color = AppColors.demarcacion.withValues(alpha: _opacidades[i]),
+        raya..color = AppColors.amarilloPastel.withValues(alpha: _opacidades[i]),
       );
     }
   }
@@ -245,7 +246,7 @@ class _Formulario extends StatelessWidget {
         children: [
           Text(
             'Iniciar sesión',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.asfalto, fontSize: 18),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.blancoHueso, fontSize: 18),
           ),
           const SizedBox(height: AppSpacing.lg),
           TextFormField(
@@ -286,10 +287,13 @@ class _Formulario extends StatelessWidget {
           if (state.error != null) ...[const SizedBox(height: AppSpacing.md), ErrorBanner(error: state.error!)],
           const SizedBox(height: AppSpacing.lg),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.asfalto, foregroundColor: AppColors.demarcacion),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.asfaltoMedio,
+              foregroundColor: AppColors.amarilloPastel,
+            ),
             onPressed: state.isLoading ? null : onSubmit,
             child: state.isLoading
-                ? const ButtonSpinner(color: AppColors.demarcacion)
+                ? const ButtonSpinner(color: AppColors.amarilloPastel)
                 : const Text('Ingresar'),
           ),
         ],

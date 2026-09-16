@@ -82,7 +82,7 @@ class OperadorHomeDashboard extends ConsumerWidget {
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         'Hola, buen turno',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.asfalto),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.blancoHueso),
                       ),
                       const SizedBox(height: AppSpacing.md),
                       const _CeldasLibresCard(),
@@ -90,17 +90,17 @@ class OperadorHomeDashboard extends ConsumerWidget {
                       _AccionPrincipal(
                         icon: Icons.add_box_outlined,
                         label: 'Registrar entrada',
-                        fondo: AppColors.verdeSenal,
-                        contenido: AppColors.concreto,
+                        fondo: AppColors.verdePastel,
+                        contenido: AppColors.asfaltoOscuro,
                         onTap: () => context.push('/tickets/entrada'),
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       _AccionPrincipal(
                         icon: Icons.indeterminate_check_box_outlined,
                         label: 'Registrar salida',
-                        fondo: AppColors.concreto,
-                        contenido: AppColors.asfalto,
-                        borde: AppColors.asfalto,
+                        fondo: AppColors.asfaltoMedio,
+                        contenido: AppColors.blancoHueso,
+                        borde: AppColors.asfaltoClaro,
                         onTap: () => context.push('/celdas'),
                       ),
                       const SizedBox(height: AppSpacing.md),
@@ -210,9 +210,9 @@ class _AccionPrincipal extends StatelessWidget {
 }
 
 /// Tarjeta secundaria (Buscar placa/Ver celdas): mismo lenguaje tranquilo que
-/// el resto de la app fuera de la cuadrícula — `concreto` con borde `linea`,
-/// sin ningún acento de `demarcacion` que compita con las acciones
-/// principales de arriba.
+/// el resto de la app fuera de la cuadrícula — `asfaltoMedio` con borde
+/// `asfaltoClaro`, sin ningún acento de `amarilloPastel` que compita con las
+/// acciones principales de arriba.
 class _AccionSecundaria extends StatelessWidget {
   const _AccionSecundaria({required this.icon, required this.label, required this.onTap});
 
@@ -223,7 +223,7 @@ class _AccionSecundaria extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.concreto,
+      color: AppColors.asfaltoMedio,
       borderRadius: BorderRadius.circular(AppRadius.md),
       child: InkWell(
         borderRadius: BorderRadius.circular(AppRadius.md),
@@ -233,15 +233,15 @@ class _AccionSecundaria extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.gutter),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.md),
-            border: Border.all(color: AppColors.linea, width: 0.5),
+            border: Border.all(color: AppColors.asfaltoClaro, width: 0.5),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: AppColors.verdeSenal, size: 18),
+              Icon(icon, color: AppColors.verdePastel, size: 18),
               const SizedBox(height: AppSpacing.xs),
-              Text(label, style: const TextStyle(color: AppColors.asfalto, fontSize: 13)),
+              Text(label, style: const TextStyle(color: AppColors.blancoHueso, fontSize: 13)),
             ],
           ),
         ),

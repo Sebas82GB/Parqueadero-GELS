@@ -227,7 +227,7 @@ void main() {
   });
 
   testWidgets(
-    'OCUPADA: el ícono de tipo va en demarcación sobre el relleno asfalto (bahía pintada, no matiz de estado)',
+    'OCUPADA: el ícono de tipo va en amarilloPastel sobre el relleno asfaltoMedio (bahía pintada, no matiz de estado)',
     (tester) async {
       await pumpCard(tester, rol: RolUsuario.admin, estado: EstadoCelda.ocupada);
 
@@ -235,7 +235,7 @@ void main() {
       // único ícono en la tarjeta es el de tipo de vehículo.
       final icono = tester.widget<Icon>(find.byIcon(Icons.directions_car));
 
-      expect(icono.color, AppColors.demarcacion);
+      expect(icono.color, AppColors.amarilloPastel);
     },
   );
 
@@ -336,4 +336,79 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('semántica: LIBRE anuncia código, libre y tipo permitido', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pumpCard(tester, rol: RolUsuario.admin, estado: EstadoCelda.libre);
+
+    expect(find.bySemanticsLabel(RegExp('libre')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Celda A-01, libre, para carro')), findsOneWidget);
+    handle.dispose();
+  });
+
+  testWidgets('semántica: OCUPADA anuncia código, ocupada y placa', (tester) async {
+    final handle = tester.ensureSemantics();
+    when(() => authRepository.restoreSession()).thenAnswer((_) async => usuario(RolUsuario.admin));
+    when(() => celdaRepository.listarTodas()).thenAnswer((_) async => [celda(EstadoCelda.ocupada)]);
+    when(
+      () => ticketRepository.listar(estado: EstadoTicket.abierto, perPage: 100),
+    ).thenAnswer(
+      (_) async => TicketPageResult(
+        data: [
+          Ticket(
+            id: 't1',
+            codigo: 'T-1',
+            vehiculoId: 'v1',
+            celdaId: 'c1',
+            horaEntrada: DateTime.now().toUtc().subtract(const Duration(minutes: 5)),
+            tarifaId: 'tar1',
+            estado: EstadoTicket.abierto,
+            operadorEntradaId: 'op1',
+            createdAt: DateTime.utc(2026, 1, 1),
+            updatedAt: DateTime.utc(2026, 1, 1),
+            vehiculo: Vehiculo(
+              id: 'v1',
+              placa: 'ABC123',
+              tipo: TipoVehiculo.carro,
+              createdAt: DateTime.utc(2026, 1, 1),
+              updatedAt: DateTime.utc(2026, 1, 1),
+            ),
+          ),
+        ],
+        page: 1,
+        perPage: 100,
+        total: 1,
+      ),
+    );
+    final router = GoRouter(
+      initialLocation: '/celdas',
+      routes: [
+        GoRoute(path: '/celdas', builder: (context, state) => const Scaffold(body: CeldaCard(celdaId: 'c1'))),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authRepositoryProvider.overrideWithValue(authRepository),
+          celdaRepositoryProvider.overrideWithValue(celdaRepository),
+          ticketRepositoryProvider.overrideWithValue(ticketRepository),
+        ],
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel(RegExp('ABC123')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Celda A-01, ocupada, placa ABC123')), findsOneWidget);
+    handle.dispose();
+  });
+
+  testWidgets('semántica: MANTENIMIENTO anuncia código y en mantenimiento', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pumpCard(tester, rol: RolUsuario.admin, estado: EstadoCelda.mantenimiento);
+
+    expect(find.bySemanticsLabel(RegExp('mantenimiento')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Celda A-01, en mantenimiento')), findsOneWidget);
+    handle.dispose();
+  });
 }

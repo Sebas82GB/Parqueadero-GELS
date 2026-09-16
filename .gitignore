@@ -5,6 +5,13 @@ CLAUDE.md
 # Copias de seguridad de historiales git anteriores (no forman parte del repo nuevo)
 **/.git.bak-*/
 
+# Bitacoras del implementador (personales, no forman parte del repo).
+# Cada tarea ejecutada deja un markdown en bitacora/<AAAA-MM-DD>-<slug>.md con
+# lo que se hizo, las decisiones tomadas y la verificacion (incluido git
+# status). Sirven para comparar entre si el comportamiento de modelos
+# distintos; son material de trabajo local.
+**/bitacora/
+
 # graphify - se versionan solo los artefactos portables y utiles para el equipo:
 # graph.json (consultable con `graphify query`) y GRAPH_REPORT.md (arquitectura).
 # Todo lo demas es local o regenerable:

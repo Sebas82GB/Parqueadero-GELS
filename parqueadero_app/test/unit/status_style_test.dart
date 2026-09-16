@@ -30,35 +30,35 @@ void main() {
   test('success: verde con check_circle', () {
     final style = StatusStyle.of(StatusTone.success);
 
-    expect(style.color, const Color(0xFF1B7F51));
+    expect(style.color, const Color(0xFF7FD1A0));
     expect(style.icon, Icons.check_circle);
   });
 
   test('warning: ámbar con warning_amber', () {
     final style = StatusStyle.of(StatusTone.warning);
 
-    expect(style.color, const Color(0xFFA85D10));
+    expect(style.color, const Color(0xFFE8B563));
     expect(style.icon, Icons.warning_amber);
   });
 
   test('danger: rojo con cancel', () {
     final style = StatusStyle.of(StatusTone.danger);
 
-    expect(style.color, const Color(0xFFD0362D));
+    expect(style.color, const Color(0xFFE88B7D));
     expect(style.icon, Icons.cancel);
   });
 
   test('info: azul con schedule', () {
     final style = StatusStyle.of(StatusTone.info);
 
-    expect(style.color, const Color(0xFF2C6FBB));
+    expect(style.color, const Color(0xFF7FB3E8));
     expect(style.icon, Icons.schedule);
   });
 
   test('neutral: gris con block', () {
     final style = StatusStyle.of(StatusTone.neutral);
 
-    expect(style.color, const Color(0xFF6B6F76));
+    expect(style.color, const Color(0xFFB0B0A8));
     expect(style.icon, Icons.block);
   });
 
@@ -71,13 +71,35 @@ void main() {
   // Regresión del hallazgo de contraste de la auditoría UX: la app se usa
   // con luz solar directa, y estos tonos son los que marcan la información
   // más urgente (mantenimiento, sin turno abierto, tiempo excedido). Si
-  // algún tono vuelve a aclararse por debajo de AA, este test lo detecta
+  // algún tono vuelve a oscurecerse por debajo de AA, este test lo detecta
   // sin depender de que alguien recuerde revisar el contraste a mano.
+  //
+  // Reforma "Asfalto y Demarcación" (2026-09-15): antes se medía contra la
+  // única superficie clara que había; ahora el tema es oscuro y los tonos
+  // viven sobre las DOS superficies donde los pinta la app —
+  // `asfaltoOscuro` (fondo raíz) y `asfaltoMedio` (tarjetas, banners) — así
+  // que se verifican ambas por separado.
   for (final tone in StatusTone.values) {
-    test('$tone: pasa AA (>= 4.5:1) como texto sobre AppColors.concreto', () {
-      final contraste = _contraste(StatusStyle.of(tone).color, AppColors.concreto);
+    test('$tone: pasa AA (>= 4.5:1) como texto sobre AppColors.asfaltoOscuro', () {
+      final contraste = _contraste(StatusStyle.of(tone).color, AppColors.asfaltoOscuro);
 
-      expect(contraste, greaterThanOrEqualTo(4.5), reason: 'contraste real: $contraste');
+      expect(
+        contraste,
+        greaterThanOrEqualTo(4.5),
+        reason: 'sobre asfaltoOscuro, contraste real: $contraste',
+      );
+    });
+  }
+
+  for (final tone in StatusTone.values) {
+    test('$tone: pasa AA (>= 4.5:1) como texto sobre AppColors.asfaltoMedio', () {
+      final contraste = _contraste(StatusStyle.of(tone).color, AppColors.asfaltoMedio);
+
+      expect(
+        contraste,
+        greaterThanOrEqualTo(4.5),
+        reason: 'sobre asfaltoMedio, contraste real: $contraste',
+      );
     });
   }
 }

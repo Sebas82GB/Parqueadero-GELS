@@ -38,29 +38,32 @@ void main() {
 
     final colores = decoracionesDeSegmentos(tester).map((d) => d.color).toList();
 
-    expect(colores, containsAll(<Color?>[AppColors.concreto, AppColors.asfalto, AppColors.demarcacion]));
-    // Los tonos de StatusStyle (semáforo success/danger/warning) no deben sobrevivir en la barra.
-    expect(colores, isNot(contains(const Color(0xFF1B7F51))));
-    expect(colores, isNot(contains(const Color(0xFFD0362D))));
-    expect(colores, isNot(contains(const Color(0xFFA85D10))));
+    expect(colores, containsAll(<Color?>[AppColors.blancoHueso, AppColors.asfaltoClaro, AppColors.amarilloPastel]));
+    // Los tonos de StatusStyle (semáforo success/danger/warning) no deben
+    // sobrevivir en la barra. Hex recalibrados para fondo oscuro en la
+    // reforma "Asfalto y Demarcación" (2026-09-15): lo que se verifica sigue
+    // siendo lo mismo — que un color de ESTADO no se cuele en la barra.
+    expect(colores, isNot(contains(const Color(0xFF7FD1A0))));
+    expect(colores, isNot(contains(const Color(0xFFE88B7D))));
+    expect(colores, isNot(contains(const Color(0xFFE8B563))));
   });
 
-  testWidgets('el segmento libre se lee vacío: relleno concreto con borde demarcacion', (tester) async {
+  testWidgets('el segmento libre se lee vacío: relleno blancoHueso con borde amarilloPastel', (tester) async {
     await pumpZonaHeader(tester, libres: 5, ocupadas: 3, mantenimiento: 0);
 
     final segmentoLibre = decoracionesDeSegmentos(
       tester,
-    ).firstWhere((d) => d.color == AppColors.concreto);
+    ).firstWhere((d) => d.color == AppColors.blancoHueso);
 
     final border = segmentoLibre.border! as Border;
-    expect(border.top.color, AppColors.demarcacion);
+    expect(border.top.color, AppColors.amarilloPastel);
   });
 
-  testWidgets('el segmento ocupado se lee lleno: relleno asfalto', (tester) async {
+  testWidgets('el segmento ocupado se lee lleno: relleno asfaltoClaro', (tester) async {
     await pumpZonaHeader(tester, libres: 5, ocupadas: 3, mantenimiento: 0);
 
-    final segmentoOcupado = decoracionesDeSegmentos(tester).firstWhere((d) => d.color == AppColors.asfalto);
+    final segmentoOcupado = decoracionesDeSegmentos(tester).firstWhere((d) => d.color == AppColors.asfaltoClaro);
 
-    expect(segmentoOcupado.color, AppColors.asfalto);
+    expect(segmentoOcupado.color, AppColors.asfaltoClaro);
   });
 }
